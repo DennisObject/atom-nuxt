@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import LogoView from "~/views/LogoView.vue";
-definePageMeta({ layout: "dusk", auth: true });
+definePageMeta({ auth: true });
 </script>
 
 <template><LogoView /></template>

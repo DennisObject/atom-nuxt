@@ -260,7 +260,7 @@ async function login() {
             autocomplete="username"
             :placeholder="t('Username')"
             required
-            class="focus:ring-0 border-2 border-gray-700 rounded bg-[#21242e] focus:border-[#eeb425] w-full text-gray-200"
+            class="focus:ring-0 border-2 border-[var(--border)] rounded bg-[var(--header)] focus:border-[#eeb425] w-full text-[var(--text)]"
         /></label>
         <label
           >{{ t("Password")
@@ -271,7 +271,7 @@ async function login() {
             autocomplete="current-password"
             :placeholder="t('Password')"
             required
-            class="focus:ring-0 border-2 border-gray-700 rounded bg-[#21242e] focus:border-[#eeb425] w-full text-gray-200"
+            class="focus:ring-0 border-2 border-[var(--border)] rounded bg-[var(--header)] focus:border-[#eeb425] w-full text-[var(--text)]"
         /></label>
         <Captcha v-model="captcha" :busy="busy" />
         <button
@@ -353,8 +353,8 @@ async function login() {
   inset: 0;
   height: 100vh;
   overflow: hidden;
-  background: #233143;
-  color: #f3f4f6;
+  background: var(--maintenance-bg, #233143);
+  color: var(--text, #f3f4f6);
 }
 .maintenance-columns {
   width: 100%;
@@ -370,7 +370,7 @@ async function login() {
   padding: 40px 24px;
   gap: 40px;
   position: relative;
-  background: #111827;
+  background: var(--surface-recessed, #111827);
 }
 .maintenance-tasks {
   display: flex;
@@ -385,7 +385,7 @@ async function login() {
   height: 80px;
   width: 100%;
   overflow: hidden;
-  background: #233143;
+  background: var(--maintenance-bg, #233143);
   padding: 8px 8px 8px 0;
   transition: transform 150ms ease-in-out;
 }
@@ -446,9 +446,9 @@ async function login() {
 }
 .maintenance-pagination a {
   padding: 8px 16px;
-  border: 1px solid #4b5563;
+  border: 1px solid var(--border, #4b5563);
   border-radius: 4px;
-  background: #1f2937;
+  background: var(--surface-inset, #1f2937);
 }
 .maintenance-fireman {
   position: absolute;
@@ -510,8 +510,8 @@ async function login() {
   padding: 24px 32px;
   border: 0;
   border-radius: 4px;
-  background: #21242e;
-  color: #e5e7eb;
+  background: var(--header, #21242e);
+  color: var(--text, #e5e7eb);
 }
 .maintenance-login-dialog::backdrop {
   background: rgb(0 0 0 / 50%);
@@ -531,7 +531,7 @@ async function login() {
   position: absolute;
   top: 12px;
   right: 10px;
-  color: #9ca3af;
+  color: var(--text-subtle, #9ca3af);
   background: none;
   border: 0;
   padding: 0 6px;
@@ -602,10 +602,10 @@ async function login() {
   max-width: none;
 }
 :global(.dark) .banned-page {
-  color: #f3f4f6;
+  color: var(--text, #f3f4f6);
 }
 :global(.dark) .banned-card {
-  background: #1f2937;
+  background: var(--surface-inset, #1f2937);
 }
 @media (max-width: 1023px) {
   .maintenance-sidebar,

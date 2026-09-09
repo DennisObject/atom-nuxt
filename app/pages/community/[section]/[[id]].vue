@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import CommunityView from "~/views/CommunityView.vue";
 definePageMeta({
-  layout: "dusk",
+  layout: "default",
   validate: (route) =>
     [
       "staff",

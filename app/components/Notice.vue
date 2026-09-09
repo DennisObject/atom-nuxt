@@ -3,8 +3,14 @@ const props = defineProps<{
   error?: string;
   success?: string;
   fields?: Record<string, string[]>;
+  teleport?: boolean;
 }>();
 const { t } = useLocale();
+const fieldMessages = computed(() =>
+  [...new Set(Object.values(props.fields || {}).flat())].filter(
+    (message) => message && message !== props.error
+  )
+);
 const dismissed = reactive({ error: false, success: false });
 watch(
   () => props.error,
@@ -20,7 +26,7 @@ watch(
 );
 </script>
 <template>
-  <Teleport to="body">
+  <Teleport to="body" :disabled="teleport === false">
     <div
       v-if="(error && !dismissed.error) || (success && !dismissed.success)"
       class="notice-stack"
@@ -49,9 +55,9 @@ watch(
           </svg>
           <div>
             {{ props[kind] }}
-            <ul v-if="kind === 'error' && fields && Object.keys(fields).length">
-              <li v-for="(messages, field) in fields" :key="field">
-                {{ messages.join(" ") }}
+            <ul v-if="kind === 'error' && fieldMessages.length">
+              <li v-for="message in fieldMessages" :key="message">
+                {{ message }}
               </li>
             </ul>
           </div>

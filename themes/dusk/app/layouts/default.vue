@@ -1,146 +1,24 @@
 <script setup lang="ts">
-const { t, locale, setLocale } = useLocale();
-const { initialize, session } = useSession();
-const { request, safeUrl } = useApi();
-const { busy, error, run } = usePage();
-const route = useRoute();
-const router = useRouter();
-const mobileOpen = ref(false);
-const openMenu = ref("");
-const logoFailed = ref(false);
-const creditsDialog = ref<HTMLDialogElement>();
-const hotel = computed(() => session.bootstrap.hotel_name || "Atom Hotel");
-const logo = computed(() =>
-  logoFailed.value
-    ? "/assets/images/logo.png"
-    : safeUrl(session.bootstrap.assets?.logo) || "/assets/images/logo.png"
-);
-const languages = computed(
-  () => session.bootstrap.locales || [{ name: "English", locale: "en" }]
-);
-const navigation = computed(() => [
-  {
-    label: "Community",
-    active: route.path.startsWith("/help-center"),
-    icon: "community_icon",
-    children: [
-      { label: "Staff", path: "/community/staff" },
-      { label: "Teams", path: "/community/teams" },
-      { label: "Team applications", path: "/community/team-applications" },
-      { label: "Staff applications", path: "/community/staff-applications" },
-      { label: "Rare values", path: "/values" },
-      { label: "Help center", path: "/help-center" },
-      { label: "Photos", path: "/community/photos" },
-    ],
-  },
-  { label: "Leaderboard", icon: "leaderboard_icon", path: "/leaderboard" },
-  { label: "News", icon: "news_icon", path: "/community/articles" },
-  { label: "Store", icon: "store_icon", path: "/shop" },
-  {
-    label: "Home",
-    active: route.path.startsWith("/user"),
-    icon: "home_icon",
-    children: session.user
-      ? [
-          { label: "My Home", path: `/home/${session.user.username}` },
-          { label: "Badge Drawer", path: "/draw-badge" },
-          { label: "Account settings", path: "/user/settings/account" },
-          { label: "Logout", path: "" },
-        ]
-      : [
-          { label: "Login", path: "/login" },
-          { label: "Register", path: "/register" },
-        ],
-  },
-]);
-const contributors = [
-  ["Kasja", "Design, ideas & GFX"],
-  [
-    "Nicollas",
-    "Dark mode, Turbolinks, performance, article reactions, user sessions, layout & PT-BR translations",
-  ],
-  ["Dominic", "Performance improvements & user sessions"],
-  [
-    "EntenKoeniq",
-    "Automatic language registration, rooms page, profile tweaks & shop additions",
-  ],
-  ["MisterDeen", "Custom Discord widget, bugfixes & tweaks"],
-  ["Kani", "RCON base & FindRetros API"],
-  ["Beny", "FindRetros API & Cloudflare fixes"],
-  ["Oliver", "Profile page additions & Finnish translations"],
-  ["Live", "French translations, bugfixes & tweaks"],
-  ["DamienJolly", "Bugfixes"],
-  ["Danbo", "Bugfixes"],
-  ["Diddy/Josh", "Code readability improvements"],
-];
-const translators = [
-  ["German", "Damue & EntenKoeniq"],
-  ["Turkish", "Talion"],
-  ["Swedish", "CentralCee, Rille & Tuborgs"],
-  ["Dutch", "Yannick"],
-  ["Spanish", "Gedomi"],
-  ["Italian", "Lorenzune"],
-  ["Norwegian", "Twana & Zaruzet"],
-  ["French", "Plow & Live"],
-  ["Finnish", "Oliver"],
-  ["Portuguese (BR)", "Nicollas"],
-];
-watch(
-  () => session.bootstrap.assets?.logo,
-  () => {
-    logoFailed.value = false;
-  }
-);
-watch(
-  () => route.fullPath,
-  () => {
-    mobileOpen.value = false;
-    openMenu.value = "";
-  }
-);
-useHead(() => ({
-  titleTemplate: (title) => (title ? `${title} · ${hotel.value}` : hotel.value),
-}));
-function hoverMenu(event: PointerEvent, name: string) {
-  if (
-    event.pointerType === "mouse" &&
-    window.matchMedia("(min-width: 1024px)").matches
-  )
-    openMenu.value = name;
-}
-function toggleMenu(event: MouseEvent, name: string) {
-  if (
-    event.detail > 0 &&
-    window.matchMedia("(min-width: 1024px) and (hover: hover)").matches
-  )
-    openMenu.value = name;
-  else openMenu.value = openMenu.value === name ? "" : name;
-}
-function closeMenu(event: FocusEvent) {
-  if (
-    !(event.currentTarget as HTMLElement).contains(
-      event.relatedTarget as Node | null
-    )
-  )
-    openMenu.value = "";
-}
-async function logout() {
-  openMenu.value = "";
-  await run(async () => {
-    await request("/logout", "POST");
-    session.user = null;
-    session.bootstrap.viewer = null;
-    session.restriction = "";
-    await router.push("/");
-  });
-}
-async function changeLocale(value: string) {
-  openMenu.value = "";
-  await run(async () => {
-    await setLocale(value);
-    await initialize();
-  });
-}
+const {
+  t,
+  locale,
+  session,
+  safeUrl,
+  busy,
+  error,
+  mobileOpen,
+  openMenu,
+  logoFailed,
+  hotel,
+  logo,
+  languages,
+  navigation,
+  hoverMenu,
+  toggleMenu,
+  closeMenu,
+  logout,
+  changeLocale,
+} = useSiteShell();
 </script>
 
 <template>
@@ -227,20 +105,22 @@ async function changeLocale(value: string) {
                   />
                 </svg>
               </button>
-              <div
-                v-show="openMenu === item.label"
-                :id="`nav-${item.icon}`"
-                class="dropdown"
-              >
-                <template v-for="child in item.children" :key="child.label">
-                  <NuxtLink v-if="child.path" :to="child.path">{{
-                    t(child.label)
-                  }}</NuxtLink>
-                  <button v-else :disabled="busy" @click="logout">
-                    {{ t(child.label) }}
-                  </button>
-                </template>
-              </div>
+              <Transition name="dropdown">
+                <div
+                  v-show="openMenu === item.label"
+                  :id="`nav-${item.icon}`"
+                  class="dropdown dropdown-children"
+                >
+                  <template v-for="child in item.children" :key="child.label">
+                    <NuxtLink v-if="child.path" :to="child.path">{{
+                      t(child.label)
+                    }}</NuxtLink>
+                    <button v-else :disabled="busy" @click="logout">
+                      {{ t(child.label) }}
+                    </button>
+                  </template>
+                </div>
+              </Transition>
             </div>
           </template>
         </div>
@@ -310,7 +190,7 @@ async function changeLocale(value: string) {
             ><img src="/assets/images/dusk/rules_icon.png" alt=""
           /></NuxtLink>
           <NuxtLink
-            v-if="session.user?.can_generate_logo"
+            v-if="session.user && session.bootstrap.viewer?.can_generate_logo"
             to="/logo-generator"
             :aria-label="t('Logo generator')"
             :title="t('Logo generator')"
@@ -332,7 +212,7 @@ async function changeLocale(value: string) {
           <a
             v-if="
               session.user &&
-              session.bootstrap.viewer?.can_access_housekeeping &&
+              session.bootstrap.viewer?.can_show_housekeeping_link &&
               safeUrl(session.bootstrap.housekeeping_url)
             "
             :href="safeUrl(session.bootstrap.housekeeping_url)"
@@ -365,65 +245,5 @@ async function changeLocale(value: string) {
       <slot />
     </main>
   </div>
-  <footer class="site-footer">
-    <button @click="creditsDialog?.showModal()">
-      © {{ new Date().getFullYear() }} {{ hotel }}
-      {{
-        t(
-          "is a not for profit educational project & is in no way affiliated with Sulake Corporation Oy."
-        )
-      }}
-    </button>
-  </footer>
-  <dialog
-    ref="creditsDialog"
-    class="credits-dialog"
-    :aria-label="hotel"
-    @click="$event.target === creditsDialog && creditsDialog?.close()"
-  >
-    <header>
-      <h3>{{ hotel }}</h3>
-      <button :aria-label="t('Close')" @click="creditsDialog?.close()">
-        ×
-      </button>
-    </header>
-    <div class="credits-body">
-      <p>
-        {{
-          t(
-            "Thank you for playing :hotel. We have put a lot of effort into making the hotel what it is, and we truly appreciate you being here",
-            { hotel }
-          )
-        }}
-        ❤️
-      </p>
-      <p>
-        {{ t(":hotel is driven by Atom CMS made by:", { hotel }) }}
-        <a
-          href="https://devbest.com/threads/atom-cms-a-multi-theme-cms.93034/"
-          target="_blank"
-          rel="noopener"
-          >Object</a
-        >
-      </p>
-      <section>
-        <h4>{{ t("Credits:") }}</h4>
-        <ul class="contributors">
-          <li v-for="[name, contribution] in contributors" :key="name">
-            <strong>{{ name }}</strong
-            ><span>{{ t(contribution || "") }}</span>
-          </li>
-        </ul>
-      </section>
-      <section>
-        <h4>{{ t("Translations") }}</h4>
-        <ul class="translators">
-          <li v-for="[language, names] in translators" :key="language">
-            <strong>{{ t(language || "") }}</strong
-            ><span>{{ names }}</span>
-          </li>
-        </ul>
-      </section>
-    </div>
-  </dialog>
+  <SiteCredits :hotel="hotel" />
 </template>

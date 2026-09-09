@@ -1,4 +1,5 @@
 <script setup lang="ts">
+const { artwork } = useAppConfig();
 import { displayDate } from "~/utils/date";
 const { t } = useLocale();
 import { reactive, ref } from "vue";
@@ -7,9 +8,9 @@ const { api, mediaUrl } = useApi();
 import type { Data, Envelope } from "~/utils/api";
 const { session, avatar } = useSession();
 import { usePage } from "~/composables/usePage";
-import Card from "~/components/Card.vue";
+import { Card } from "#components";
 import Notice from "~/components/Notice.vue";
-import ArticleTile from "~/components/ArticleTile.vue";
+import { ArticleTile } from "#components";
 import RichText from "~/components/RichText.vue";
 const route = useRoute(),
   slug = route.params.slug ? encodeURIComponent(String(route.params.slug)) : "";
@@ -23,6 +24,16 @@ const pagination = reactive({ page: 1, last: 1 }),
   commentPagination = reactive({ page: 1, last: 1 });
 const reactions = ref<Record<string, number>>({}),
   myReactions = ref<string[]>([]);
+const reactionDialog = ref<HTMLDialogElement>();
+const articleReactions = computed(() =>
+  Object.entries(reactions.value).filter(([, count]) => count > 0)
+);
+const availableReactions = computed(() =>
+  (session.bootstrap.reactions || []).filter(
+    (reaction) =>
+      !reactions.value[reaction] && !myReactions.value.includes(reaction)
+  )
+);
 async function load(page = 1) {
   if (slug) {
     const result = (await api<Data<"Article">>(
@@ -137,6 +148,7 @@ async function removeComment(id: number) {
   }, "Comment deleted.");
 }
 async function react(reaction: string) {
+  if (!session.user || busy.value) return;
   await run(async () => {
     await api(
       `/articles/${slug}/reactions/${encodeURIComponent(reaction)}`,
@@ -150,7 +162,7 @@ async function react(reaction: string) {
   <Notice :error="error" :fields="fields" :success="success" />
   <template v-if="!slug"
     ><div class="news-heading">
-      <img src="/assets/images/dusk/news_icon.png" alt="" />
+      <img :src="artwork.news" alt="" />
       <h1>{{ t("News") }}</h1>
     </div>
     <div class="grid four-columns">
@@ -230,25 +242,64 @@ async function react(reaction: string) {
         </header>
         <RichText :html="article.full_story" />
       </article>
-      <Card :title="t('Reactions')" icon="speechbubble_icon">
-        <div class="flex items-center gap-4 flex-wrap">
+      <div class="article-reactions" :aria-label="t('Reactions')">
+        <button
+          v-if="session.user"
+          class="reaction-add"
+          type="button"
+          @click="reactionDialog?.showModal()"
+        >
+          {{ t("Add") }}
+        </button>
+        <button
+          v-for="[reaction, count] in articleReactions"
+          :key="reaction"
+          class="reaction-count"
+          :aria-pressed="myReactions.includes(reaction)"
+          :disabled="busy || !session.user"
+          @click="react(reaction)"
+        >
+          <img
+            :src="`/assets/images/icons/reactions/${reaction}.png`"
+            :alt="reaction"
+          />
+          {{ count }}
+        </button>
+      </div>
+      <dialog
+        v-if="session.user"
+        ref="reactionDialog"
+        class="reaction-dialog"
+        aria-labelledby="reaction-dialog-title"
+        @click="$event.target === reactionDialog && reactionDialog?.close()"
+      >
+        <header>
+          <h2 id="reaction-dialog-title">{{ t("Insert Reaction") }}</h2>
           <button
-            v-for="reaction in session.bootstrap.reactions || []"
+            type="button"
+            :aria-label="t('Close')"
+            @click="reactionDialog?.close()"
+          >
+            ✕
+          </button>
+        </header>
+        <p v-if="error" role="alert">{{ error }}</p>
+        <div class="reaction-options">
+          <button
+            v-for="reaction in availableReactions"
             :key="reaction"
-            class="small secondary"
-            :aria-pressed="myReactions.includes(reaction)"
-            :disabled="busy || !session.user"
+            type="button"
+            :disabled="busy"
             @click="react(reaction)"
           >
             <img
               :src="`/assets/images/icons/reactions/${reaction}.png`"
               :alt="reaction"
-              style="width: 22px; height: 22px; object-fit: contain"
             />
-            {{ reactions[reaction] || 0 }}
           </button>
-        </div></Card
-      ><Card :title="t('Comments')" icon="speechbubble_icon"
+        </div>
+      </dialog>
+      <Card :title="t('Comments')" icon="speechbubble_icon"
         ><article v-for="item in comments" :key="item.id" class="comment">
           <div class="flex items-center gap-4 flex-wrap">
             <NuxtLink :to="`/home/${item.author?.username}`"
@@ -313,7 +364,7 @@ async function react(reaction: string) {
   display: flex;
   align-items: center;
   gap: 16px;
-  background: #21242e;
+  background: var(--header, #21242e);
   border-radius: 8px;
   padding: 12px;
   margin-bottom: 16px;
@@ -333,12 +384,12 @@ async function react(reaction: string) {
 }
 .article-content-panel {
   padding: 12px;
-  background: #1f2937;
+  background: var(--surface-inset, #1f2937);
   border-radius: 4px;
   display: flex;
   flex-direction: column;
   gap: 32px;
-  color: #f3f4f6;
+  color: var(--text, #f3f4f6);
 }
 .article-content-panel header {
   min-height: 96px;
@@ -369,7 +420,7 @@ async function react(reaction: string) {
   position: relative;
   border-radius: 8px;
   overflow: hidden;
-  background: linear-gradient(transparent 65%, #171a23 65%),
+  background: linear-gradient(transparent 65%, var(--surface-deep, #171a23) 65%),
     url("/assets/images/staff-bg.png");
 }
 .author-portrait {
@@ -379,7 +430,7 @@ async function react(reaction: string) {
   width: 64px;
   height: 64px;
   border-radius: 50%;
-  background: url("/assets/images/dusk/me_circle_image.png") center/contain;
+  background: var(--portrait-background) center/contain;
   overflow: hidden;
 }
 .author-portrait img {

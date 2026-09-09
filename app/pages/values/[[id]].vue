@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import RareValuesView from "~/views/RareValuesView.vue";
-definePageMeta({ layout: "dusk", auth: true });
+definePageMeta({ auth: true });
 </script>
 
 <template><RareValuesView /></template>

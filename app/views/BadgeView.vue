@@ -232,7 +232,7 @@ async function buy() {
       icon="hotel-icon"
       class="border border-gray-900 lg:col-span-3"
     >
-      <div class="px-2 text-sm text-gray-200 flex flex-col gap-6">
+      <div class="px-2 text-sm text-[var(--text)] flex flex-col gap-6">
         <div class="flex flex-col md:flex-row flex-wrap gap-4 justify-between">
           <button
             class="badge-drawer-button flex-1 border-2 border-black rounded text-black font-medium"
@@ -291,7 +291,7 @@ async function buy() {
             tabindex="0"
             @keydown.ctrl.z.prevent="undo"
             @keydown.meta.z.prevent="undo"
-            class="badge-canvas w-full h-full border border-gray-700"
+            class="badge-canvas w-full h-full border border-[var(--border)]"
             width="40"
             height="40"
             :aria-label="t('Badge drawing area')"
@@ -394,7 +394,7 @@ async function buy() {
             v-model="badgeName"
             required
             maxlength="24"
-            class="mt-1 focus:ring-0 border-4 rounded bg-gray-800 border-gray-700 text-gray-200 focus:border-[#eeb425] w-full"
+            class="mt-1 focus:ring-0 border-4 rounded bg-[var(--surface-inset)] border-[var(--border)] text-[var(--text)] focus:border-[#eeb425] w-full"
         /></label>
         <label class="font-semibold mt-2"
           >{{ t("Badge Description:")
@@ -402,7 +402,7 @@ async function buy() {
             v-model="description"
             required
             maxlength="255"
-            class="mt-1 focus:ring-0 border-4 rounded bg-gray-800 border-gray-700 text-gray-200 focus:border-[#eeb425] w-full"
+            class="mt-1 focus:ring-0 border-4 rounded bg-[var(--surface-inset)] border-[var(--border)] text-[var(--text)] focus:border-[#eeb425] w-full"
         /></label>
         <button
           :disabled="busy || config.cost === undefined || !valid"

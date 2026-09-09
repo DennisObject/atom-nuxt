@@ -67,10 +67,10 @@ function currencyName(type: number) {
             v-for="(holder, index) in value.holdings"
             :key="holder.user?.id || index"
             :to="holder.user ? `/home/${holder.user.username}` : '/values'"
-            class="px-3 h-[100px] rounded bg-gray-700 flex gap-4 items-center overflow-hidden"
+            class="px-3 h-[100px] rounded bg-[var(--surface-muted)] flex gap-4 items-center overflow-hidden"
           >
             <div
-              class="w-12 h-12 shrink-0 overflow-hidden rounded-full flex items-center justify-center bg-gray-800"
+              class="w-12 h-12 shrink-0 overflow-hidden rounded-full flex items-center justify-center bg-[var(--surface-inset)]"
             >
               <img
                 v-if="holder.user"
@@ -119,18 +119,18 @@ function currencyName(type: number) {
             <div
               v-for="item in category.values"
               :key="item.id"
-              class="p-3 rounded bg-gray-700 flex gap-x-6 gap-4 items-center overflow-hidden"
+              class="p-3 rounded bg-[var(--surface-muted)] flex gap-x-6 gap-4 items-center overflow-hidden"
             >
               <div class="w-8 h-8 shrink-0">
                 <div
-                  class="w-10 h-10 overflow-hidden rounded-full flex items-center justify-center bg-gray-800"
+                  class="w-10 h-10 overflow-hidden rounded-full flex items-center justify-center bg-[var(--surface-inset)]"
                 >
                   <img :src="safeUrl(item.icon)" :alt="item.name" />
                 </div>
               </div>
               <div class="flex flex-col w-full min-w-0">
                 <div
-                  class="font-bold text-gray-200 truncate flex items-center gap-[5px]"
+                  class="font-bold text-[var(--text)] truncate flex items-center gap-[5px]"
                 >
                   <NuxtLink
                     v-if="item.item_id"
@@ -214,7 +214,7 @@ function currencyName(type: number) {
               :aria-label="t('Search for a rare')"
               :placeholder="t('Search for a rare')"
               maxlength="255"
-              class="mb-3 focus:ring-0 border-2 border-gray-700 rounded bg-[#21242e] focus:border-[#eeb425] w-full text-gray-200"
+              class="mb-3 focus:ring-0 border-2 border-[var(--border)] rounded bg-[var(--header)] focus:border-[#eeb425] w-full text-[var(--text)]"
             /><button
               :disabled="status === 'pending'"
               class="w-full rounded bg-green-600 hover:bg-green-700 text-white p-2 border-2 border-green-500 transition duration-150 font-semibold"
@@ -228,16 +228,16 @@ function currencyName(type: number) {
           :subtitle="t('Select a category below')"
           icon="inventory-icon"
           class="border border-gray-900"
-          ><nav class="px-2 text-sm text-gray-200 space-y-2">
+          ><nav class="px-2 text-sm text-[var(--text)] space-y-2">
             <NuxtLink
               to="/values"
-              class="block rounded bg-gray-700 py-2 px-4 transition duration-200 hover:scale-[102%]"
+              class="block rounded bg-[var(--surface-muted)] py-2 px-4 transition duration-200 hover:scale-[102%]"
               >{{ t("All values") }}</NuxtLink
             ><NuxtLink
               v-for="category in data?.navigation || []"
               :key="category.id"
               :to="`/values/category/${category.id}`"
-              class="block rounded bg-gray-700 py-2 px-4 transition duration-200 hover:scale-[102%]"
+              class="block rounded bg-[var(--surface-muted)] py-2 px-4 transition duration-200 hover:scale-[102%]"
               >{{ category.name }}</NuxtLink
             >
           </nav></Card

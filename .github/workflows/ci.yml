@@ -10,7 +10,12 @@ permissions:
 
 jobs:
   build:
-    name: Nuxt typecheck and build
+    name: Nuxt ${{ matrix.theme }}
+    strategy:
+      matrix:
+        theme: [atom, dusk]
+    env:
+      ATOM_THEME: ${{ matrix.theme }}
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:

@@ -7,7 +7,7 @@ const { api, request } = useApi();
 import type { RecordData, Data } from "~/utils/api";
 const { session, refreshUser } = useSession();
 import { usePage } from "~/composables/usePage";
-import Card from "~/components/Card.vue";
+import { Card } from "#components";
 import Notice from "~/components/Notice.vue";
 import Captcha from "~/components/Captcha.vue";
 import DOMPurify from "isomorphic-dompurify";
@@ -448,8 +448,8 @@ async function changeTwoFactor(action: "enable" | "confirm" | "disable") {
   gap: 12px;
 }
 .settings-navigation a {
-  background: #21242e;
-  color: #f3f4f6;
+  background: var(--header, #21242e);
+  color: var(--text, #f3f4f6);
   display: flex;
   gap: 8px;
   justify-content: center;
@@ -488,19 +488,19 @@ async function changeTwoFactor(action: "enable" | "confirm" | "disable") {
   font-size: 16px;
   line-height: 24px;
   font-weight: 600;
-  color: #e5e7eb;
+  color: var(--text, #e5e7eb);
 }
 .settings-content label small {
   font-size: 14px;
   line-height: 21px;
   font-weight: 400;
-  color: #9ca3af;
+  color: var(--text-subtle, #9ca3af);
 }
 .settings-content input {
   margin-top: 12px;
-  background: #21242e;
-  color: #e5e7eb;
-  border: 2px solid #374151;
+  background: var(--header, #21242e);
+  color: var(--text, #e5e7eb);
+  border: 2px solid var(--border, #374151);
   border-radius: 4px;
   padding: 8px 12px;
   width: 100%;
@@ -567,7 +567,7 @@ async function changeTwoFactor(action: "enable" | "confirm" | "disable") {
 }
 .session-table {
   overflow: auto;
-  border: 2px solid #374151;
+  border: 2px solid var(--border, #374151);
   border-radius: 4px;
 }
 .session-table table {
@@ -576,15 +576,15 @@ async function changeTwoFactor(action: "enable" | "confirm" | "disable") {
   border-collapse: collapse;
 }
 .session-table thead {
-  background: #21242e;
+  background: var(--header, #21242e);
 }
 .session-table th,
 .session-table td {
   padding: 8px 16px;
-  color: #e5e7eb;
+  color: var(--text, #e5e7eb);
   text-align: left;
   white-space: nowrap;
-  border-bottom: 1px solid #374151;
+  border-bottom: 1px solid var(--border, #374151);
 }
 .session-table th {
   font-weight: 500;

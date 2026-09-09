@@ -197,7 +197,7 @@ async function rate() {
 .widget-profile {
   display: flex;
   justify-content: space-between;
-  border-bottom: 1px solid #4b5563;
+  border-bottom: 1px solid var(--border, #4b5563);
   padding: 8px 8px 12px;
   gap: 12px;
 }
@@ -207,7 +207,7 @@ async function rate() {
 .widget-profile small {
   display: block;
   font-size: 12px;
-  color: #9ca3af;
+  color: var(--text-subtle, #9ca3af);
 }
 .widget-profile .online {
   color: #4ade80;
@@ -226,7 +226,7 @@ async function rate() {
   display: flex;
   align-items: center;
   gap: 8px;
-  border-bottom: 1px solid #4b5563;
+  border-bottom: 1px solid var(--border, #4b5563);
   padding: 4px;
 }
 .widget-room strong {
@@ -234,7 +234,7 @@ async function rate() {
 }
 .widget-room p {
   font-size: 10px;
-  color: #9ca3af;
+  color: var(--text-subtle, #9ca3af);
 }
 .room-state {
   width: 32px;
@@ -261,7 +261,7 @@ async function rate() {
   font-size: 12px;
 }
 .widget-rating span {
-  color: #9ca3af;
+  color: var(--text-subtle, #9ca3af);
 }
 .rating-stars {
   display: flex;

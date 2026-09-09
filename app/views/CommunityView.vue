@@ -1,4 +1,5 @@
 <script setup lang="ts">
+const { artwork } = useAppConfig();
 const { t } = useLocale();
 import { computed, ref } from "vue";
 
@@ -6,7 +7,7 @@ const { api, safeUrl } = useApi();
 import type { Data } from "~/utils/api";
 const { avatar, session } = useSession();
 import { usePage } from "~/composables/usePage";
-import Card from "~/components/Card.vue";
+import { Card } from "#components";
 import Notice from "~/components/Notice.vue";
 import Captcha from "~/components/Captcha.vue";
 const captcha = ref<Record<string, string>>({});
@@ -30,6 +31,14 @@ const titles: Record<string, string> = {
   "staff-applications": "Staff applications",
   "team-applications": "Team applications",
 };
+const applicationStatusLabels: Record<string, string> = {
+  pending: "Your application is pending",
+  approved: "You have been approved",
+  rejected: "Your application was rejected",
+};
+function applicationStatusLabel(status: string): string {
+  return t(applicationStatusLabels[status] || "Application submitted");
+}
 const isApplications = computed(() => section.endsWith("applications"));
 const boardNames: Record<string, string> = {
   credits: "Credits",
@@ -127,6 +136,7 @@ async function apply() {
       ...captcha.value,
     });
     application.value = "";
+    await load();
   }, "Your application has been submitted.");
 }
 const photoDialog = ref<HTMLDialogElement>();
@@ -157,13 +167,13 @@ function changePhoto(step: number) {
     class="community-heading"
   >
     <img
-      :src="`/assets/images/dusk/${
+      :src="
         section === 'leaderboard'
-          ? 'leaderboard_icon'
+          ? artwork.leaderboard
           : section === 'photos'
-          ? 'camera_icon'
-          : 'community_icon'
-      }.png`"
+          ? artwork.photos
+          : artwork.community
+      "
       alt=""
     />
     <h1>{{ t(titles[section] || "Community") }}</h1>
@@ -195,7 +205,7 @@ function changePhoto(step: number) {
             class="staff-member"
             :to="`/home/${user.username}`"
             :style="{
-              backgroundImage: `linear-gradient(transparent 65%,#171a23 65%),url('${safeUrl(
+              backgroundImage: `linear-gradient(transparent 65%,var(--surface-deep) 65%),url('${safeUrl(
                 group.background
                   ? /^https?:/.test(group.background) ||
                     group.background.startsWith('/')
@@ -309,9 +319,7 @@ function changePhoto(step: number) {
           <img
             v-if="index < 3"
             class="leaderboard-medal"
-            :src="`/assets/images/dusk/leaderboard_${
-              ['gold', 'silver', 'bronze'][index]
-            }_icon.png`"
+            :src="artwork.medals[index]"
             :alt="String(index + 1)"
           /><span v-else class="leaderboard-number">{{
             index + 1
@@ -336,9 +344,7 @@ function changePhoto(step: number) {
           :alt="`Photo by ${photo.author?.username || 'a hotel member'}`"
         />
         <figcaption>
-          <img src="/assets/images/dusk/author_camera_icon.png" alt="" />{{
-            photo.author?.username
-          }}
+          <img :src="artwork.photoAuthor" alt="" />{{ photo.author?.username }}
         </figcaption></a
       >
     </div>
@@ -390,7 +396,14 @@ function changePhoto(step: number) {
             </p>
           </div>
         </header>
-        <form class="application-form" @submit.prevent="apply">
+        <p
+          v-if="position.application_status"
+          class="application-form"
+          role="status"
+        >
+          {{ applicationStatusLabel(position.application_status) }}
+        </p>
+        <form v-else class="application-form" @submit.prevent="apply">
           <label
             >{{ t("Username")
             }}<input :value="session.user?.username" readonly /></label
@@ -415,7 +428,7 @@ function changePhoto(step: number) {
           :subtitle="t('Read before applying')"
           icon="hotel-icon"
           class="border border-gray-900"
-          ><p class="px-2 text-sm text-gray-200">
+          ><p class="px-2 text-sm text-[var(--text)]">
             {{
               t(
                 "Please fill out all the fields to apply for :position. Be honest and transparent. Providing incorrect information may lead to removal if hired.",
@@ -432,7 +445,13 @@ function changePhoto(step: number) {
         :key="item.id"
         :title="item.name || 'Position'"
         icon="community_icon"
-        ><RichText :html="item.description" /><NuxtLink
+        ><RichText :html="item.description" /><button
+          v-if="item.application_status"
+          disabled
+        >
+          {{ applicationStatusLabel(item.application_status) }}</button
+        ><NuxtLink
+          v-else
           class="button"
           :to="`/community/${section}/${item.id}`"
         >
@@ -495,18 +514,18 @@ function changePhoto(step: number) {
   gap: 4px;
 }
 .application-form input {
-  background: #21242e;
-  color: #e5e7eb;
-  border: 2px solid #374151;
+  background: var(--header, #21242e);
+  color: var(--text, #e5e7eb);
+  border: 2px solid var(--border, #374151);
   border-radius: 4px;
   padding: 8px 12px;
 }
 .application-form textarea {
   min-height: 180px;
-  border: 4px solid #374151;
+  border: 4px solid var(--border, #374151);
   border-radius: 4px;
-  background: #1f2937;
-  color: #e5e7eb;
+  background: var(--surface-inset, #1f2937);
+  color: var(--text, #e5e7eb);
 }
 .application-form textarea:focus {
   border-color: #eeb425;
@@ -533,8 +552,8 @@ function changePhoto(step: number) {
   padding: 16px;
   border: 0;
   border-radius: 8px;
-  background: #171a23;
-  color: white;
+  background: var(--surface-deep, #171a23);
+  color: var(--text);
 }
 .photo-lightbox::backdrop {
   background: #000c;
@@ -560,7 +579,7 @@ function changePhoto(step: number) {
   display: flex;
   align-items: center;
   gap: 16px;
-  background: #21242e;
+  background: var(--header, #21242e);
   border-radius: 8px;
   padding: 12px;
   margin-bottom: 16px;
@@ -580,7 +599,7 @@ function changePhoto(step: number) {
 }
 .staff-group {
   border-radius: 8px;
-  background: #2b303c;
+  background: var(--panel, #2b303c);
   overflow: hidden;
   padding-bottom: 16px;
 }
@@ -588,7 +607,7 @@ function changePhoto(step: number) {
   display: flex;
   gap: 8px;
   padding: 12px;
-  background: #21242e;
+  background: var(--header, #21242e);
   margin-bottom: 16px;
   align-items: center;
 }
@@ -603,11 +622,11 @@ function changePhoto(step: number) {
 .staff-group header h2 {
   font-size: 14px;
   font-weight: 600;
-  color: #d1d5db;
+  color: var(--text-secondary, #d1d5db);
 }
 .staff-group header p {
   font-size: 14px;
-  color: #6b7280;
+  color: var(--text-dim, #6b7280);
 }
 .staff-members {
   display: grid;
@@ -621,7 +640,7 @@ function changePhoto(step: number) {
   position: relative;
   border-radius: 8px;
   overflow: hidden;
-  background-color: #171a23;
+  background-color: var(--surface-deep, #171a23);
 }
 .staff-portrait {
   position: absolute;
@@ -630,7 +649,7 @@ function changePhoto(step: number) {
   width: 64px;
   height: 64px;
   border-radius: 50%;
-  background: url("/assets/images/dusk/me_circle_image.png") center/contain;
+  background: var(--portrait-background) center/contain;
   overflow: hidden;
 }
 .staff-portrait img {
@@ -680,7 +699,7 @@ function changePhoto(step: number) {
   gap: 8px;
   align-items: center;
   padding: 8px 16px;
-  background: #21242ee6;
+  background: color-mix(in srgb, var(--header) 90%, transparent);
   border-radius: 6px;
   font-weight: bold;
   font-size: 16px;
@@ -693,7 +712,7 @@ function changePhoto(step: number) {
   padding: 12px;
   border-radius: 6px;
   height: 60px;
-  background: #21242ee6;
+  background: color-mix(in srgb, var(--header) 90%, transparent);
   display: flex;
   align-items: center;
   gap: 8px;
@@ -706,8 +725,7 @@ function changePhoto(step: number) {
   overflow: hidden;
   border-radius: 50%;
   flex-shrink: 0;
-  background: url("/assets/images/dusk/leaderboard_circle_image.png")
-    center/cover;
+  background: var(--leaderboard-portrait-background) center/cover;
 }
 .leaderboard-avatar img {
   position: absolute;

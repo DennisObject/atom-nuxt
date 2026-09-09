@@ -1,6 +1,6 @@
 # Atom Nuxt
 
-The Dusk theme for [Atom CMS](https://github.com/DennisObject/atomcms), built with Nuxt 4. Pages, layouts, components, translations and artwork live here; Laravel provides authentication, permissions, content, purchases, support and emulator integration through its [headless API](https://github.com/DennisObject/atomcms/pull/237).
+The Atom and Dusk themes for [Atom CMS](https://github.com/DennisObject/atomcms), built with Nuxt 4. Pages, layouts, components, translations and artwork live here; Laravel provides authentication, permissions, content, purchases, support and emulator integration through its [headless API](https://github.com/DennisObject/atomcms/pull/237).
 
 ## Development
 
@@ -32,19 +32,38 @@ Configure Laravel's public application/frontend URLs and trusted proxy settings 
 
 Responses containing session-dependent HTML are private and not cached. The badge canvas and game client render in the browser. Public news, profile homes and rules support server rendering. Payment actions and game launches happen only in response to browser actions, never while rendering a page on the server.
 
-## Theme development
+## Themes and project structure
 
-The original Dusk theme is the visual reference. Its artwork and translations are retained.
+Both themes live in this repository and use one Nuxt application, dependency lockfile, API client and set of feature actions. Nuxt's [local layers](https://nuxt.com/docs/4.x/getting-started/layers) supply the selected theme's presentation. There is no need to fork the frontend or create a repository per theme.
 
-- `app/pages/` defines public URLs and page access metadata.
-- `app/layouts/dusk.vue` contains the Dusk navigation, page shell and footer.
-- `app/views/` implements the feature pages shared by related routes.
-- `app/components/` contains reusable theme controls and home widgets.
-- `app/assets/css/dusk.css` carries the Dusk styles and Tailwind setup.
-- `app/composables/` owns request-scoped session, locale and API access.
-- `public/assets/` contains theme-owned artwork.
+```sh
+npm run dev:atom
+npm run dev:dusk
+npm run build:atom
+npm run build:dusk
+```
 
-Develop a theme by changing its layout, pages, components and styles while preserving the API calls and server access checks. Nuxt's standard layers can share this foundation between separate theme projects; there is no custom theme loader or second implementation of Laravel's business rules.
+Alternatively set `ATOM_THEME=atom` or `ATOM_THEME=dusk` in `.env` for development, or in the build environment. Dusk remains the default. Each build contains one theme; deploy that build's entire `.output/` directory. Changing `ATOM_THEME` on an already built Node server does not change its theme. Build both themes separately when deploying two sites, saving each output before the next build replaces it.
+
+Atom supports light and dark color modes through its navigation toggle. The preference is stored in a cookie so server rendering and client navigation agree. Dusk retains its dark appearance. Theme choice belongs to the frontend build and is independent of Laravel's Blade theme setting.
+
+| Location                     | Responsibility                                                                     |
+| ---------------------------- | ---------------------------------------------------------------------------------- |
+| `app/pages/`                 | Shared URLs, access metadata and page composition                                  |
+| `app/views/`                 | Common feature screens such as settings, support, articles, shop and profile homes |
+| `app/composables/`           | Shared authentication, session, API, locale, navigation and page actions           |
+| `app/components/`            | Shared forms, notices, editor and feature controls                                 |
+| `app/assets/css/base.css`    | Shared structure and controls using theme color variables                          |
+| `themes/atom/app/`           | Atom layout, page presentation, cards and stylesheet                               |
+| `themes/dusk/app/`           | Dusk layout, page presentation, cards and stylesheet                               |
+| `themes/*/nuxt.config.ts`    | Theme layer configuration, including editor colors                                 |
+| `server/`                    | Shared Laravel proxy                                                               |
+| `app/locales/`, `app/types/` | Shared translations and generated API contract                                     |
+| `public/assets/`             | Retained artwork; Atom-specific assets are under `images/atom/`                    |
+
+Change shared actions once to fix both themes. Change a theme's layout, components or CSS for visual differences. Theme components are resolved through Nuxt's component registry (`#components`), so shared screens use the selected theme's cards without importing Dusk or Atom directly. Auth and member dashboard templates share their underlying form and action modules.
+
+To add another theme, create its local layer under `themes/`, implement the presentation components supplied by the existing themes, provide its stylesheet/editor palette, and add its name to the explicit theme allowlist in `nuxt.config.ts` and the CI matrix. Keep API calls and authorization in the shared core. Separate repositories only become useful when a frontend has independent ownership, dependencies or product behavior.
 
 ## Features
 
@@ -56,8 +75,10 @@ Feature availability comes from the backend and the selected emulator. The unimp
 
 The backend publishes `docs/api/schema.d.ts`. When upgrading the API, copy that file to `app/types/api-schema.d.ts`, then run the checks above. Generated TypeScript types describe data shapes; Laravel validates requests and enforces permissions.
 
+CI builds and checks Atom and Dusk independently. Run `ATOM_THEME=atom npm run typecheck`, `npm run build:atom`, then `ATOM_THEME=atom npm test`; repeat with `dusk`.
+
 `npm test` uses a disposable HTTP fixture and the production Nuxt build to check server-rendered content, concurrent session isolation, guest redirects and authentication proxy cookies. It does not exercise a real emulator or payment provider.
 
-For a configured hotel, also verify registration, login/logout, two-factor enrollment/challenge, account changes, news interactions, home editing, support and commerce in a browser. Check desktop/mobile layouts against the original Dusk theme and verify that failed requests retain user input without replaying purchases.
+For a configured hotel, also verify registration, login/logout, two-factor enrollment/challenge, account changes, news interactions, home editing, support and commerce in a browser. Check desktop/mobile layouts against the original selected theme and verify that failed requests retain user input without replaying purchases.
 
 Original Atom CMS artwork and source attribution are retained under the [MIT license](LICENSE).

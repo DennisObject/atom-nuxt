@@ -5,7 +5,7 @@ const { api } = useApi();
 import type { Data } from "~/utils/api";
 const { session } = useSession();
 import { usePage } from "~/composables/usePage";
-import Card from "~/components/Card.vue";
+import { Card } from "#components";
 import Notice from "~/components/Notice.vue";
 const { busy, error, success, run } = usePage();
 const font = ref("atom"),
@@ -92,13 +92,13 @@ async function generate(use: boolean) {
     class="border border-gray-900"
   >
     <Notice :error="error" :success="success" />
-    <div class="px-2 text-sm text-gray-200">
+    <div class="px-2 text-sm text-[var(--text)]">
       <div class="mt-4">
         <div class="grid grid-cols-6 gap-3">
           <button
             v-for="choice in fonts"
             :key="choice"
-            class="logo-font h-24 rounded border border-gray-700 p-2 flex gap-2 justify-center items-center transition duration-300 ease-in-out hover:bg-gray-900"
+            class="logo-font h-24 rounded border border-[var(--border)] p-2 flex gap-2 justify-center items-center transition duration-300 ease-in-out hover:bg-gray-900"
             :class="
               font === choice
                 ? 'bg-gray-900 ring-2 ring-emerald-700'
@@ -123,7 +123,7 @@ async function generate(use: boolean) {
             v-model="text"
             maxlength="60"
             :placeholder="t('Type here...')"
-            class="mt-2 focus:ring-0 border-4 rounded bg-gray-800 border-gray-700 text-gray-200 focus:border-[#eeb425] w-full"
+            class="mt-2 focus:ring-0 border-4 rounded bg-[var(--surface-inset)] border-[var(--border)] text-[var(--text)] focus:border-[#eeb425] w-full"
           />
           <div
             class="logo-preview flex mt-4 gap-[2px] overflow-x-auto"

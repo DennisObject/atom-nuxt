@@ -8,7 +8,7 @@ import type { Data } from "~/utils/api";
 const { session, refreshUser } = useSession();
 import { money } from "~/utils/money";
 import { usePage } from "~/composables/usePage";
-import Card from "~/components/Card.vue";
+import { Card } from "#components";
 import Notice from "~/components/Notice.vue";
 import RichText from "~/components/RichText.vue";
 const route = useRoute();
@@ -464,9 +464,12 @@ async function topup() {
 }
 .shop-layout {
   display: grid;
-  grid-template-columns: 2.25fr 6.75fr 3fr;
+  grid-template-columns: minmax(0, 2.25fr) minmax(0, 6.75fr) minmax(0, 3fr);
   gap: 16px;
   align-items: start;
+}
+.shop-layout > * {
+  min-width: 0;
 }
 .shop-categories {
   grid-column: 1;
@@ -481,7 +484,7 @@ async function topup() {
   grid-row: 1;
 }
 .shop-categories h2 {
-  background: #2b303c;
+  background: var(--panel, #2b303c);
   padding: 12px;
   border-radius: 4px;
   margin-bottom: 12px;
@@ -493,7 +496,7 @@ async function topup() {
   gap: 8px;
 }
 .shop-categories .sidebar-nav a {
-  background: #2b303c;
+  background: var(--panel, #2b303c);
   padding: 16px;
   border-radius: 8px;
   gap: 16px;
@@ -506,14 +509,14 @@ async function topup() {
 .shop-package {
   border-radius: 8px;
   overflow: hidden;
-  background: #2b303c;
+  background: var(--panel, #2b303c);
 }
 .shop-package header {
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 12px 16px;
-  background: #21242e;
+  background: var(--header, #21242e);
   gap: 8px;
 }
 .shop-package h2 {
@@ -555,8 +558,8 @@ async function topup() {
   padding: 24px;
   border: 0;
   border-radius: 8px;
-  background: #21242e;
-  color: #e5e7eb;
+  background: var(--header, #21242e);
+  color: var(--text, #e5e7eb);
   max-height: 85vh;
 }
 .shop-dialog::backdrop {
@@ -581,7 +584,7 @@ async function topup() {
 }
 @media (max-width: 1023px) {
   .shop-layout {
-    grid-template-columns: 1fr 3fr;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 3fr);
   }
   .shop-finance {
     grid-row: 1;
@@ -594,12 +597,12 @@ async function topup() {
     grid-row: 2;
   }
   .shop-packages .two-columns {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
 }
 @media (max-width: 639px) {
   .shop-layout {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
   .shop-categories {
     grid-row: 2;

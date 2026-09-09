@@ -9,7 +9,11 @@
     "typecheck": "nuxt typecheck",
     "preview": "nuxt preview --host 127.0.0.1",
     "postinstall": "nuxt prepare",
-    "test": "node --test tests/*.test.mjs"
+    "test": "node --test tests/*.test.mjs",
+    "dev:atom": "ATOM_THEME=atom nuxt dev --host 127.0.0.1",
+    "dev:dusk": "ATOM_THEME=dusk nuxt dev --host 127.0.0.1",
+    "build:atom": "ATOM_THEME=atom nuxt build",
+    "build:dusk": "ATOM_THEME=dusk nuxt build"
   },
   "dependencies": {
     "@tinymce/tinymce-vue": "^6.3.0",

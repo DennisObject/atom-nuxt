@@ -2,7 +2,15 @@
 const route = useRoute();
 const { session } = useSession();
 const { locale } = useLocale();
-useHead(() => ({ htmlAttrs: { lang: locale.value } }));
+const { isDark } = useThemeMode();
+const { theme } = useAppConfig();
+useHead(() => ({
+  htmlAttrs: {
+    lang: locale.value,
+    class: isDark.value ? "dark" : "",
+    "data-theme": theme.name,
+  },
+}));
 watch(
   () => [session.user, session.restriction],
   () => {

@@ -47,7 +47,7 @@ export function useSession() {
     user?: Partial<Data<"PublicUser">> | null,
     large = false
   ): string {
-    if (!user?.look) return "/assets/images/dusk/ghost.png";
+    if (!user?.look) return "/assets/images/avatar-fallback.png";
     return safeUrl(
       `${session.bootstrap.assets?.avatar || ""}${encodeURIComponent(
         user.look

@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import AuthView from "~/views/AuthView.vue";
-definePageMeta({ layout: "dusk", authKind: "reset" });
+import { AuthView } from "#components";
+definePageMeta({ authKind: "reset" });
 </script>
 
 <template><AuthView /></template>

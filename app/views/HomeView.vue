@@ -6,7 +6,7 @@ const { api, safeUrl } = useApi();
 import type { Data } from "~/utils/api";
 const { avatar, session, refreshUser } = useSession();
 import { usePage } from "~/composables/usePage";
-import Card from "~/components/Card.vue";
+import { Card } from "#components";
 import Notice from "~/components/Notice.vue";
 import HomeWidget from "~/components/HomeWidget.vue";
 const route = useRoute(),
@@ -869,7 +869,7 @@ async function buyPreview() {
   max-width: 928px;
   height: 1360px;
   min-height: 1360px;
-  border: 1px solid #374151;
+  border: 1px solid var(--border, #374151);
   border-radius: 8px;
   overflow: hidden;
   background-size: cover;
@@ -877,15 +877,15 @@ async function buyPreview() {
   background-repeat: no-repeat;
 }
 .home-widget {
-  background: #2b303c;
-  border: 1px solid #4b5563;
+  background: var(--panel, #2b303c);
+  border: 1px solid var(--border, #4b5563);
   border-radius: 8px;
   padding: 0;
-  color: #e5e7eb;
+  color: var(--text, #e5e7eb);
   overflow: hidden;
 }
 .home-widget h3 {
-  background: #21242e;
+  background: var(--header, #21242e);
   padding: 8px 12px;
   font-size: 14px;
   font-weight: 600;
@@ -910,8 +910,8 @@ async function buyPreview() {
   max-height: 75vh;
   border: 0;
   border-radius: 8px;
-  background: #2b303c;
-  color: #f3f4f6;
+  background: var(--panel, #2b303c);
+  color: var(--text, #f3f4f6);
   margin: auto;
 }
 .home-bag::backdrop {
@@ -921,7 +921,7 @@ async function buyPreview() {
   display: flex;
   gap: 4px;
   padding: 8px 12px;
-  background: #21242e;
+  background: var(--header, #21242e);
 }
 .close-bag {
   margin-left: auto;
@@ -937,7 +937,7 @@ async function buyPreview() {
   width: 176px;
   flex-shrink: 0;
   padding: 8px;
-  border-right: 1px solid #374151;
+  border-right: 1px solid var(--border, #374151);
   display: flex;
   flex-direction: column;
   gap: 4px;
@@ -949,7 +949,7 @@ async function buyPreview() {
 .bag-preview {
   width: 176px;
   flex-shrink: 0;
-  border-left: 1px solid #374151;
+  border-left: 1px solid var(--border, #374151);
   padding: 12px;
   display: flex;
   flex-direction: column;
@@ -1002,7 +1002,7 @@ async function buyPreview() {
   width: 64px;
   height: 64px;
   padding: 3px;
-  border: 1px solid #4b5563;
+  border: 1px solid var(--border, #4b5563);
 }
 .inventory-item img {
   max-width: 56px;

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+const { artwork } = useAppConfig();
 import { displayDate } from "~/utils/date";
 const { t } = useLocale();
 import { onMounted, reactive, ref } from "vue";
@@ -7,7 +8,7 @@ const { api, safeUrl } = useApi();
 import type { Data } from "~/utils/api";
 const { session, avatar } = useSession();
 import { usePage } from "~/composables/usePage";
-import Card from "~/components/Card.vue";
+import { Card } from "#components";
 import Notice from "~/components/Notice.vue";
 import RichText from "~/components/RichText.vue";
 const route = useRoute(),
@@ -121,11 +122,7 @@ async function removeReply(replyId: number) {
   <Notice :error="error" :fields="fields" :success="success" />
   <template v-if="kind === 'rules'">
     <div class="section-heading support-heading">
-      <h1>
-        <img src="/assets/images/dusk/exclamation-mark_icon.png" alt="" />{{
-          t("Rules")
-        }}
-      </h1>
+      <h1><img :src="artwork.rules" alt="" />{{ t("Rules") }}</h1>
     </div>
     <div class="stack">
       <Card
@@ -461,7 +458,7 @@ async function removeReply(replyId: number) {
 .support-copy {
   padding: 0 8px;
   font-size: 14px;
-  color: #e5e7eb;
+  color: var(--text, #e5e7eb);
 }
 .support-image {
   float: right;
@@ -477,7 +474,7 @@ async function removeReply(replyId: number) {
 }
 .support-heading {
   padding: 12px;
-  background: #21242e;
+  background: var(--header, #21242e);
   border-radius: 8px;
 }
 .support-heading h1 {
@@ -494,7 +491,7 @@ async function removeReply(replyId: number) {
   display: flex;
   align-items: baseline;
   gap: 4px;
-  color: #d1d5db;
+  color: var(--text-secondary, #d1d5db);
 }
 .rule-line :deep(p) {
   margin: 0;
@@ -515,9 +512,9 @@ async function removeReply(replyId: number) {
 }
 .ticket-form input,
 .ticket-form select {
-  background: #1f2937;
-  border: 4px solid #374151;
-  color: #e5e7eb;
+  background: var(--surface-inset, #1f2937);
+  border: 4px solid var(--border, #374151);
+  color: var(--text, #e5e7eb);
   padding: 8px 12px;
   border-radius: 4px;
   width: 100%;
@@ -550,7 +547,7 @@ async function removeReply(replyId: number) {
   align-self: flex-end;
 }
 .ticket-reply {
-  background: #374151;
+  background: var(--surface-muted, #374151);
   border-radius: 4px;
   overflow: hidden;
 }
@@ -563,7 +560,7 @@ async function removeReply(replyId: number) {
   border-bottom: 1px solid #1f2937;
   position: relative;
   overflow: hidden;
-  color: #9ca3af;
+  color: var(--text-subtle, #9ca3af);
 }
 .reply-author {
   padding-left: 56px;
@@ -590,7 +587,7 @@ async function removeReply(replyId: number) {
 }
 .open-tickets a {
   padding: 8px;
-  background: #374151;
+  background: var(--surface-muted, #374151);
   border-radius: 4px;
 }
 .open-tickets a:hover {
@@ -599,21 +596,21 @@ async function removeReply(replyId: number) {
 .ticket-table {
   width: 100%;
   font-size: 14px;
-  border: 1px solid #374151;
+  border: 1px solid var(--border, #374151);
   border-radius: 4px;
 }
 .ticket-table th {
-  background: #1f2937;
-  color: white;
+  background: var(--surface-inset, #1f2937);
+  color: var(--text);
 }
 .ticket-table td,
 .ticket-table th {
   padding: 8px 16px;
   text-align: left;
-  border-bottom: 1px solid #374151;
+  border-bottom: 1px solid var(--border, #374151);
 }
 .ticket-table td {
-  color: #d1d5db;
+  color: var(--text-secondary, #d1d5db);
 }
 .ticket-grid svg,
 .ticket-table svg {

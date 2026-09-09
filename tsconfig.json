@@ -1,15 +1,9 @@
 {
-    "compilerOptions": {
-        "target": "ES2022",
-        "module": "ESNext",
-        "moduleResolution": "Bundler",
-        "strict": true,
-        "skipLibCheck": true,
-        "lib": ["ES2022", "DOM", "DOM.Iterable"],
-        "types": ["vite/client"],
-        "noEmit": true,
-        "verbatimModuleSyntax": true,
-        "allowImportingTsExtensions": true
-    },
-    "include": ["src/**/*.ts", "src/**/*.vue"]
+  "files": [],
+  "references": [
+    { "path": "./.nuxt/tsconfig.app.json" },
+    { "path": "./.nuxt/tsconfig.server.json" },
+    { "path": "./.nuxt/tsconfig.shared.json" },
+    { "path": "./.nuxt/tsconfig.node.json" }
+  ]
 }

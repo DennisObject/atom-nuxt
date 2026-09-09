@@ -1,10 +1,10 @@
-# Atom Vue
+# Atom Nuxt
 
-An independent Vue 3 frontend for [Atom CMS](https://github.com/DennisObject/atomcms)'s `/api/v1` HTTP contract. Requires the backend's [headless mode](https://github.com/DennisObject/atomcms/pull/237). It recreates Dusk's navy panels, purple navigation, pixel artwork, account card, news and community layouts. It does not import PHP, Blade, backend source files, or a backend asset manifest.
+The Dusk theme for [Atom CMS](https://github.com/DennisObject/atomcms), built with Nuxt 4. Pages, layouts, components, translations and artwork live here; Laravel provides authentication, permissions, content, purchases, support and emulator integration through its [headless API](https://github.com/DennisObject/atomcms/pull/237).
 
-## Run locally
+## Development
 
-Use Node 22 or later. Start an installed Atom backend configured for the example's origin, then:
+Use Node 22.19+ or Node 24.11+. Start an installed Atom backend, then:
 
 ```sh
 cp .env.example .env
@@ -12,39 +12,52 @@ npm ci
 npm run dev
 ```
 
-Open `http://127.0.0.1:5173`. The development server proxies API and authentication requests to `VITE_DEV_API_URL` (default `http://127.0.0.1:8000`). Include `127.0.0.1:5173` in the backend's Sanctum stateful domains.
+Open `http://127.0.0.1:3000`. Set `NUXT_BACKEND_URL` to the Laravel origin, usually `http://127.0.0.1:8000`. This setting is server-only. Nuxt forwards API and authentication requests to Laravel; the browser uses the frontend origin for both pages and requests.
 
-For a separately hosted API, set `VITE_API_URL` before building. Frontend and API must share a top-level domain for Sanctum session cookies; configure the backend cookie domain, explicit credentialed CORS origin, and stateful domains accordingly. No API secret belongs in a `VITE_` environment variable.
+Add the frontend host and port to Laravel's `SANCTUM_STATEFUL_DOMAINS`, configure its frontend origin/CORS settings, and use cookies appropriate to your HTTP development or HTTPS production environment. Laravel remains responsible for CSRF validation, session cookies and all authorization. No Laravel application key or payment secret belongs in this repository.
 
-## Deploy
+## Build and deploy
 
 ```sh
 npm ci
-npm run build
-```
-
-Serve `dist/` with an SPA fallback to `index.html`. When `VITE_API_URL` is empty, proxy `/api/*`, `/sanctum/*`, and authentication POST/PUT/DELETE requests to Atom while serving page GET requests from the SPA. Serve the backend's uploaded `/storage/*` and configured media paths through the API origin. The frontend does not need a PHP runtime. Generated contract types are bundled locally in `src/api-schema.d.ts`; update that snapshot from Atom CMS's `docs/api/schema.d.ts` when upgrading the backend API.
-
-## Flows
-
--   Registration, login, password reset, authenticator/recovery-code challenge, logout.
--   Profile, password, session history, two-factor enrollment and recovery codes.
--   News, comments and reactions; staff, teams, leaderboards, photos and applications.
--   Store categories, gifts, vouchers, purchase history and PayPal payment status.
--   Support tickets and replies, hotel rules, profile homes, widgets, inventory and layout editing.
--   Pixel badge drawing/import and GIF download/purchase; the existing seven pixel logo fonts; rare values and Nitro launch.
-
-Availability and permissions come from Atom. Unsupported emulator features show the backend's error; the existing unimplemented groups home widget shows an unavailable state. Flash URLs can be launched by the API, but modern browsers do not include a Flash player. A live Nitro renderer and emulator must be configured to play the game.
-
-The frontend never calculates purchase eligibility, grants inventory, modifies balances, or marks a payment successful. Commerce retries retain their idempotency key until a successful response. Other mutations are not retried automatically. Passwords, TOTP/recovery codes and game tickets are not persisted in browser storage.
-
-## Checks
-
-```sh
 npm run typecheck
 npm run build
+npm test
+HOST=127.0.0.1 PORT=3000 NUXT_BACKEND_URL=http://127.0.0.1:8000 node .output/server/index.mjs
 ```
 
-Browser verification requires a real backend: register, log out, log in, update the motto, enroll an authenticator, log out and confirm that a challenge is required, then browse news, homes, support and the store. Confirm errors for incorrect credentials and expired CSRF sessions. A successful build alone does not prove these integrations.
+Deploy the complete `.output/` directory and run its Node server under your process supervisor. Route the public HTTPS origin to that server, preserving the original host and protocol. `.output/public` alone is insufficient: public content is rendered on the server and the server proxies Laravel requests. Set runtime environment variables in the supervisor; the production entry point does not load `.env` automatically.
 
-Static artwork is copied from Atom CMS's existing Dusk/public assets. The original MIT license and copyright notice are retained in [LICENSE](LICENSE). `gifenc` encodes the same 40 × 40 GIF badge format accepted by Atom; DOMPurify sanitizes rich content before rendering.
+Configure Laravel's public application/frontend URLs and trusted proxy settings for that origin. Nuxt forwards `/api`, `/sanctum`, `/storage`, `/housekeeping`, Livewire, housekeeping assets and authentication mutations to Laravel. Authentication page GET requests remain Nuxt pages. Theme-owned public assets are served locally; missing `/assets` files, backend asset directories and `/client` paths fall through to Laravel. PayPal processing/callback routes also reach Laravel; frontend payment-status pages remain in Nuxt. External game/media origins must remain publicly reachable. Keep Laravel's queue workers, scheduler and uploaded storage running as usual.
+
+Responses containing session-dependent HTML are private and not cached. The badge canvas and game client render in the browser. Public news, profile homes and rules support server rendering. Payment actions and game launches happen only in response to browser actions, never while rendering a page on the server.
+
+## Theme development
+
+The original Dusk theme is the visual reference. Its artwork and translations are retained.
+
+- `app/pages/` defines public URLs and page access metadata.
+- `app/layouts/dusk.vue` contains the Dusk navigation, page shell and footer.
+- `app/views/` implements the feature pages shared by related routes.
+- `app/components/` contains reusable theme controls and home widgets.
+- `app/assets/css/dusk.css` carries the Dusk styles and Tailwind setup.
+- `app/composables/` owns request-scoped session, locale and API access.
+- `public/assets/` contains theme-owned artwork.
+
+Develop a theme by changing its layout, pages, components and styles while preserving the API calls and server access checks. Nuxt's standard layers can share this foundation between separate theme projects; there is no custom theme loader or second implementation of Laravel's business rules.
+
+## Features
+
+Registration, login, password reset, authenticator/recovery-code challenges and logout; account settings, password changes, session history and two-factor enrollment; news, comments and reactions; staff, teams, leaderboards, photos and applications; store categories, gifts, vouchers, purchase history and PayPal status; support tickets/replies and rules; profile homes, widgets, inventory and layout editing; badge drawing/import/download/purchase, pixel logo generation, rare values and Nitro launch.
+
+Feature availability comes from the backend and the selected emulator. The unimplemented groups home widget remains unavailable. Flash requires a separate supported runtime; modern browsers use Nitro. Real payment delivery, mail and game entry require configured backend integrations. Ticket editing uses the original TinyMCE 7 cloud editor and the backend’s `tinymce_api_key`; that key must authorize the frontend domain.
+
+## API types and verification
+
+The backend publishes `docs/api/schema.d.ts`. When upgrading the API, copy that file to `app/types/api-schema.d.ts`, then run the checks above. Generated TypeScript types describe data shapes; Laravel validates requests and enforces permissions.
+
+`npm test` uses a disposable HTTP fixture and the production Nuxt build to check server-rendered content, concurrent session isolation, guest redirects and authentication proxy cookies. It does not exercise a real emulator or payment provider.
+
+For a configured hotel, also verify registration, login/logout, two-factor enrollment/challenge, account changes, news interactions, home editing, support and commerce in a browser. Check desktop/mobile layouts against the original Dusk theme and verify that failed requests retain user input without replaying purchases.
+
+Original Atom CMS artwork and source attribution are retained under the [MIT license](LICENSE).

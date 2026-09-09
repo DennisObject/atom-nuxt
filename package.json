@@ -1,24 +1,35 @@
 {
-    "name": "atom-vue",
-    "version": "1.0.0",
-    "private": true,
-    "type": "module",
-    "scripts": {
-        "dev": "vite --host 127.0.0.1",
-        "build": "vue-tsc --noEmit && vite build",
-        "typecheck": "vue-tsc --noEmit",
-        "preview": "vite preview --host 127.0.0.1"
-    },
-    "dependencies": {
-        "dompurify": "^3.4.15",
-        "gifenc": "^1.0.3",
-        "vue": "^3.5.42",
-        "vue-router": "^4.6.4"
-    },
-    "devDependencies": {
-        "@vitejs/plugin-vue": "^5.2.4",
-        "typescript": "~5.9.3",
-        "vite": "^6.4.3",
-        "vue-tsc": "^3.2.5"
-    }
+  "name": "atom-nuxt",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "nuxt dev --host 127.0.0.1",
+    "build": "nuxt build",
+    "typecheck": "nuxt typecheck",
+    "preview": "nuxt preview --host 127.0.0.1",
+    "postinstall": "nuxt prepare",
+    "test": "node --test tests/*.test.mjs"
+  },
+  "dependencies": {
+    "@tinymce/tinymce-vue": "^6.3.0",
+    "gifenc": "^1.0.3",
+    "isomorphic-dompurify": "^3.0.0",
+    "node-fetch": "^3.3.2",
+    "nuxt": "^4.5.2",
+    "vue": "^3.5.42",
+    "vue-router": "^5.3.1"
+  },
+  "devDependencies": {
+    "@tailwindcss/forms": "^0.5.11",
+    "@tailwindcss/typography": "^0.5.20",
+    "@tailwindcss/vite": "^4.3.3",
+    "@types/node": "^22.20.1",
+    "tailwindcss": "^4.3.3",
+    "typescript": "~5.9.3",
+    "vue-tsc": "^3.2.5"
+  },
+  "engines": {
+    "node": ">=22.19.0"
+  }
 }

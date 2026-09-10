@@ -14,28 +14,32 @@ useHead(() => ({
 watch(
   () => [session.user, session.restriction],
   () => {
-    if (!session.ready) return;
+    if (!session.ready) {
+      return;
+    }
     const destination = accessDestination(
       route.path,
       !!route.meta.auth,
-      session
+      session,
     );
-    if (destination)
+    if (destination) {
       void navigateTo(
         destination === "/login"
           ? { path: destination, query: { next: route.fullPath } }
-          : destination
+          : destination,
       );
-  }
+    }
+  },
 );
 watch(
   () => route.fullPath,
   () => {
-    if (import.meta.client)
+    if (import.meta.client) {
       document
         .querySelectorAll("details.nav-menu[open]")
         .forEach((menu) => menu.removeAttribute("open"));
-  }
+    }
+  },
 );
 </script>
 

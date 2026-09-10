@@ -1,4 +1,5 @@
 import type { components } from "~/types/api-schema";
+
 export type Data<Name extends keyof components["schemas"]> =
   components["schemas"][Name];
 export type RecordData = Record<string, unknown>;
@@ -13,7 +14,7 @@ export class ApiError extends Error {
     public code: string,
     message: string,
     public fields: Record<string, string[]> = {},
-    public voteUrl: string | null = null
+    public voteUrl: string | null = null,
   ) {
     super(message);
   }

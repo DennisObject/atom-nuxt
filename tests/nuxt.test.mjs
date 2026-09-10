@@ -35,11 +35,23 @@ before(async () => {
     res.setHeader("content-type", "application/json");
     const name = req.headers.cookie?.match(/member=(Alice|Bob)/)?.[1];
     const restriction = req.headers.cookie?.match(
-      /restriction=(account_banned|maintenance|two_factor_required)/
+      /restriction=(account_banned|maintenance|two_factor_required)/,
     )?.[1];
     const viewer = name
       ? {
           ...user(name),
+          ...(req.headers.cookie?.includes("avatar=1")
+            ? {
+                look: "hr-100-61.hd-180-1",
+                online_friends: [
+                  {
+                    ...user("Bob"),
+                    look: "hr-100-61.hd-180-1",
+                    last_online: 1700000000,
+                  },
+                ],
+              }
+            : {}),
           requires_two_factor: !!restriction,
           can_generate_logo: req.headers.cookie?.includes("logo=1") || false,
           can_show_housekeeping_link:
@@ -60,7 +72,12 @@ before(async () => {
             online_count: 0,
             maintenance: restriction === "maintenance",
             locales: [{ locale: "en", name: "English" }],
-            assets: { logo: "/assets/images/logo.png", avatar: "", badge: "" },
+            assets: {
+              logo: "/assets/images/logo.png",
+              avatar:
+                "https://avatar.example.test/avatar?direction=4&head_direction=4&size=m&figure=",
+              badge: "",
+            },
             registration: {
               enabled: !req.headers.cookie?.includes("registration=closed"),
               requires_beta_code:
@@ -70,7 +87,7 @@ before(async () => {
             reactions: ["heart", "like", "wow"],
             latest_photos: [],
           },
-        })
+        }),
       );
     } else if (req.url === "/api/v1/me") {
       res.statusCode = !viewer ? 401 : restriction ? 403 : 200;
@@ -79,9 +96,9 @@ before(async () => {
           !viewer
             ? { code: "unauthenticated" }
             : restriction
-            ? { error: { code: restriction, message: restriction } }
-            : { data: viewer }
-        )
+              ? { error: { code: restriction, message: restriction } }
+              : { data: viewer },
+        ),
       );
     } else if (req.url.startsWith("/api/v1/status")) {
       res.end(
@@ -104,7 +121,7 @@ before(async () => {
               has_more: false,
             },
           },
-        })
+        }),
       );
     } else if (req.url === "/api/v1/ban") {
       res.end(
@@ -117,8 +134,83 @@ before(async () => {
                   ban_expire: null,
                 }
               : null,
-        })
+        }),
       );
+    } else if (req.url === "/api/v1/staff" || req.url === "/api/v1/teams") {
+      res.end(
+        JSON.stringify({
+          data: [
+            {
+              id: 1,
+              name: "Community Hosts",
+              description: "Here to help",
+              color: "#327fa8",
+              badge: null,
+              background: null,
+              users: [user("Alice")],
+            },
+          ],
+        }),
+      );
+    } else if (req.url === "/api/v1/leaderboards") {
+      res.end(
+        JSON.stringify({
+          data: { credits: [{ user: user("Alice"), value: 42 }] },
+        }),
+      );
+    } else if (req.url.startsWith("/api/v1/photos")) {
+      res.end(
+        JSON.stringify({
+          data: [
+            {
+              id: 1,
+              url: "/assets/images/staff-bg.png",
+              author: user("Alice"),
+            },
+          ],
+          meta: { current_page: 1, last_page: 1 },
+        }),
+      );
+    } else if (req.url === "/api/v1/homes/Alice") {
+      res.end(
+        JSON.stringify({
+          data: {
+            user: user("Alice"),
+            active_background: null,
+            items: [
+              {
+                id: 1,
+                x: 30,
+                y: 30,
+                z: 1,
+                placed: true,
+                is_reversed: false,
+                theme: "note",
+                extra_data: "Welcome to my home",
+                definition: {
+                  id: 1,
+                  type: "n",
+                  name: "Welcome note",
+                  image: null,
+                },
+              },
+            ],
+            member_since: "2026-01-01T00:00:00Z",
+          },
+        }),
+      );
+    } else if (req.url === "/api/v1/homes/Alice/shop") {
+      res.end(JSON.stringify({ data: { categories: [], items: [] } }));
+    } else if (req.url === "/api/v1/shop") {
+      res.end(JSON.stringify({ data: { categories: [], packages: [] } }));
+    } else if (req.url === "/api/v1/me/two-factor") {
+      res.end(
+        JSON.stringify({
+          data: { enabled: false, qr_code: null, recovery_codes: [] },
+        }),
+      );
+    } else if (req.url === "/api/v1/badges") {
+      res.end(JSON.stringify({ data: { cost: 10, currency: "diamonds" } }));
     } else if (req.url === "/api/v1/articles/welcome") {
       res.end(
         JSON.stringify({
@@ -127,10 +219,12 @@ before(async () => {
             slug: "welcome",
             title: "Welcome",
             full_story: "<p>Article body</p>",
+            can_comment: true,
           },
           reactions: { heart: 2 },
+          reaction_users: { heart: ["Alice", "Bob"] },
           my_reactions: name ? ["heart"] : [],
-        })
+        }),
       );
     } else if (req.url.startsWith("/api/v1/articles/welcome/comments")) {
       res.end(JSON.stringify({ data: [] }));
@@ -149,7 +243,7 @@ before(async () => {
             },
           ],
           meta: { current_page: 1, last_page: 1 },
-        })
+        }),
       );
     } else if (req.url.startsWith("/api/v1/applications")) {
       const position = {
@@ -160,14 +254,14 @@ before(async () => {
         application_status:
           name === "Alice"
             ? req.headers.cookie?.match(
-                /application=(pending|approved|rejected)/
+                /application=(pending|approved|rejected)/,
               )?.[1] || "pending"
             : null,
       };
       res.end(
         JSON.stringify({
           data: req.url === "/api/v1/applications/1" ? position : [position],
-        })
+        }),
       );
     } else if (req.url.startsWith("/paypal/successful-transaction")) {
       res.statusCode = 302;
@@ -241,17 +335,17 @@ test("public news renders in HTML and concurrent sessions remain isolated", asyn
         assert.ok(html.includes(name));
         assert.ok(
           !html.includes(
-            name === "Alice" ? "Bob@example.test" : "Alice@example.test"
-          )
+            name === "Alice" ? "Bob@example.test" : "Alice@example.test",
+          ),
         );
       } else {
         assert.ok(
           !html.includes("Alice@example.test") &&
-            !html.includes("Bob@example.test")
+            !html.includes("Bob@example.test"),
         );
       }
       return html;
-    })
+    }),
   );
   assert.equal(responses.length, 5);
 });
@@ -264,7 +358,7 @@ test("guest account visits redirect to login while login GET stays a frontend pa
   assert.equal(login.status, 200);
   assert.match(login.headers.get("content-type"), /text\/html/);
   assert.ok(
-    !requests.some((req) => req.path === "/login" && req.method === "GET")
+    !requests.some((req) => req.path === "/login" && req.method === "GET"),
   );
 });
 
@@ -282,38 +376,38 @@ test("authentication proxy preserves method, cookies and backend Set-Cookie head
   assert.equal(response.headers.getSetCookie().length, 2);
   assert.ok(
     requests.some(
-      (req) => req.path === "/login" && req.accept === "application/json"
-    )
+      (req) => req.path === "/login" && req.accept === "application/json",
+    ),
   );
   assert.ok(
     requests.some(
-      (req) => req.path === "/login" && req.host === new URL(origin).host
-    )
+      (req) => req.path === "/login" && req.host === new URL(origin).host,
+    ),
   );
   assert.ok(
     requests.some(
       (req) =>
         req.path === "/login" &&
         req.method === "POST" &&
-        req.cookie === "XSRF-TOKEN=example"
-    )
+        req.cookie === "XSRF-TOKEN=example",
+    ),
   );
 });
 
 test("payment callbacks reach Laravel and preserve its redirect", async () => {
   const response = await fetch(
     `${origin}/paypal/successful-transaction?token=example`,
-    { redirect: "manual" }
+    { redirect: "manual" },
   );
   assert.equal(response.status, 302);
   assert.equal(
     response.headers.get("location"),
-    "/paypal/success?order=example"
+    "/paypal/success?order=example",
   );
   assert.ok(
     requests.some(
-      (req) => req.path === "/paypal/successful-transaction?token=example"
-    )
+      (req) => req.path === "/paypal/successful-transaction?token=example",
+    ),
   );
 });
 
@@ -361,6 +455,7 @@ test("maintenance sends guests to the notice while keeping staff login reachable
 });
 
 test("navigation follows authentication, emulator support and individual permission grants", async () => {
+  const atom = process.env.ATOM_THEME === "atom";
   for (const cookie of [
     "",
     "member=Alice",
@@ -389,29 +484,37 @@ test("navigation follows authentication, emulator support and individual permiss
     ]) {
       assert.equal(
         header.includes(`href="${path}"`),
-        member,
-        `${cookie}: ${path}`
+        path === "/draw-badge" || path === "/user/settings/account" || atom
+          ? member
+          : true,
+        `${cookie}: ${path}`,
       );
     }
     for (const path of ["/community/photos", "/values"]) {
       assert.equal(
         header.includes(`href="${path}"`),
-        member && !cookie.includes("emulator=ada"),
-        `${cookie}: ${path}`
+        (!atom || member) && !cookie.includes("emulator=ada"),
+        `${cookie}: ${path}`,
       );
     }
-    assert.equal(header.includes('href="/login"'), !member);
+    if (!atom) assert.equal(header.includes('href="/login"'), !member);
     assert.equal(header.includes('href="/register"'), !member);
     assert.equal(
       header.includes('href="/logo-generator"'),
-      cookie.includes("logo=1")
+      cookie.includes("logo=1"),
     );
     assert.equal(
       header.includes(`href="${origin}/housekeeping"`),
-      cookie.includes("housekeeping=1")
+      cookie.includes("housekeeping=1"),
     );
-    assert.ok(header.includes('href="/community/articles"'));
-    assert.ok(header.includes('href="/help-center/rules"'));
+    assert.equal(
+      header.includes('href="/community/articles"'),
+      !atom || member,
+    );
+    assert.equal(
+      header.includes('href="/help-center/rules"'),
+      !atom || !member,
+    );
   }
 });
 
@@ -423,13 +526,13 @@ test("article reactions show existing counts and reserve unused reactions for th
     assert.equal(response.status, 200);
     const html = await response.text();
     const strip = html.match(
-      /<div class="article-reactions"[\s\S]*?<\/div>/
+      /<div[^>]*aria-label="Reactions"[\s\S]*?<\/div>/,
     )[0];
     assert.match(strip, /alt="heart"/);
     assert.doesNotMatch(strip, /alt="like"|alt="wow"/);
-    assert.equal(strip.includes('class="reaction-add"'), member);
+    assert.equal(/<button[^>]*>\s*Add\s*<\/button>/.test(strip), member);
     const modal = html.match(
-      /<dialog[^>]*class="reaction-dialog"[\s\S]*?<\/dialog>/
+      /<dialog[^>]*aria-labelledby="reaction-dialog-title"[\s\S]*?<\/dialog>/,
     )?.[0];
     assert.equal(!!modal, member);
     if (modal) {
@@ -447,7 +550,7 @@ test("footer renders the original credits in a closed dialog for guests", async 
   const html = await response.text();
   assert.match(html, /<footer[^>]*class="[^"]*site-footer/);
   const credits = html.match(
-    /<dialog[^>]*class="credits-dialog"[\s\S]*?<\/dialog>/
+    /<dialog[^>]*class="[^"]*credits-dialog[^"]*"[\s\S]*?<\/dialog>/,
   )[0];
   assert.match(credits, /Kasja/);
   assert.match(credits, /Translations/);
@@ -484,7 +587,7 @@ test("both theme presentations retain the shared authentication form modes", asy
     ["/register", ["username", "mail", "password", "password_confirmation"]],
     ["/forgot-password", ["mail"]],
     ["/reset-password/test-token", ["password", "password_confirmation"]],
-    ["/two-factor-challenge", ["code"]],
+    ["/two-factor-challenge", ["code", "recovery_code"]],
   ]) {
     const response = await fetch(`${origin}${path}`);
     assert.equal(response.status, 200);
@@ -493,11 +596,25 @@ test("both theme presentations retain the shared authentication form modes", asy
       assert.match(
         html,
         new RegExp(`<input[^>]*name="${field}"`),
-        `${path}: ${field}`
+        `${path}: ${field}`,
       );
     }
+    if (path === "/register") {
+      assert.match(html, /I accept the .* terms &amp; rules/);
+      if (process.env.ATOM_THEME === "atom") {
+        assert.match(html, /Your username is what you will have to use/);
+        assert.match(html, /Your password must contain atleast 8 characters/);
+        assert.match(html, /Create account/);
+      } else {
+        assert.match(html, /Enter your e-mail/);
+        assert.match(html, /Back to login/);
+      }
+    }
     if (path === "/two-factor-challenge")
-      assert.match(html, /Use a recovery code/);
+      assert.match(
+        html,
+        /Enter one of your recovery codes if you cannot access your authenticator app/,
+      );
   }
   const beta = await fetch(`${origin}/register`, {
     headers: { cookie: "registration=beta" },
@@ -508,7 +625,10 @@ test("both theme presentations retain the shared authentication form modes", asy
   });
   const html = await closed.text();
   assert.match(html, /Registration is currently closed/);
-  assert.match(html, /<button[^>]*disabled[^>]*>\s*Register\s*<\/button>/);
+  assert.match(
+    html,
+    /<button[^>]*disabled[^>]*>\s*(?:Register|Create account)\s*<\/button>/,
+  );
 });
 
 test("team application pages show the current applicant status without offering another submission", async () => {
@@ -527,7 +647,7 @@ test("team application pages show the current applicant status without offering 
       assert.equal(response.status, 200);
       const html = await response.text();
       assert.ok(html.includes(label));
-      assert.ok(!html.includes("Apply now"));
+      assert.ok(!html.includes("Apply for Events Team"));
       assert.ok(!html.includes("<textarea"));
     }
   }
@@ -535,6 +655,96 @@ test("team application pages show the current applicant status without offering 
     headers: { cookie: "member=Bob" },
   });
   const html = await fresh.text();
-  assert.ok(html.includes("Apply now"));
+  assert.ok(html.includes("Apply for Events Team"));
   assert.ok(!html.includes("Your application is pending"));
+});
+
+test("extracted community and home components preserve their server-rendered content", async () => {
+  for (const [path, expected] of [
+    ["/community/staff", "Community Hosts"],
+    ["/community/teams", "Here to help"],
+    ["/leaderboard", "42"],
+    ["/community/photos", "Photo by Alice"],
+    ["/home/Alice", "Welcome to my home"],
+  ]) {
+    const response = await fetch(`${origin}${path}`, {
+      headers: { cookie: "member=Alice" },
+    });
+    assert.equal(response.status, 200, path);
+    assert.ok(
+      (await response.text()).includes(expected),
+      `${path}: ${expected}`,
+    );
+  }
+});
+
+test("production CSS includes responsive utilities from the theme layers", async () => {
+  const html = await (await fetch(`${origin}/login`)).text();
+  const stylesheets = [
+    ...html.matchAll(/<link\b[^>]*href="([^"]+\.css)"[^>]*>/g),
+  ].map((match) => match[1]);
+  assert.ok(stylesheets.length, "the rendered page links its compiled CSS");
+  const styles = (
+    await Promise.all(
+      stylesheets.map(async (path) =>
+        (await fetch(new URL(path, origin))).text(),
+      ),
+    )
+  ).join("\n");
+  assert.ok(
+    styles.includes(".lg\\:hidden"),
+    "desktop navigation visibility utilities are compiled from the theme",
+  );
+  assert.ok(
+    styles.includes(
+      process.env.ATOM_THEME === "atom"
+        ? ".md\\:flex-row"
+        : ".md\\:grid-cols-2",
+    ),
+    "responsive theme layout utilities are compiled",
+  );
+});
+
+test("avatar poses override configured defaults without duplicate query parameters", async () => {
+  const html = await (
+    await fetch(`${origin}/user/me`, {
+      headers: { cookie: "member=Alice; avatar=1" },
+    })
+  ).text();
+  const avatars = [
+    ...html.matchAll(/https:\/\/avatar\.example\.test\/avatar[^"'<>\\\s)]+/g),
+  ].map(([value]) => new URL(value.replaceAll("&amp;", "&")));
+  assert.ok(avatars.length);
+  for (const avatar of avatars) {
+    for (const key of ["direction", "head_direction", "size"]) {
+      assert.equal(
+        avatar.searchParams.getAll(key).length,
+        1,
+        `${key}: ${avatar}`,
+      );
+    }
+  }
+  assert.ok(
+    avatars.some(
+      (url) =>
+        url.searchParams.get("size") === "s" &&
+        url.searchParams.get("headonly") === "1",
+    ),
+  );
+  assert.ok(
+    avatars.some(
+      (url) =>
+        url.searchParams.get("size") === "l" &&
+        url.searchParams.get("action") === "wav",
+    ),
+  );
+  if (process.env.ATOM_THEME === "atom") {
+    assert.ok(
+      avatars.some(
+        (url) =>
+          url.searchParams.get("headonly") === "1" &&
+          url.searchParams.get("head_direction") === "2",
+      ),
+    );
+  }
 });

@@ -1,73 +1,47 @@
 <script setup lang="ts">
-const { t } = useLocale();
 import { computed, ref } from "vue";
-const { api } = useApi();
+import { renderLogo } from "~/utils/logo";
 import type { Data } from "~/utils/api";
-const { session } = useSession();
 import { usePage } from "~/composables/usePage";
-import { Card } from "#components";
-import Notice from "~/components/Notice.vue";
+import { BaseCard } from "#components";
+import AppNotice from "~/components/AppNotice.vue";
+
+const { t } = useLocale();
+const { theme } = useAppConfig();
+const { api } = useApi();
+
+const { session } = useSession();
+
 const { busy, error, success, run } = usePage();
-const font = ref("atom"),
-  text = ref(""),
-  fonts = [
-    "atom",
-    "sunrise",
-    "marine",
-    "danlie",
-    "habton",
-    "habton_capitalized",
-    "habbo_modern",
-  ];
+const font = ref("atom");
+const text = ref("");
+const fonts = [
+  "atom",
+  "sunrise",
+  "marine",
+  "danlie",
+  "habton",
+  "habton_capitalized",
+  "habbo_modern",
+];
 const letters = computed(() =>
   text.value
     .toLowerCase()
     .replace(/[^a-z ]/g, "")
-    .split("")
+    .split(""),
 );
-async function render(): Promise<HTMLCanvasElement> {
-  const images = await Promise.all(
-    letters.value.map(
-      (letter) =>
-        new Promise<HTMLImageElement | null>((resolve, reject) => {
-          if (letter === " ") {
-            resolve(null);
-            return;
-          }
-          const image = new Image();
-          image.onload = () => resolve(image);
-          image.onerror = () =>
-            reject(new Error("A logo letter could not be loaded."));
-          image.src = `/assets/images/logo-generator/${font.value}/${letter}.png`;
-        })
-    )
-  );
-  const canvas = document.createElement("canvas");
-  canvas.width = Math.max(
-    1,
-    images.reduce((sum, image) => sum + (image?.width || 15), 0) +
-      Math.max(0, images.length - 1) * 2
-  );
-  canvas.height = Math.max(1, ...images.map((image) => image?.height || 0));
-  const context = canvas.getContext("2d");
-  let left = 0;
-  for (const image of images) {
-    if (image) context?.drawImage(image, left, canvas.height - image.height);
-    left += (image?.width || 15) + 2;
-  }
-  return canvas;
-}
+
 async function generate(use: boolean) {
   await run(
     async () => {
-      const canvas = await render();
+      const canvas = await renderLogo(letters.value, font.value);
       if (use) {
         const blob = await new Promise<Blob>((resolve, reject) =>
           canvas.toBlob((value) =>
             value
               ? resolve(value)
-              : reject(new Error("Could not generate this logo."))
-          )
+              : reject(new Error("Could not generate this logo.")),
+          ),
         );
         const data = new FormData();
         data.append("logo", blob, "logo.png");
@@ -80,28 +54,30 @@ async function generate(use: boolean) {
         link.click();
       }
     },
-    use ? "The hotel logo has been updated." : ""
+    use ? "The hotel logo has been updated." : "",
   );
 }
 </script>
 <template>
-  <Card
+  <BaseCard
     :title="t('Logo generator')"
     :subtitle="t('Generate your very own logo')"
     icon="hotel-icon"
-    class="border border-gray-900"
+    class="border border-[var(--border)]"
   >
-    <Notice :error="error" :success="success" />
+    <AppNotice :error="error" :success="success" />
     <div class="px-2 text-sm text-[var(--text)]">
       <div class="mt-4">
         <div class="grid grid-cols-6 gap-3">
           <button
             v-for="choice in fonts"
             :key="choice"
-            class="logo-font h-24 rounded border border-[var(--border)] p-2 flex gap-2 justify-center items-center transition duration-300 ease-in-out hover:bg-gray-900"
+            class="logo-font h-24 rounded border border-[var(--border)] p-2 flex gap-2 justify-center items-center transition duration-300 ease-in-out hover:bg-[var(--header)]"
             :class="
               font === choice
-                ? 'bg-gray-900 ring-2 ring-emerald-700'
+                ? theme.name === 'atom'
+                  ? 'bg-gray-200 dark:bg-gray-900 ring-2 ring-emerald-700'
+                  : 'bg-gray-900 ring-2 ring-emerald-700'
                 : 'bg-transparent'
             "
             :aria-pressed="font === choice"
@@ -113,6 +89,7 @@ async function generate(use: boolean) {
               :key="letter"
               :src="`/assets/images/logo-generator/${choice}/${letter}.png`"
               :alt="letter"
+              class="object-contain"
             />
           </button>
         </div>
@@ -130,13 +107,15 @@ async function generate(use: boolean) {
             :class="text ? 'mb-4' : ''"
             :aria-label="t('Logo preview')"
           >
-            <template v-for="(letter, index) in letters" :key="index"
-              ><span v-if="letter === ' '" class="shrink-0 w-[15px]"></span
-              ><img
+            <template v-for="(letter, index) in letters" :key="index">
+              <span v-if="letter === ' '" class="shrink-0 w-[15px]"></span>
+              <img
                 v-else
                 :src="`/assets/images/logo-generator/${font}/${letter}.png`"
                 :alt="letter"
-            /></template>
+                class="max-w-none shrink-0 object-contain"
+              />
+            </template>
           </div>
           <div class="flex gap-4 justify-between">
             <button
@@ -158,16 +137,5 @@ async function generate(use: boolean) {
         </div>
       </div>
     </div>
-  </Card>
+  </BaseCard>
 </template>
-<style scoped>
-.logo-font img {
-  max-width: 30%;
-  object-fit: contain;
-}
-.logo-preview img {
-  image-rendering: pixelated;
-  max-width: none;
-  flex-shrink: 0;
-}
-</style>

@@ -1,27 +1,31 @@
 <script setup lang="ts">
 import { onMounted, onBeforeUnmount, ref, watch } from "vue";
+
 const { session } = useSession();
 type CaptchaApi = {
   render(
     element: HTMLElement,
-    options: Record<string, unknown>
+    options: Record<string, unknown>,
   ): string | number;
   reset(id: string | number): void;
   remove?(id: string | number): void;
 };
 const model = defineModel<Record<string, string>>({ required: true });
 const props = defineProps<{ busy?: boolean }>();
-const recaptchaElement = ref<HTMLElement | null>(null),
-  turnstileElement = ref<HTMLElement | null>(null),
-  error = ref("");
+const recaptchaElement = ref<HTMLElement | null>(null);
+const turnstileElement = ref<HTMLElement | null>(null);
+const error = ref("");
 const widgets: { api: CaptchaApi; id: string | number }[] = [];
 let alive = true;
+
 async function loadScript(name: string, src: string): Promise<CaptchaApi> {
   const globals = window as unknown as Record<string, CaptchaApi>;
-  if (globals[name]) return globals[name];
+  if (globals[name]) {
+    return globals[name];
+  }
   await new Promise<void>((resolve, reject) => {
     let script = document.querySelector<HTMLScriptElement>(
-      `script[data-captcha="${name}"]`
+      `script[data-captcha="${name}"]`,
     );
     if (!script) {
       script = document.createElement("script");
@@ -36,17 +40,20 @@ async function loadScript(name: string, src: string): Promise<CaptchaApi> {
       () =>
         reject(
           new Error(
-            "The verification service could not be loaded. Please reload this page."
-          )
+            "The verification service could not be loaded. Please reload this page.",
+          ),
         ),
-      { once: true }
+      { once: true },
     );
   });
   return globals[name]!;
 }
+
 onMounted(async () => {
   const config = session.bootstrap.captcha;
-  if (!config) return;
+  if (!config) {
+    return;
+  }
   try {
     for (const item of [
       {
@@ -66,13 +73,18 @@ onMounted(async () => {
         url: "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit",
       },
     ]) {
-      if (!item.enabled) continue;
-      if (!item.key)
+      if (!item.enabled) {
+        continue;
+      }
+      if (!item.key) {
         throw new Error(
-          "Hotel verification is not configured. Please contact the hotel team."
+          "Hotel verification is not configured. Please contact the hotel team.",
         );
+      }
       const service = await loadScript(item.name, item.url);
-      if (!alive || !item.element.value) return;
+      if (!alive || !item.element.value) {
+        return;
+      }
       const id = service.render(item.element.value, {
         sitekey: item.key,
         theme: "dark",
@@ -99,7 +111,7 @@ watch(
       widgets.forEach((widget) => widget.api.reset(widget.id));
       model.value = {};
     }
-  }
+  },
 );
 onBeforeUnmount(() => {
   alive = false;
@@ -113,10 +125,16 @@ onBeforeUnmount(() => {
       session.bootstrap.captcha?.recaptcha_enabled ||
       session.bootstrap.captcha?.turnstile_enabled
     "
-    class="stack"
+    class="grid content-start gap-4"
   >
     <div ref="recaptchaElement"></div>
     <div ref="turnstileElement"></div>
-    <p v-if="error" class="notice error" role="alert">{{ error }}</p>
+    <p
+      v-if="error"
+      class="relative m-0 flex items-start gap-3 overflow-hidden rounded-lg border-0 bg-[var(--panel)] p-3 pr-9 text-sm leading-5 shadow-lg error"
+      role="alert"
+    >
+      {{ error }}
+    </p>
   </div>
 </template>

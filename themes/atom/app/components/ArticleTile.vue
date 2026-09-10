@@ -1,33 +1,51 @@
 <script setup lang="ts">
 import type { Data } from "~/utils/api";
-const { mediaUrl } = useApi();
+
+const { mediaUrl, safeUrl } = useApi();
 const { avatar, session } = useSession();
 defineProps<{ article: Data<"Article">; forSlider?: boolean }>();
 </script>
 <template>
   <article
-    class="atom-article-tile"
-    :class="{ 'atom-article-slide': forSlider }"
+    class="group relative h-[210px] w-full min-w-0 overflow-hidden rounded bg-white shadow-sm transition duration-200 ease-in-out dark:bg-gray-900"
+    :class="forSlider ? 'h-[215px]' : 'hover:scale-[101%]'"
   >
-    <NuxtLink :to="`/community/article/${article.slug}`">
+    <NuxtLink
+      class="hover:text-inherit"
+      :to="`/community/article/${article.slug}`"
+    >
       <div
-        class="atom-article-image"
+        class="mb-5 block h-[100px] w-full bg-position-[300px_220px] transition-[background-position] duration-300"
+        :class="{ 'group-hover:bg-position-[350px_220px]': !forSlider }"
         :style="{ backgroundImage: `url('${mediaUrl(article.image)}')` }"
       ></div>
-      <div class="atom-article-caption">
-        <h2>{{ article.title }}</h2>
-        <div class="atom-article-author">
-          <span class="atom-article-avatar"
-            ><img
+      <div class="mt-4 px-4">
+        <h2
+          class="truncate text-lg font-semibold dark:text-gray-200"
+          :class="{
+            'transition duration-200 group-hover:text-[#e9b124]': forSlider,
+          }"
+        >
+          {{ article.title }}
+        </h2>
+        <div class="flex items-center gap-x-2">
+          <div
+            class="mt-3 flex size-10 shrink-0 items-center justify-center overflow-hidden rounded-full bg-gray-100 dark:bg-gray-800"
+          >
+            <img
               :src="
                 article.author?.look
-                  ? `${avatar(article.author)}&headonly=1`
+                  ? safeUrl(
+                      `${session.bootstrap.assets?.avatar || ''}${encodeURIComponent(article.author.look)}&headonly=1`,
+                    )
                   : avatar(article.author)
               "
-              alt="" /></span
-          ><span>{{
-            article.author?.username || session.bootstrap.hotel_name
-          }}</span>
+              alt=""
+            />
+          </div>
+          <p class="mt-4 font-semibold dark:text-gray-400">
+            {{ article.author?.username || session.bootstrap.hotel_name }}
+          </p>
         </div>
       </div>
     </NuxtLink>

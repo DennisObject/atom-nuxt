@@ -1,6 +1,9 @@
 import type { Data } from "~/utils/api";
+
 export function money(value?: Data<"Money"> | null): string {
-  if (!value) return "";
+  if (!value) {
+    return "";
+  }
   const formatter = new Intl.NumberFormat(undefined, {
     style: "currency",
     currency: value.currency,

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import CommunityView from "~/views/CommunityView.vue";
+
 definePageMeta({
   layout: "default",
   validate: (route) =>

@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import type { NuxtError } from "#app";
+
 defineProps<{ error: NuxtError }>();
 </script>
 <template>
-  <main class="container main-content">
+  <main class="mx-auto grid w-full max-w-7xl gap-4 p-6">
     <h1>
       {{
         error.statusCode === 404

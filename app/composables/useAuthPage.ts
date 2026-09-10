@@ -8,11 +8,11 @@ export function useAuthPage(kindOverride?: () => string | undefined) {
   const { api, request } = useApi();
   const { initialize, session, avatar } = useSession();
   const captcha = ref<Record<string, string>>({});
-  const route = useRoute(),
-    router = useRouter();
+  const route = useRoute();
+  const router = useRouter();
   const { busy, error, fields, success, run } = usePage();
   const kind = computed(() =>
-    String(kindOverride?.() || route.meta.authKind || "login")
+    String(kindOverride?.() || route.meta.authKind || "login"),
   );
   const form = reactive({
     username: "",
@@ -25,33 +25,42 @@ export function useAuthPage(kindOverride?: () => string | undefined) {
     beta_code: "",
     referral_code: String(route.params.referral || route.query.referral || ""),
   });
-  const recovery = ref(false);
-  const loginAvatar = ref("/assets/images/avatar-fallback.png");
+  const loginAvatar = ref("/assets/images/dusk/ghost.png");
   watch(
     () => form.username,
     (username, _, cleanup) => {
-      if (kind.value !== "login") return;
+      if (kind.value !== "login") {
+        return;
+      }
       let active = true;
       const timer = setTimeout(async () => {
         if (!username) {
-          loginAvatar.value = "/assets/images/avatar-fallback.png";
+          loginAvatar.value = "/assets/images/dusk/ghost.png";
           return;
         }
         try {
           const result = await api<Data<"PublicUser">>(
-            `/users/${encodeURIComponent(username)}`
+            `/users/${encodeURIComponent(username)}`,
           );
-          if (active) loginAvatar.value = avatar(result.data);
+          if (active) {
+            loginAvatar.value = avatar(result.data, {
+              direction: 4,
+              action: "wav",
+            });
+          }
         } catch {
-          if (active) loginAvatar.value = "/assets/images/avatar-fallback.png";
+          if (active) {
+            loginAvatar.value = "/assets/images/dusk/ghost.png";
+          }
         }
       }, 200);
       cleanup(() => {
         active = false;
         clearTimeout(timer);
       });
-    }
+    },
   );
+
   async function submit() {
     await run(
       async () => {
@@ -70,7 +79,7 @@ export function useAuthPage(kindOverride?: () => string | undefined) {
               password: form.password,
               password_confirmation: form.password_confirmation,
               ...captcha.value,
-            }
+            },
           );
           await router.push("/login");
           return;
@@ -81,7 +90,7 @@ export function useAuthPage(kindOverride?: () => string | undefined) {
             : `/${kind.value}`;
         const payload =
           kind.value === "challenge"
-            ? recovery.value
+            ? form.recovery_code.trim() !== ""
               ? { recovery_code: form.recovery_code }
               : { code: form.code }
             : { ...form, ...captcha.value };
@@ -101,20 +110,20 @@ export function useAuthPage(kindOverride?: () => string | undefined) {
             route.query.next.startsWith("/") &&
             !route.query.next.startsWith("//")
             ? route.query.next
-            : "/user/me"
+            : "/user/me",
         );
       },
       kind.value === "forgot"
         ? "If an account matches that email address, a password reset link will arrive shortly."
-        : ""
+        : "",
     );
   }
+
   return {
     t,
     kind,
     session,
     form,
-    recovery,
     captcha,
     loginAvatar,
     busy,

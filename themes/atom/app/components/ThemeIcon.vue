@@ -1,0 +1,69 @@
+<script setup lang="ts">
+const props = defineProps<{ name: string }>();
+
+const icons: Record<string, { color: string; src: string }> = {
+  "hotel-icon": {
+    color: "bg-[#f68b08]",
+    src: "/assets/images/icons/feeds.png",
+  },
+  "chat-icon": { color: "bg-[#375571]", src: "/assets/images/icons/chat.png" },
+  "article-icon": {
+    color: "bg-[#536e5e]",
+    src: "/assets/images/icons/article.gif",
+  },
+  "lighthouse-icon": {
+    color: "bg-[#8554a6]",
+    src: "/assets/images/icons/lighthouse.png",
+  },
+  "catalog-icon": {
+    color: "bg-[#8d4ab782]",
+    src: "/assets/images/icons/catalog.png",
+  },
+  "inventory-icon": {
+    color: "bg-[#232121]",
+    src: "/assets/images/icons/inventory.png",
+  },
+  "duo-chat-icon": {
+    color: "bg-[#eec980]",
+    src: "/assets/images/icons/due-chat.png",
+  },
+  "friends-icon": {
+    color: "bg-[#b17f85]",
+    src: "/assets/images/icons/friends.png",
+  },
+  "camera-icon": {
+    color: "bg-[#242c31] dark:bg-[#25658d]",
+    src: "/assets/images/atom/icons/camera.png",
+  },
+  "discord-icon": {
+    color: "bg-[#25658d]",
+    src: "/assets/images/atom/icons/discord.png",
+  },
+  "currency-icon": {
+    color: "bg-[#e3ad06]",
+    src: "/assets/images/atom/icons/currency.png",
+  },
+};
+
+const icon = computed(
+  () =>
+    icons[props.name] || {
+      color: "bg-transparent",
+      src: `/assets/images/dusk/${props.name}.png`,
+    },
+);
+</script>
+
+<template>
+  <span
+    class="flex size-[var(--icon-size,50px)] shrink-0 items-center justify-center rounded-full"
+    :class="icon.color"
+    aria-hidden="true"
+  >
+    <img
+      :src="icon.src"
+      class="max-h-[50px] max-w-[50px] [image-rendering:pixelated]"
+      alt=""
+    />
+  </span>
+</template>

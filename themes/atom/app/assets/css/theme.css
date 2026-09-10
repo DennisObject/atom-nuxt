@@ -1,81 +1,86 @@
 @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap");
 
-@layer components {
+@layer base {
   :root {
+    --button-weight: 600;
     --portrait-background: url("/assets/images/atom/kasja_mepage_image.png");
     --leaderboard-portrait-background: url("/assets/images/atom/kasja_mepage_image.png");
     color-scheme: light;
     --theme-font: "Poppins";
-    --text: #111827;
-    --page-bg: #f3f4f6;
-    --muted: #4b5563;
+    --text: #000;
+    --page-bg: var(--color-gray-100);
+    --muted: var(--color-gray-600);
     --lilac: #956b08;
     --panel: #fff;
-    --header: #f9fafb;
+    --header: var(--color-gray-50);
     --accent: #eeb425;
     --accent-border: #facc15;
     --accent-active: #fef3c7;
-    --button-text: #111827;
-    --surface-muted: #e5e7eb;
-    --surface-inset: #f3f4f6;
-    --surface-deep: #e5e7eb;
-    --surface-recessed: #f9fafb;
-    --maintenance-bg: #f3f4f6;
-    --border: #d1d5db;
+    --button-text: var(--color-gray-900);
+    --surface-muted: var(--color-gray-200);
+    --surface-inset: var(--color-gray-100);
+    --surface-deep: var(--color-gray-200);
+    --surface-recessed: var(--color-gray-50);
+    --maintenance-bg: var(--color-gray-100);
+    --border: var(--color-gray-300);
     --focus-ring: #ca8a04;
-    --input-border: #d1d5db;
+    --input-border: var(--color-gray-300);
     --input-bg: #fff;
-    --input-text: #111827;
-    --empty-text: #4b5563;
+    --input-text: var(--color-gray-900);
+    --empty-text: var(--color-gray-600);
     --empty-bg: #f9fafbcc;
-    --divider: #e5e7eb;
+    --divider: var(--color-gray-200);
     --badge-bg: #fef3c7;
     --badge-border: #fde68a;
     --link: #2563eb;
-    --table-border: #e5e7eb;
+    --table-border: var(--color-gray-200);
     --price-color: #956b08;
-    --stage-bg: #d1d5db;
+    --stage-bg: var(--color-gray-300);
     --widget-bg: #fffffff2;
-    --widget-border: #d1d5db;
-    --canvas-border: #9ca3af;
-    --text-secondary: #4b5563;
-    --text-subtle: #6b7280;
-    --text-dim: #6b7280;
+    --widget-border: var(--color-gray-300);
+    --canvas-border: var(--color-gray-400);
+    --text-secondary: var(--color-gray-600);
+    --text-subtle: var(--color-gray-500);
+    --text-dim: var(--color-gray-500);
     --body-artwork: url("/assets/images/atom/background-light.jpg");
   }
   :root.dark {
     color-scheme: dark;
-    --text: #f3f4f6;
-    --page-bg: #111827;
-    --muted: #9ca3af;
+    --text: var(--color-gray-200);
+    --page-bg: var(--color-gray-900);
+    --muted: var(--color-gray-400);
     --lilac: #facc15;
-    --panel: #1f2937;
-    --header: #111827;
+    --panel: var(--color-gray-800);
+    --header: var(--color-gray-900);
     --accent-active: #713f12;
-    --surface-muted: #374151;
-    --surface-inset: #1f2937;
-    --surface-deep: #030712;
-    --surface-recessed: #111827;
-    --maintenance-bg: #1f2937;
-    --border: #4b5563;
-    --input-border: #374151;
-    --input-bg: #111827;
-    --input-text: #f3f4f6;
-    --empty-text: #d1d5db;
+    --surface-muted: var(--color-gray-700);
+    --surface-inset: var(--color-gray-800);
+    --surface-deep: var(--color-gray-950);
+    --surface-recessed: var(--color-gray-900);
+    --maintenance-bg: var(--color-gray-800);
+    --border: var(--color-gray-600);
+    --input-border: var(--color-gray-700);
+    --input-bg: var(--color-gray-900);
+    --input-text: var(--color-gray-100);
+    --empty-text: var(--color-gray-300);
     --empty-bg: #111827cc;
-    --divider: #374151;
+    --divider: var(--color-gray-700);
     --badge-bg: #713f1280;
     --badge-border: #a16207;
     --link: #60a5fa;
-    --table-border: #374151;
+    --table-border: var(--color-gray-700);
     --price-color: #facc15;
-    --stage-bg: #111827;
+    --stage-bg: var(--color-gray-900);
     --widget-bg: #1f2937f2;
-    --widget-border: #4b5563;
-    --text-secondary: #d1d5db;
-    --text-subtle: #9ca3af;
-    --text-dim: #9ca3af;
+    --widget-border: var(--color-gray-600);
+    --text-secondary: var(--color-gray-300);
+    --text-subtle: var(--color-gray-400);
+    --text-dim: var(--color-gray-400);
     --body-artwork: url("/assets/images/atom/background-dark.jpg");
+  }
+  ::placeholder {
+    color: #626565;
+    opacity: 1;
   }
   html {
     scroll-behavior: smooth;
@@ -83,299 +88,6 @@
   body {
     background: var(--body-artwork) no-repeat fixed right bottom;
     background-color: var(--page-bg);
-    font-size: 14px;
-  }
-  button,
-  .button {
-    color: var(--button-text);
-    font-weight: 600;
-  }
-  button:hover,
-  .button:hover {
-    color: var(--button-text);
-  }
-  button.secondary,
-  .button.secondary {
-    color: var(--text);
-  }
-  button.danger {
-    color: white;
-  }
-  .text-button {
-    color: var(--lilac);
-  }
-  .sidebar-nav a.router-link-exact-active {
-    border-left: 4px solid var(--accent);
-  }
-  .photo figcaption {
-    color: white;
-  }
-  .atom-card {
-    border-radius: 4px;
-    padding-bottom: 12px;
-    box-shadow: 0 1px 3px #0000001a, 0 1px 2px #0000001a;
-  }
-  .atom-card .card-heading {
-    background: var(--header);
-    border-bottom: 1px solid var(--divider);
-    padding: 12px;
-    gap: 8px;
-  }
-  .atom-card .card-heading h2,
-  .atom-card .card-heading p {
-    font-size: 14px;
-    line-height: 20px;
-  }
-  :root.dark .atom-card .card-heading p {
-    color: #6b7280;
-  }
-  .atom-card .card-body {
-    padding-inline: 12px;
-  }
-  .atom-card .card-icon {
-    min-width: 50px;
-    max-width: 50px;
-    min-height: 50px;
-    max-height: 50px;
-  }
-  .atom-secondary-button {
-    width: 100%;
-    border: 2px solid #22c55e;
-    border-radius: 4px;
-    background: #16a34a;
-    color: white;
-    padding: 8px 24px;
-    font-weight: 600;
-    transition: background-color 150ms ease-in-out;
-  }
-  .atom-secondary-button:hover {
-    background: #15803d;
-    color: white;
-  }
-  .friends-icon {
-    background: #b17f85 url("/assets/images/icons/friends.png") no-repeat center;
-  }
-  .atom-article-tile {
-    display: flex;
-    flex-direction: column;
-    min-width: 0;
-    height: 210px;
-    overflow: hidden;
-    border-radius: 4px;
-    background: var(--panel);
-    color: var(--text);
-    box-shadow: 0 1px 3px #0000001a;
-  }
-  .atom-article-image {
-    display: block;
-    height: 100px;
-    background-position: 300px 220px;
-    transition: background-position 300ms ease-in-out;
-  }
-  .atom-article-tile:not(.atom-article-slide):hover .atom-article-image {
-    background-position: 350px 220px;
-  }
-  .atom-article-slide:hover h2 {
-    color: #e9b124;
-  }
-  .atom-article-caption {
-    display: grid;
-    gap: 0;
-    padding: 16px;
-  }
-  .atom-article-caption h2 {
-    font-size: 18px;
-    font-weight: 600;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-  .atom-article-author {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-top: 12px;
     font-size: 16px;
-    font-weight: 600;
-  }
-  .atom-article-author > span:last-child {
-    margin-top: 4px;
-  }
-  .atom-article-avatar {
-    width: 40px;
-    height: 40px;
-    flex-shrink: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
-    border-radius: 50%;
-    background: var(--surface-inset);
-  }
-  .atom-article-avatar img {
-    max-width: none;
-    image-rendering: pixelated;
-  }
-  :root.dark .atom-article-tile {
-    background: #111827;
-  }
-  :root.dark .atom-article-author {
-    color: #9ca3af;
-  }
-  :root.dark .atom-article-avatar {
-    background: #1f2937;
-  }
-  .camera-icon {
-    background: #242c31 url("/assets/images/atom/icons/camera.png") no-repeat
-      center;
-  }
-  .discord-icon {
-    background: #25658d url("/assets/images/atom/icons/discord.png") no-repeat
-      center;
-  }
-  .hotel-icon {
-    background-color: #f68b08;
-  }
-  .chat-icon {
-    background-color: #375571;
-  }
-  .article-icon {
-    background-color: #536e5e;
-  }
-  .lighthouse-icon {
-    background-color: #8554a6;
-  }
-  .currency-icon {
-    background: #e3ad06 url("/assets/images/atom/icons/currency.png") no-repeat
-      center;
-  }
-  .catalog-icon {
-    background-color: #8d4ab782;
-  }
-  .inventory-icon {
-    background-color: #232121;
-  }
-  .duo-chat-icon {
-    background-color: #eec980;
-  }
-  .staff-card {
-    text-align: center;
-    background: var(--panel);
-  }
-  .staff-card img {
-    height: 125px;
-    image-rendering: pixelated;
-  }
-  .staff-card .card-body {
-    align-items: center;
-  }
-  .article-reactions button,
-  .reaction-options button {
-    color: var(--text);
-  }
-  .site-footer {
-    background: var(--panel);
-  }
-  @media (max-width: 700px) {
-    .atom-card .card-heading {
-      padding: 12px;
-    }
-    .atom-card .card-body {
-      padding-inline: 12px;
-    }
-  }
-}
-
-/* Shell components use scoped styles, so shell defaults share their unlayered cascade. */
-.atom-shell .main-content {
-  width: 100%;
-  max-width: 1280px;
-  margin-inline: auto;
-  padding: 24px;
-  min-width: 0;
-}
-.atom-navigation button,
-.atom-account-tools button {
-  background: transparent;
-  color: var(--text);
-  border: 0;
-  border-radius: 0;
-  padding: 0;
-  filter: none;
-}
-.atom-navigation .nav-links > a,
-.atom-navigation .dropdown-parent {
-  color: var(--text);
-  border-bottom: 4px solid transparent;
-  padding-block: 4px 0;
-  text-transform: uppercase;
-}
-.atom-navigation .nav-links > a:hover,
-.atom-navigation .nav-links > .router-link-active,
-.atom-navigation .dropdown-parent:hover,
-.atom-navigation .nav-menu.active > .dropdown-parent {
-  color: var(--text);
-  border-bottom-color: var(--accent);
-}
-.atom-navigation .dropdown-children button {
-  padding: 10px 16px;
-}
-.atom-navigation .dropdown-children a:hover,
-.atom-navigation .dropdown-children button:hover {
-  color: var(--text);
-  background: var(--surface-inset);
-}
-.atom-navigation .language-options button {
-  padding: 3px;
-}
-.atom-navigation .atom-mode-toggle:hover,
-.atom-navigation .language-toggle:hover,
-.atom-navigation .language-options button:hover,
-.atom-account-tools button:hover {
-  color: var(--lilac);
-  background: transparent;
-}
-.atom-welcome .atom-login {
-  background: transparent;
-  color: white;
-  border-color: white;
-  text-transform: uppercase;
-}
-.atom-welcome .atom-login:hover {
-  background: white;
-  color: #111827;
-  filter: none;
-}
-.atom-login-dialog > header button {
-  padding: 0;
-  border: 0;
-  background: transparent;
-  color: var(--text);
-}
-.site-footer > button {
-  background: transparent;
-  color: var(--muted);
-  font-size: 14px;
-  font-weight: 400;
-}
-.site-footer > button:hover {
-  color: var(--text);
-  text-decoration: underline;
-}
-@media (max-width: 639px) {
-  .atom-shell .atom-currencies {
-    flex-wrap: wrap;
-    justify-content: center;
-    min-width: 0;
-    row-gap: 10px;
-  }
-  .atom-shell .atom-top-inner {
-    padding-top: 12px;
-  }
-  .atom-shell .main-content {
-    padding-inline: 16px;
-  }
-  .site-footer > button {
-    font-size: 12px;
   }
 }

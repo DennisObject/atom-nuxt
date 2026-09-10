@@ -21,7 +21,7 @@ export default defineNuxtConfig({
   css: [
     fileURLToPath(new URL("./app/assets/css/base.css", import.meta.url)),
     fileURLToPath(
-      new URL(`./themes/${theme}/app/assets/css/theme.css`, import.meta.url)
+      new URL(`./themes/${theme}/app/assets/css/theme.css`, import.meta.url),
     ),
   ],
   runtimeConfig: {

@@ -15,12 +15,18 @@ export function useApi() {
   function backendUrl(path: string): string {
     return path.startsWith("/") ? path : `/${path}`;
   }
+
   function mediaUrl(path?: string | null): string {
-    if (!path) return "";
+    if (!path) {
+      return "";
+    }
     return /^https?:\/\//i.test(path) ? path : backendUrl(path);
   }
+
   function safeUrl(path?: string | null): string {
-    if (!path) return "";
+    if (!path) {
+      return "";
+    }
     try {
       const url = new URL(mediaUrl(path), frontendOrigin);
       return ["https:", "http:"].includes(url.protocol) ? url.href : "";
@@ -28,11 +34,12 @@ export function useApi() {
       return "";
     }
   }
+
   async function request<T = RecordData>(
     path: string,
     method = "GET",
     body?: unknown,
-    extraHeaders: Record<string, string> = {}
+    extraHeaders: Record<string, string> = {},
   ): Promise<T> {
     const write = !["GET", "HEAD"].includes(method);
     const headers: Record<string, string> = {
@@ -51,7 +58,9 @@ export function useApi() {
         .split("; ")
         .find((value) => value.startsWith("XSRF-TOKEN="))
         ?.slice(11);
-      if (token) headers["X-XSRF-TOKEN"] = decodeURIComponent(token);
+      if (token) {
+        headers["X-XSRF-TOKEN"] = decodeURIComponent(token);
+      }
     }
     let status = 200;
     const data = await fetchRequest<T>(backendUrl(path), {
@@ -70,6 +79,7 @@ export function useApi() {
       credentials: "include",
       retry: 0,
       ignoreResponseError: true,
+
       onResponse({ response }) {
         status = response.status;
       },
@@ -85,8 +95,9 @@ export function useApi() {
       }
       if (
         ["account_banned", "maintenance", "two_factor_required"].includes(code)
-      )
+      ) {
         state.value.restriction = code;
+      }
       throw new ApiError(
         status,
         code,
@@ -96,18 +107,20 @@ export function useApi() {
             ? "Your session expired. Please submit the form again."
             : `The request failed (${status}).`),
         error.fields || json?.errors || {},
-        typeof json?.vote_url === "string" ? json.vote_url : null
+        typeof json?.vote_url === "string" ? json.vote_url : null,
       );
     }
     return (data ?? {}) as T;
   }
+
   function api<T = RecordData>(
     path: string,
     method = "GET",
     body?: unknown,
-    headers?: Record<string, string>
+    headers?: Record<string, string>,
   ): Promise<Envelope<T>> {
     return request<Envelope<T>>(`/api/v1${path}`, method, body, headers);
   }
+
   return { request, api, backendUrl, mediaUrl, safeUrl };
 }

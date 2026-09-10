@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { AuthView } from "#components";
+import AuthChallengeView from "~/components/auth/AuthChallengeView.vue";
+
 definePageMeta({ authKind: "challenge" });
 </script>
 
-<template><AuthView /></template>
+<template><AuthChallengeView /></template>

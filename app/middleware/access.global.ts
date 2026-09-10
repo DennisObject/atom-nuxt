@@ -14,10 +14,11 @@ export default defineNuxtRouteMiddleware(async (to) => {
     }
   }
   const redirect = accessDestination(to.path, !!to.meta.auth, session);
-  if (redirect)
+  if (redirect) {
     return navigateTo(
       redirect === "/login"
         ? { path: redirect, query: { next: to.fullPath } }
-        : redirect
+        : redirect,
     );
+  }
 });

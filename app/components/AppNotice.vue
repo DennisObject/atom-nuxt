@@ -8,38 +8,44 @@ const props = defineProps<{
 const { t } = useLocale();
 const fieldMessages = computed(() =>
   [...new Set(Object.values(props.fields || {}).flat())].filter(
-    (message) => message && message !== props.error
-  )
+    (message) => message && message !== props.error,
+  ),
 );
 const dismissed = reactive({ error: false, success: false });
 watch(
   () => props.error,
   () => {
     dismissed.error = false;
-  }
+  },
 );
 watch(
   () => props.success,
   () => {
     dismissed.success = false;
-  }
+  },
 );
 </script>
 <template>
   <Teleport to="body" :disabled="teleport === false">
     <div
       v-if="(error && !dismissed.error) || (success && !dismissed.success)"
-      class="notice-stack"
+      class="pointer-events-none fixed top-4 right-4 z-100 flex w-80 max-w-[calc(100vw-32px)] flex-col gap-2"
       aria-live="polite"
     >
-      <template v-for="kind in (['error', 'success'] as const)" :key="kind">
+      <template v-for="kind in ['error', 'success'] as const" :key="kind">
         <div
           v-if="props[kind] && !dismissed[kind]"
-          class="notice"
-          :class="kind"
+          class="group pointer-events-auto relative m-0 flex items-start gap-3 overflow-hidden rounded-lg border-0 bg-[var(--panel)] p-3 pr-9 text-sm leading-5 shadow-lg"
+          :data-kind="kind"
           :role="kind === 'error' ? 'alert' : 'status'"
         >
-          <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+          <svg
+            class="mt-0.5 size-5 shrink-0"
+            :class="kind === 'error' ? 'text-rose-500' : 'text-emerald-500'"
+            viewBox="0 0 20 20"
+            fill="currentColor"
+            aria-hidden="true"
+          >
             <path
               v-if="kind === 'success'"
               fill-rule="evenodd"
@@ -62,14 +68,15 @@ watch(
             </ul>
           </div>
           <button
-            class="notice-close"
+            class="absolute top-[7px] right-2 border-0 bg-transparent p-0 text-xl font-normal text-[var(--text-subtle)]"
             :aria-label="t('Close')"
             @click="dismissed[kind] = true"
           >
             ×
           </button>
           <div
-            class="notice-progress"
+            class="absolute bottom-0 left-0 h-0.5 animate-[notice-progress_4s_linear_forwards] group-hover:[animation-play-state:paused]"
+            :class="kind === 'error' ? 'bg-rose-500' : 'bg-emerald-500'"
             @animationend="dismissed[kind] = true"
           ></div>
         </div>

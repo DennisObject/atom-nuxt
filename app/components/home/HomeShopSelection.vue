@@ -142,9 +142,13 @@ function buy(place: boolean) {
           :key="total.currency"
           class="flex items-center justify-between text-xs"
         >
-          <span class="flex items-center gap-1"
-            ><img :src="currencyIcon(total.currency)" alt="" class="size-3.5" />{{ currencyName(total.currency) }}</span
-          >
+          <span class="flex items-center gap-1">
+            <img
+              :src="currencyIcon(total.currency)"
+              alt=""
+              class="size-3.5"
+            />{{ currencyName(total.currency) }}
+          </span>
 
           <strong
             :class="{ 'text-red-500': balance(total.currency) < total.total }"

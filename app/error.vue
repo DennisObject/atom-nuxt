@@ -3,6 +3,7 @@ import type { NuxtError } from "#app";
 
 defineProps<{ error: NuxtError }>();
 </script>
+
 <template>
   <main class="mx-auto grid w-full max-w-7xl gap-4 p-6">
     <h1>
@@ -12,6 +13,7 @@ defineProps<{ error: NuxtError }>();
           : "The hotel is temporarily unavailable"
       }}
     </h1>
+
     <p>
       {{
         error.statusCode === 404
@@ -19,6 +21,7 @@ defineProps<{ error: NuxtError }>();
           : "Please try again in a moment."
       }}
     </p>
+
     <button @click="clearError({ redirect: '/' })">Back home</button>
   </main>
 </template>

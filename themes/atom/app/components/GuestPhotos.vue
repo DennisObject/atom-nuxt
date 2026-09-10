@@ -2,8 +2,11 @@
 import PhotoLightbox from "~/components/PhotoLightbox.vue";
 
 const { t } = useLocale();
+
 const { safeUrl } = useApi();
+
 const { session, avatar } = useSession();
+
 const photoViewer =
   useTemplateRef<InstanceType<typeof PhotoLightbox>>("photoViewer");
 </script>
@@ -38,6 +41,7 @@ const photoViewer =
             :src="safeUrl(photo.url)"
             :alt="`${t('Photo by')} ${photo.author?.username || t('Unknown')}`"
           />
+
           <div
             class="absolute bottom-3 left-4 flex items-center gap-x-3 rounded-full bg-white pr-3 dark:bg-gray-800"
           >
@@ -49,6 +53,7 @@ const photoViewer =
                 alt=""
               />
             </div>
+
             <p class="dark:text-white">
               {{ photo.author?.username || t("Unknown") }}
             </p>
@@ -57,6 +62,7 @@ const photoViewer =
       </a>
     </div>
   </GuestCard>
+
   <PhotoLightbox
     ref="photoViewer"
     :photos="session.bootstrap.latest_photos || []"

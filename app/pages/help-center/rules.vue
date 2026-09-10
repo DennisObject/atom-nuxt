@@ -4,4 +4,6 @@ import SupportView from "~/views/SupportView.vue";
 definePageMeta({ support: "rules" });
 </script>
 
-<template><SupportView /></template>
+<template>
+  <SupportView />
+</template>

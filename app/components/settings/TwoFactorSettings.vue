@@ -8,14 +8,21 @@ import { ApiError } from "~/utils/api";
 import AppCaptcha from "~/components/AppCaptcha.vue";
 
 const { t } = useLocale();
+
 const { theme } = useAppConfig();
+
 const { api, request } = useApi();
+
 const { session, refreshUser } = useSession();
+
 const { busy, error, fields, success, run } = usePage();
 
 const form = reactive({ current_password: "", code: "" });
+
 const captcha = ref<Record<string, string>>({});
+
 const twoFactor = ref<Partial<Data<"TwoFactor">>>({});
+
 const passwordRequired = ref(false);
 
 const qr = computed(() =>
@@ -29,6 +36,7 @@ const qr = computed(() =>
 async function loadTwoFactor() {
   try {
     twoFactor.value = (await api<Data<"TwoFactor">>("/me/two-factor")).data;
+
     passwordRequired.value = false;
   } catch (failure) {
     if (failure instanceof ApiError && failure.status === 423) {
@@ -46,7 +54,9 @@ async function confirmPassword() {
     await request("/user/confirm-password", "POST", {
       password: form.current_password,
     });
+
     form.current_password = "";
+
     await loadTwoFactor();
   });
 }
@@ -55,19 +65,24 @@ async function changeTwoFactor(action: "enable" | "confirm" | "disable") {
   await run(
     async () => {
       const endpoint = "/user/settings/two-factor-authentication";
+
       if (action === "confirm") {
         await request(`${endpoint}/confirm`, "POST", {
           code: form.code,
           ...captcha.value,
         });
+
         form.code = "";
       } else {
         await request(endpoint, action === "enable" ? "POST" : "DELETE", {
           current_password: form.current_password,
         });
       }
+
       form.current_password = "";
+
       await loadTwoFactor();
+
       await refreshUser();
     },
     action === "confirm"
@@ -81,6 +96,7 @@ async function changeTwoFactor(action: "enable" | "confirm" | "disable") {
 
 <template>
   <AppNotice :error="error" :fields="fields" :success="success" />
+
   <form
     class="flex flex-col gap-3"
     v-if="passwordRequired"
@@ -89,6 +105,7 @@ async function changeTwoFactor(action: "enable" | "confirm" | "disable") {
     <p>
       {{ t("Confirm your password to view your security settings.") }}
     </p>
+
     <SettingsField
       compact
       :label="t('Current password')"
@@ -97,6 +114,7 @@ async function changeTwoFactor(action: "enable" | "confirm" | "disable") {
       autocomplete="current-password"
       required
     />
+
     <button
       class="w-full rounded border-2 border-green-500 bg-green-600 p-2 font-semibold text-white enabled:hover:bg-green-700"
       :class="{ 'px-6 py-2': theme.name === 'atom' }"
@@ -105,6 +123,7 @@ async function changeTwoFactor(action: "enable" | "confirm" | "disable") {
       {{ t("Confirm password") }}
     </button>
   </form>
+
   <form
     class="flex flex-col gap-3"
     v-else-if="twoFactor.enabled"
@@ -118,6 +137,7 @@ async function changeTwoFactor(action: "enable" | "confirm" | "disable") {
       autocomplete="current-password"
       required
     />
+
     <button
       class="w-full rounded border-2 border-green-500 bg-green-600 p-2 font-semibold text-white enabled:hover:bg-green-700 border-red-400! bg-red-500! enabled:hover:bg-red-600!"
       :class="{ 'px-6 py-2': theme.name === 'atom' }"
@@ -126,6 +146,7 @@ async function changeTwoFactor(action: "enable" | "confirm" | "disable") {
       {{ t("Disable 2FA") }}
     </button>
   </form>
+
   <template v-else-if="twoFactor.qr_code">
     <p>
       {{
@@ -134,6 +155,7 @@ async function changeTwoFactor(action: "enable" | "confirm" | "disable") {
         )
       }}
     </p>
+
     <div
       class="mt-4 flex flex-wrap self-center gap-4 rounded bg-gray-100 px-4 py-2 text-black md:flex-nowrap md:gap-8"
     >
@@ -141,8 +163,10 @@ async function changeTwoFactor(action: "enable" | "confirm" | "disable") {
         class="max-w-[260px] bg-transparent p-0 [&_svg]:h-auto [&_svg]:max-w-full"
         v-html="qr"
       ></div>
+
       <div>
         <strong>{{ t("Recovery codes:") }}</strong>
+
         <ul>
           <li v-for="code in twoFactor.recovery_codes" :key="code">
             {{ code }}
@@ -150,6 +174,7 @@ async function changeTwoFactor(action: "enable" | "confirm" | "disable") {
         </ul>
       </div>
     </div>
+
     <p
       class="mt-2 max-w-[480px] self-center text-xs font-bold text-red-500 italic"
     >
@@ -159,6 +184,7 @@ async function changeTwoFactor(action: "enable" | "confirm" | "disable") {
         )
       }}
     </p>
+
     <form
       class="mt-8 flex flex-col gap-4"
       @submit.prevent="changeTwoFactor('confirm')"
@@ -177,6 +203,7 @@ async function changeTwoFactor(action: "enable" | "confirm" | "disable") {
         :placeholder="t('Code')"
         required
       />
+
       <AppCaptcha
         v-if="
           session.bootstrap.captcha?.recaptcha_enabled ||
@@ -185,6 +212,7 @@ async function changeTwoFactor(action: "enable" | "confirm" | "disable") {
         v-model="captcha"
         :busy="busy"
       />
+
       <button
         class="w-full rounded border-2 border-green-500 bg-green-600 p-2 font-semibold text-white enabled:hover:bg-green-700"
         :class="{ 'px-6 py-2': theme.name === 'atom' }"
@@ -194,6 +222,7 @@ async function changeTwoFactor(action: "enable" | "confirm" | "disable") {
       </button>
     </form>
   </template>
+
   <template v-else>
     <div class="flex w-full flex-col gap-y-3 dark:text-gray-100">
       <p>
@@ -204,6 +233,7 @@ async function changeTwoFactor(action: "enable" | "confirm" | "disable") {
           )
         }}
       </p>
+
       <p>
         {{
           t(
@@ -212,6 +242,7 @@ async function changeTwoFactor(action: "enable" | "confirm" | "disable") {
         }}
       </p>
     </div>
+
     <form
       class="mt-8 flex flex-col gap-3 self-end"
       @submit.prevent="changeTwoFactor('enable')"
@@ -224,6 +255,7 @@ async function changeTwoFactor(action: "enable" | "confirm" | "disable") {
         autocomplete="current-password"
         required
       />
+
       <button
         class="w-full rounded border-2 border-green-500 bg-green-600 p-2 font-semibold text-white enabled:hover:bg-green-700"
         :class="{ 'px-6 py-2': theme.name === 'atom' }"

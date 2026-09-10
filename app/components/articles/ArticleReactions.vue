@@ -7,24 +7,36 @@ type ArticleResponse = Envelope<Data<"Article">> & {
   my_reactions?: string[];
   reaction_users?: Record<string, string[]>;
 };
+
 const props = defineProps<{
   slug: string;
   initialReactions: Record<string, number>;
   initialMyReactions: string[];
   initialReactionUsers?: Record<string, string[]>;
 }>();
+
 const { t } = useLocale();
+
 const { theme } = useAppConfig();
+
 const { api } = useApi();
+
 const { session } = useSession();
+
 const { busy, error, run } = usePage();
+
 const reactions = ref(props.initialReactions);
+
 const myReactions = ref(props.initialMyReactions);
+
 const reactionUsers = ref(props.initialReactionUsers || {});
+
 const reactionDialog = ref<HTMLDialogElement>();
+
 const articleReactions = computed(() =>
   Object.entries(reactions.value).filter(([, count]) => count > 0),
 );
+
 const availableReactions = computed(() =>
   (session.bootstrap.reactions || []).filter(
     (reaction) =>
@@ -42,11 +54,15 @@ async function react(reaction: string) {
       `/articles/${props.slug}/reactions/${encodeURIComponent(reaction)}`,
       myReactions.value.includes(reaction) ? "DELETE" : "PUT",
     );
+
     const result = (await api<Data<"Article">>(
       `/articles/${props.slug}`,
     )) as ArticleResponse;
+
     reactions.value = result.reactions || {};
+
     myReactions.value = result.my_reactions || [];
+
     reactionUsers.value = result.reaction_users || {};
   });
 }
@@ -54,6 +70,7 @@ async function react(reaction: string) {
 
 <template>
   <AppNotice :error="error" />
+
   <div
     class="flex w-full flex-wrap gap-2 rounded-lg p-2"
     :class="
@@ -71,6 +88,7 @@ async function react(reaction: string) {
     >
       {{ t("Add") }}
     </button>
+
     <ArticleReaction
       v-for="[reaction, count] in articleReactions"
       :key="reaction"
@@ -83,6 +101,7 @@ async function react(reaction: string) {
       @select="react(reaction)"
     />
   </div>
+
   <dialog
     v-if="session.user"
     ref="reactionDialog"
@@ -99,6 +118,7 @@ async function react(reaction: string) {
       <h2 class="m-0 text-2xl leading-8 font-normal" id="reaction-dialog-title">
         {{ t("Insert Reaction") }}
       </h2>
+
       <button
         type="button"
         class="border-0 bg-transparent p-0 text-[var(--text-secondary)]"
@@ -108,7 +128,9 @@ async function react(reaction: string) {
         ✕
       </button>
     </header>
+
     <p v-if="error" role="alert">{{ error }}</p>
+
     <div class="mt-4 flex flex-wrap justify-center gap-3">
       <button
         class="rounded-lg border-2 bg-transparent px-3 py-2 hover:filter-none"

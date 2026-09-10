@@ -6,6 +6,7 @@ defineProps<{
   panelClass?: string;
   borderless?: boolean;
 }>();
+
 const { openMenu, closeMenu } = useThemeShell();
 </script>
 
@@ -29,6 +30,7 @@ const { openMenu, closeMenu } = useThemeShell();
       @click="openMenu = openMenu === name ? '' : name"
     >
       <slot />
+
       <svg
         class="size-5 text-gray-400"
         viewBox="0 0 20 20"
@@ -42,6 +44,7 @@ const { openMenu, closeMenu } = useThemeShell();
         />
       </svg>
     </button>
+
     <div
       v-show="openMenu === name"
       :id="`atom-menu-${name}`"

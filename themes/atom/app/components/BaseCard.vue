@@ -17,6 +17,7 @@ const backgroundIcon = computed(() => {
     "exclamation-mark_icon": "lighthouse-icon",
     rules_icon: "article-icon",
   };
+
   return icons[props.icon || ""] || "hotel-icon";
 });
 </script>
@@ -29,15 +30,20 @@ const backgroundIcon = computed(() => {
       class="card-heading flex gap-x-2 border-b border-current bg-gray-50 p-3 dark:border-gray-700 dark:bg-gray-900"
     >
       <ThemeIcon v-if="icon" :name="backgroundIcon" />
+
       <div class="flex flex-col justify-center text-sm">
         <h2 class="text-sm font-semibold text-black dark:text-gray-300">
           {{ title }}
         </h2>
+
         <p v-if="subtitle" class="text-sm dark:text-gray-500">
           {{ subtitle }}
         </p>
       </div>
     </header>
-    <div class="card-body flex h-full flex-col px-3"><slot /></div>
+
+    <div class="card-body flex h-full flex-col px-3">
+      <slot />
+    </div>
   </section>
 </template>

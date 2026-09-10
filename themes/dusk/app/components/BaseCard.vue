@@ -14,8 +14,10 @@ defineProps<{
       class="card-heading flex items-center gap-2 bg-[var(--header)] p-3 text-sm leading-5"
     >
       <ThemeIcon v-if="icon" :name="icon" />
+
       <div>
         <h2 class="text-sm font-semibold leading-5">{{ title }}</h2>
+
         <p
           v-if="subtitle"
           class="text-sm leading-5 text-[var(--text-secondary)]"
@@ -24,6 +26,9 @@ defineProps<{
         </p>
       </div>
     </header>
-    <div class="card-body flex h-full flex-col px-4"><slot /></div>
+
+    <div class="card-body flex h-full flex-col px-4">
+      <slot />
+    </div>
   </section>
 </template>

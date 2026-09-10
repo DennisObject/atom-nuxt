@@ -3,7 +3,9 @@ import type { Data } from "~/utils/api";
 import { ArticleTile } from "#components";
 
 const props = defineProps<{ articles: Data<"Article">[] }>();
+
 const { t } = useLocale();
+
 const { slide, hovered, focused, startSwipe, endSwipe, leaveFocus } =
   useNewsCarousel(() => props.articles.length, true);
 </script>
@@ -20,6 +22,7 @@ const { slide, hovered, focused, startSwipe, endSwipe, leaveFocus } =
     @pointerup="endSwipe"
   >
     <EmptyArticle v-if="!articles.length" />
+
     <ArticleTile
       v-for="(article, index) in articles"
       v-show="index === slide"
@@ -27,6 +30,7 @@ const { slide, hovered, focused, startSwipe, endSwipe, leaveFocus } =
       :article="article"
       for-slider
     />
+
     <template v-if="articles.length > 1">
       <div class="absolute inset-x-0 bottom-0 flex justify-center gap-2">
         <button

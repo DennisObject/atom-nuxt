@@ -5,7 +5,9 @@ const shellKey: InjectionKey<ReturnType<typeof useSiteShell>> =
 
 export function provideThemeShell() {
   const shell = useSiteShell();
+
   provide(shellKey, shell);
+
   return shell;
 }
 

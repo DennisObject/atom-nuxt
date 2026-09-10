@@ -7,9 +7,13 @@ import SettingsNavigation from "~/components/settings/SettingsNavigation.vue";
 import TwoFactorSettings from "~/components/settings/TwoFactorSettings.vue";
 
 const { t } = useLocale();
+
 const { theme } = useAppConfig();
+
 const route = useRoute();
+
 const tab = computed(() => String(route.params.tab || "account"));
+
 const titles: Record<string, string> = {
   account: "Account settings",
   password: "Password settings",
@@ -20,6 +24,7 @@ const titles: Record<string, string> = {
 <template>
   <div class="grid grid-cols-12 items-start gap-x-3 gap-y-8">
     <SettingsNavigation :tab="tab" />
+
     <BaseCard
       class="col-span-12 min-w-0 md:col-span-9"
       :class="{
@@ -50,7 +55,9 @@ const titles: Record<string, string> = {
         :key="tab"
         :tab="tab"
       />
+
       <TwoFactorSettings v-else-if="tab === 'two-factor'" />
+
       <SessionLogs v-else-if="tab === 'session-logs'" />
     </BaseCard>
   </div>

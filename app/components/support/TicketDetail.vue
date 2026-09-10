@@ -5,16 +5,21 @@ import RichText from "~/components/RichText.vue";
 import type { Data } from "~/utils/api";
 
 const { t } = useLocale();
+
 const { api } = useApi();
+
 const { busy, error, fields, run } = usePage();
 
 const props = defineProps<{ ticket: Data<"Ticket">; categoryName: string }>();
+
 const emit = defineEmits<{ changed: [] }>();
+
 const router = useRouter();
 
 async function toggle() {
   await run(async () => {
     await api(`/support/tickets/${props.ticket.id}/toggle-status`, "POST");
+
     emit("changed");
   });
 }
@@ -23,8 +28,10 @@ async function remove() {
   if (!window.confirm("Delete this support ticket and its replies?")) {
     return;
   }
+
   await run(async () => {
     await api(`/support/tickets/${props.ticket.id}`, "DELETE");
+
     await router.push("/help-center");
   });
 }
@@ -32,6 +39,7 @@ async function remove() {
 
 <template>
   <AppNotice :error="error" :fields="fields" />
+
   <BaseCard :title="`${ticket.title} [${categoryName}]`" icon="chat-icon">
     <NuxtLink
       class="self-end"
@@ -50,6 +58,7 @@ async function remove() {
         />
       </svg>
     </NuxtLink>
+
     <div class="flex gap-3">
       <button
         class="w-full rounded border-2 border-green-500 bg-green-600 p-2 font-semibold text-white hover:bg-green-700 grow"
@@ -59,6 +68,7 @@ async function remove() {
       >
         {{ t(ticket.open ? "Close" : "Re-open") }}
       </button>
+
       <button
         v-if="ticket.can_delete"
         class="border-[#d26475] bg-[#9e3b4a] grow"
@@ -68,6 +78,7 @@ async function remove() {
         {{ t("Delete") }}
       </button>
     </div>
+
     <RichText class="mt-8" :html="ticket.content" />
   </BaseCard>
 </template>

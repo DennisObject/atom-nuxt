@@ -7,13 +7,19 @@ import type { Data } from "~/utils/api";
 import { displayDate } from "~/utils/date";
 
 const { t } = useLocale();
+
 const { api } = useApi();
+
 const { session, avatar } = useSession();
+
 const { busy, error, fields, success, run } = usePage();
 
 const props = defineProps<{ ticket: Data<"Ticket"> }>();
+
 const emit = defineEmits<{ changed: [] }>();
+
 const reply = ref("");
+
 const replies = computed(() => [...(props.ticket.replies || [])].reverse());
 
 async function postReply() {
@@ -21,7 +27,9 @@ async function postReply() {
     await api(`/support/tickets/${props.ticket.id}/replies`, "POST", {
       content: reply.value,
     });
+
     reply.value = "";
+
     emit("changed");
   }, "Your reply has been sent.");
 }
@@ -29,6 +37,7 @@ async function postReply() {
 async function removeReply(replyId: number) {
   await run(async () => {
     await api(`/support/replies/${replyId}`, "DELETE");
+
     emit("changed");
   });
 }
@@ -36,6 +45,7 @@ async function removeReply(replyId: number) {
 
 <template>
   <AppNotice :error="error" :fields="fields" :success="success" />
+
   <BaseCard
     :title="t('Comments')"
     :subtitle="t('Please submit your reply below')"
@@ -47,6 +57,7 @@ async function removeReply(replyId: number) {
       @submit.prevent="postReply"
     >
       <TicketEditor v-model="reply" :disabled="busy" />
+
       <div>
         <button
           class="w-full rounded border-2 border-green-500 bg-green-600 p-2 font-semibold text-white hover:bg-green-700"
@@ -56,6 +67,7 @@ async function removeReply(replyId: number) {
         </button>
       </div>
     </form>
+
     <div class="grid content-start gap-4 mt-4">
       <article
         v-for="item in replies"
@@ -79,10 +91,13 @@ async function removeReply(replyId: number) {
               :src="avatar(item.author)"
               alt=""
             />
+
             <small>{{ item.author?.username }}</small>
           </div>
+
           <div class="flex gap-2">
             <small>{{ displayDate(item.created_at, true) }}</small>
+
             <button
               v-if="item.can_delete"
               class="border-0 bg-transparent p-0 text-[var(--lilac)]"
@@ -102,8 +117,10 @@ async function removeReply(replyId: number) {
             </button>
           </div>
         </header>
+
         <RichText class="p-4" :html="item.content" />
       </article>
+
       <p v-if="!ticket.replies?.length">
         {{ t("There is currently no replies") }}
       </p>

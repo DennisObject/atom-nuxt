@@ -4,8 +4,11 @@ import AppNotice from "~/components/AppNotice.vue";
 import type { Data } from "~/utils/api";
 
 const { t, locale } = useLocale();
+
 const { theme } = useAppConfig();
+
 const { api } = useApi();
+
 const { error, fields, run } = usePage();
 
 const sessions = ref<Data<"Session">[]>([]);
@@ -18,6 +21,7 @@ onMounted(() =>
 
 function lastActive(value: string): string {
   const seconds = Math.round((Date.now() - new Date(value).getTime()) / 1000);
+
   const units: [Intl.RelativeTimeFormatUnit, number][] = [
     ["year", 31536000],
     ["month", 2592000],
@@ -27,6 +31,7 @@ function lastActive(value: string): string {
     ["minute", 60],
     ["second", 1],
   ];
+
   const [unit, duration]: [Intl.RelativeTimeFormatUnit, number] = units.find(
     ([, duration]) => Math.abs(seconds) >= duration,
   ) || ["second", 1];
@@ -39,6 +44,7 @@ function lastActive(value: string): string {
 
 <template>
   <AppNotice :error="error" :fields="fields" />
+
   <div
     class="overflow-hidden overflow-x-auto rounded"
     :class="
@@ -79,6 +85,7 @@ function lastActive(value: string): string {
           </th>
         </tr>
       </thead>
+
       <tbody
         class="divide-y divide-gray-200 dark:divide-gray-700"
         :class="
@@ -96,20 +103,26 @@ function lastActive(value: string): string {
           >
             {{ item.ip_address }}
           </td>
+
           <td class="border-0 px-4 py-2">
             {{ String(item.is_current_device) }}
           </td>
+
           <td class="border-0 px-4 py-2">
             {{ String(item.agent.is_desktop) }}
           </td>
+
           <td class="border-0 px-4 py-2">{{ item.agent.platform || "" }}</td>
+
           <td class="border-0 px-4 py-2">{{ item.agent.browser || "" }}</td>
+
           <td class="border-0 px-4 py-2 whitespace-nowrap">
-            <time :datetime="item.last_active">{{
-              lastActive(item.last_active)
-            }}</time>
+            <time :datetime="item.last_active">
+              {{ lastActive(item.last_active) }}
+            </time>
           </td>
         </tr>
+
         <tr v-if="!sessions.length">
           <td
             colspan="6"

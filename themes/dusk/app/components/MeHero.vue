@@ -1,6 +1,8 @@
 <script setup lang="ts">
 const { t } = useLocale();
+
 const { session, avatar } = useSession();
+
 const portrait = computed(() =>
   avatar(session.user, { size: "l", action: "wav" }),
 );
@@ -23,6 +25,7 @@ const portrait = computed(() =>
         />
       </NuxtLink>
     </div>
+
     <div class="z-10">
       <div
         class="relative hidden size-[200px] overflow-hidden rounded-full bg-[url(/assets/images/dusk/me_circle_image.png)] lg:block"
@@ -39,6 +42,7 @@ const portrait = computed(() =>
         </NuxtLink>
       </div>
     </div>
+
     <div
       class="flex w-full flex-col justify-between self-start px-4 lg:flex-row"
     >
@@ -46,8 +50,10 @@ const portrait = computed(() =>
         <h1 class="text-3xl font-semibold leading-9">
           {{ t("Hey :username!", { username: session.user.username }) }}
         </h1>
+
         <p class="italic">{{ session.user.motto }}</p>
       </div>
+
       <div class="w-full self-start lg:ml-14 lg:w-64">
         <NuxtLink
           class="block w-full rounded border-2 border-yellow-300 bg-yellow-500 px-4 py-2 text-center text-white transition-transform duration-300 hover:scale-[1.02] hover:text-white"
@@ -57,6 +63,7 @@ const portrait = computed(() =>
         </NuxtLink>
       </div>
     </div>
+
     <MeBalances />
   </section>
 </template>

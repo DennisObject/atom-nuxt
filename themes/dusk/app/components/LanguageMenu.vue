@@ -22,6 +22,7 @@ const { t, locale, busy, openMenu, languages, closeMenu, changeLocale } =
         :src="`/assets/images/icons/flags/${locale}.png`"
         :alt="locale"
       />
+
       <svg
         class="size-5 text-gray-400"
         viewBox="0 0 20 20"
@@ -35,6 +36,7 @@ const { t, locale, busy, openMenu, languages, closeMenu, changeLocale } =
         />
       </svg>
     </button>
+
     <div
       v-show="openMenu === 'language'"
       id="language-options"

@@ -3,7 +3,9 @@ import { BaseCard } from "#components";
 import type { Data } from "~/utils/api";
 
 defineProps<{ openTickets: Data<"Ticket">[] }>();
+
 const { t } = useLocale();
+
 const { session } = useSession();
 </script>
 
@@ -26,16 +28,19 @@ const { session } = useSession();
             item.title.length > 20 ? item.title.slice(0, 20) + "…" : item.title
           }}
         </NuxtLink>
+
         <p v-if="!openTickets.length">
           {{ t("You currently have no open tickets.") }}
         </p>
       </div>
+
       <NuxtLink
         v-if="session.user?.can_manage_tickets"
         class="text-sm underline"
         to="/help-center/tickets/all"
-        >{{ t("All support tickets") }}</NuxtLink
       >
+        {{ t("All support tickets") }}
+      </NuxtLink>
     </BaseCard>
   </aside>
 </template>

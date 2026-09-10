@@ -1,21 +1,32 @@
 export function useSiteShell() {
   const { t, locale, setLocale } = useLocale();
+
   const { initialize, session, avatar } = useSession();
+
   const { request, safeUrl } = useApi();
+
   const { busy, error, run } = usePage();
+
   const route = useRoute();
+
   const mobileOpen = ref(false);
+
   const openMenu = ref("");
+
   const logoFailed = ref(false);
+
   const hotel = computed(() => session.bootstrap.hotel_name || "Atom Hotel");
+
   const logo = computed(() =>
     logoFailed.value
       ? "/assets/images/logo.png"
       : safeUrl(session.bootstrap.assets?.logo) || "/assets/images/logo.png",
   );
+
   const languages = computed(
     () => session.bootstrap.locales || [{ name: "English", locale: "en" }],
   );
+
   const navigation = computed(() =>
     [
       {
@@ -75,19 +86,23 @@ export function useSiteShell() {
       },
     ].filter((item) => item.visible !== false),
   );
+
   watch(
     () => session.bootstrap.assets?.logo,
     () => {
       logoFailed.value = false;
     },
   );
+
   watch(
     () => route.fullPath,
     () => {
       mobileOpen.value = false;
+
       openMenu.value = "";
     },
   );
+
   useHead(() => ({
     titleTemplate: (title) =>
       title ? `${title} · ${hotel.value}` : hotel.value,
@@ -110,6 +125,7 @@ export function useSiteShell() {
     ) {
       return;
     }
+
     openMenu.value = openMenu.value === name ? "" : name;
   }
 
@@ -130,22 +146,27 @@ export function useSiteShell() {
   }
 
   onMounted(() => document.addEventListener("pointerdown", closeOutsideMenu));
+
   onBeforeUnmount(() =>
     document.removeEventListener("pointerdown", closeOutsideMenu),
   );
 
   async function logout() {
     openMenu.value = "";
+
     await run(async () => {
       await request("/logout", "POST");
+
       await navigateTo("/", { external: true });
     });
   }
 
   async function changeLocale(value: string) {
     openMenu.value = "";
+
     await run(async () => {
       await setLocale(value);
+
       await initialize();
     });
   }

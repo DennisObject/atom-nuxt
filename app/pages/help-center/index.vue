@@ -4,4 +4,6 @@ import SupportView from "~/views/SupportView.vue";
 definePageMeta({ auth: true, support: "index" });
 </script>
 
-<template><SupportView /></template>
+<template>
+  <SupportView />
+</template>

@@ -8,16 +8,22 @@ export function useLocale() {
     sameSite: "lax",
     maxAge: 31536000,
   });
+
   const locale = useState("locale", () => preference.value);
+
   const messages = useState<Record<string, string>>("translations", () => ({}));
 
   async function setLocale(value: string): Promise<void> {
     const loader = dictionaries[`../locales/${value}.json`];
+
     if (!loader) {
       return;
     }
+
     messages.value = (await loader()).default;
+
     locale.value = value;
+
     preference.value = value;
   }
 
@@ -26,9 +32,11 @@ export function useLocale() {
     replacements: Record<string, string | number> = {},
   ): string {
     let result = messages.value[message] || message;
+
     for (const [key, value] of Object.entries(replacements)) {
       result = result.replaceAll(`:${key}`, String(value));
     }
+
     return result;
   }
 

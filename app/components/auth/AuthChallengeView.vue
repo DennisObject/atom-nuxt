@@ -1,8 +1,11 @@
 <script setup lang="ts">
 import { BaseCard } from "#components";
 import AuthForm from "~/components/AuthForm.vue";
+
 const { t } = useLocale();
+
 const { theme } = useAppConfig();
+
 useSeoMeta({ title: () => t("Two-Factor Authentication") });
 </script>
 

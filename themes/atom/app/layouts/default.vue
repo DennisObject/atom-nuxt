@@ -13,8 +13,11 @@ const { hotel, error, openMenu, mobileOpen } = provideThemeShell();
       "
     >
       <AccountBar />
+
       <SiteBanner />
+
       <SiteNavigation />
+
       <main
         class="overflow-hidden bg-[image:var(--body-artwork)] bg-fixed bg-position-[right_bottom] bg-no-repeat"
         @click="openMenu = ''"
@@ -23,10 +26,14 @@ const { hotel, error, openMenu, mobileOpen } = provideThemeShell();
           class="relative mx-auto mt-10 w-full min-w-0 max-w-7xl p-6 md:mt-0"
         >
           <AppNotice :error="error" />
+
           <slot />
         </div>
       </main>
     </div>
-    <div class="mt-auto"><SiteCredits :hotel="hotel" /></div>
+
+    <div class="mt-auto">
+      <SiteCredits :hotel="hotel" />
+    </div>
   </div>
 </template>

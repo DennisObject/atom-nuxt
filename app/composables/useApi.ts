@@ -7,9 +7,13 @@ import {
 
 export function useApi() {
   const fetchRequest = useRequestFetch();
+
   const requestHeaders = useRequestHeaders(["cookie"]);
+
   const frontendOrigin = useRequestURL().origin;
+
   const { locale } = useLocale();
+
   const state = useSessionState();
 
   function backendUrl(path: string): string {
@@ -20,6 +24,7 @@ export function useApi() {
     if (!path) {
       return "";
     }
+
     return /^https?:\/\//i.test(path) ? path : backendUrl(path);
   }
 
@@ -27,8 +32,10 @@ export function useApi() {
     if (!path) {
       return "";
     }
+
     try {
       const url = new URL(mediaUrl(path), frontendOrigin);
+
       return ["https:", "http:"].includes(url.protocol) ? url.href : "";
     } catch {
       return "";
@@ -42,27 +49,33 @@ export function useApi() {
     extraHeaders: Record<string, string> = {},
   ): Promise<T> {
     const write = !["GET", "HEAD"].includes(method);
+
     const headers: Record<string, string> = {
       Accept: "application/json",
       "Accept-Language": locale.value,
       "X-Requested-With": "XMLHttpRequest",
       ...extraHeaders,
     };
+
     if (write) {
       // Mutations originate from browser actions; keep Laravel's CSRF cookie fresh.
       await $fetch("/sanctum/csrf-cookie", {
         credentials: "include",
         retry: 0,
       });
+
       const token = document.cookie
         .split("; ")
         .find((value) => value.startsWith("XSRF-TOKEN="))
         ?.slice(11);
+
       if (token) {
         headers["X-XSRF-TOKEN"] = decodeURIComponent(token);
       }
     }
+
     let status = 200;
+
     const data = await fetchRequest<T>(backendUrl(path), {
       method: method as "GET" | "POST" | "PUT" | "PATCH" | "DELETE",
       body: body as Record<string, unknown> | FormData | undefined,
@@ -84,20 +97,28 @@ export function useApi() {
         status = response.status;
       },
     });
+
     if (status >= 400) {
       const json = data as ApiFailure | undefined;
+
       const error = json?.error || {};
+
       const code = error.code || json?.code || "request_failed";
+
       if (status === 401) {
         state.value.user = null;
+
         state.value.bootstrap.viewer = null;
+
         state.value.restriction = "";
       }
+
       if (
         ["account_banned", "maintenance", "two_factor_required"].includes(code)
       ) {
         state.value.restriction = code;
       }
+
       throw new ApiError(
         status,
         code,
@@ -110,6 +131,7 @@ export function useApi() {
         typeof json?.vote_url === "string" ? json.vote_url : null,
       );
     }
+
     return (data ?? {}) as T;
   }
 

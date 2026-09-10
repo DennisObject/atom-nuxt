@@ -3,10 +3,15 @@ import type { Data } from "~/utils/api";
 import { money } from "~/utils/money";
 
 defineProps<{ item: Data<"ShopPackage">; busy: boolean }>();
+
 const emit = defineEmits<{ purchase: [gift: boolean] }>();
+
 const { t } = useLocale();
+
 const { safeUrl } = useApi();
+
 const { theme } = useAppConfig();
+
 const isAtom = theme.name === "atom";
 </script>
 
@@ -23,12 +28,15 @@ const isAtom = theme.name === "atom";
         <h2 :class="isAtom ? 'text-sm font-semibold' : 'text-base font-normal'">
           {{ item.name }}
         </h2>
+
         <strong v-if="!isAtom">{{ money(item.price) }}</strong>
       </div>
+
       <p v-if="isAtom && item.description" class="text-[var(--text-dim)]">
         {{ item.description }}
       </p>
     </header>
+
     <div class="flex h-full flex-col px-3">
       <div :class="isAtom ? 'flex justify-between' : 'flex w-full flex-col'">
         <div v-if="!isAtom && item.image" class="flex w-full justify-center">
@@ -38,13 +46,16 @@ const isAtom = theme.name === "atom";
             :alt="item.name"
           />
         </div>
+
         <p v-if="!isAtom && item.description" class="mt-2 text-sm">
           {{ item.description }}
         </p>
+
         <div :class="{ 'mt-3 text-sm': !isAtom }">
           <p class="font-semibold" :class="{ 'mb-1': !isAtom }">
             {{ t(isAtom ? "You will receive:" : "Includes:") }}
           </p>
+
           <ul class="list-disc pl-4">
             <li
               v-for="product in item.items"
@@ -54,12 +65,14 @@ const isAtom = theme.name === "atom";
               {{ product.quantity }}x {{ product.name }}
             </li>
           </ul>
+
           <p
             v-if="item.stock !== null"
             class="mt-2 text-xs text-yellow-500 dark:text-yellow-400"
           >
             {{ t(":stock remaining", { stock: item.stock }) }}
           </p>
+
           <p
             v-if="item.limit_per_user"
             class="text-xs text-[var(--text-dim)]"
@@ -68,6 +81,7 @@ const isAtom = theme.name === "atom";
             {{ t("Limit: :limit per user", { limit: item.limit_per_user }) }}
           </p>
         </div>
+
         <img
           v-if="isAtom && item.image"
           class="max-h-[60px] max-w-[60px] object-contain"
@@ -75,6 +89,7 @@ const isAtom = theme.name === "atom";
           :alt="item.name"
         />
       </div>
+
       <div class="mt-auto flex" :class="isAtom ? 'gap-4 pt-2' : 'gap-2 pt-4'">
         <button
           v-if="item.is_giftable"
@@ -103,6 +118,7 @@ const isAtom = theme.name === "atom";
             />
           </svg>
         </button>
+
         <button
           class="w-full rounded border-2 p-2 font-semibold text-white"
           :class="

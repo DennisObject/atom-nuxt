@@ -2,7 +2,9 @@
 import type { Data } from "~/utils/api";
 
 defineProps<{ item: Data<"RareValue"> }>();
+
 const { t } = useLocale();
+
 const { safeUrl } = useApi();
 
 function currencyName(type: number) {
@@ -21,6 +23,7 @@ function currencyName(type: number) {
         <img :src="safeUrl(item.icon)" :alt="item.name" />
       </div>
     </div>
+
     <div class="flex flex-col w-full min-w-0">
       <div
         class="font-bold text-[var(--text)] truncate flex items-center gap-[5px]"
@@ -32,7 +35,9 @@ function currencyName(type: number) {
         >
           {{ item.name }}
         </NuxtLink>
+
         <span v-else class="truncate">{{ item.name }}</span>
+
         <img
           v-if="item.is_limited"
           class="w-4 h-4"
@@ -40,6 +45,7 @@ function currencyName(type: number) {
           :alt="t('Limited edition')"
         />
       </div>
+
       <div
         class="w-full bg-yellow-400 rounded h-[35px] flex items-center mt-2 text-gray-900"
       >
@@ -48,16 +54,19 @@ function currencyName(type: number) {
         >
           <img src="/assets/images/icons/currency/credits.png" alt="" />
         </div>
+
         <p class="w-full text-center truncate">
           {{ item.credit_value || 0 }} {{ t("credits") }}
         </p>
       </div>
+
       <div class="w-full bg-gray-500 rounded h-[35px] flex items-center mt-1">
         <div
           class="bg-gray-600 rounded-l w-1/3 px-4 h-full flex items-center justify-center"
         >
           <img src="/assets/images/icons/navigation/shop.png" alt="" />
         </div>
+
         <p class="w-full text-center truncate">
           {{ item.currency_value || 0 }}
           {{ currencyName(item.currency_type) }}

@@ -4,7 +4,9 @@ import RichText from "~/components/RichText.vue";
 import type { Data } from "~/utils/api";
 
 defineProps<{ categories: Data<"SupportCategory">[] }>();
+
 const { t } = useLocale();
+
 const { safeUrl } = useApi();
 </script>
 
@@ -37,8 +39,10 @@ const { safeUrl } = useApi();
             "
             alt=""
           />
+
           <RichText :html="category.content" />
         </div>
+
         <a
           v-if="safeUrl(category.button_url)"
           class="mt-4 ml-2 self-start rounded border-2 px-2 py-1 font-semibold text-white transition hover:scale-105"

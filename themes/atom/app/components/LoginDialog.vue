@@ -1,22 +1,30 @@
 <script setup lang="ts">
 const { t } = useLocale();
+
 const { session } = useSession();
+
 const route = useRoute();
+
 const dialog = useTemplateRef<HTMLDialogElement>("dialog");
+
 const isOpen = ref(false);
 
 async function open() {
   isOpen.value = true;
+
   await nextTick();
+
   dialog.value?.showModal();
 }
 
 function close() {
   dialog.value?.close();
+
   isOpen.value = false;
 }
 
 watch(() => route.fullPath, close);
+
 watch(
   () => session.user,
   (user) => {
@@ -39,6 +47,7 @@ defineExpose({ open });
   >
     <header class="mb-2 flex flex-col items-center">
       <h2 class="text-2xl font-semibold">{{ t("Hello!") }}</h2>
+
       <p class="dark:text-gray-400">
         {{
           t("There is currently :online users online", {
@@ -46,6 +55,7 @@ defineExpose({ open });
           })
         }}
       </p>
+
       <button
         class="absolute top-3 right-2.5 ml-auto rounded-lg border-0 bg-transparent p-1.5 text-sm text-gray-400 hover:bg-gray-200 hover:text-gray-900 dark:hover:bg-gray-800 dark:hover:text-white"
         :aria-label="t('Close')"
@@ -65,6 +75,7 @@ defineExpose({ open });
         </svg>
       </button>
     </header>
+
     <AuthForm v-if="isOpen" kind="login" in-dialog />
   </dialog>
 </template>

@@ -5,9 +5,13 @@ import RichText from "~/components/RichText.vue";
 import type { Data } from "~/utils/api";
 
 const { t } = useLocale();
+
 const { artwork, theme } = useAppConfig();
+
 const { session } = useSession();
+
 const { api } = useApi();
+
 const { data: rules, error } = await useAsyncData(
   "hotel-rules",
   async () => (await api<Data<"RuleCategory">[]>("/rules")).data,
@@ -16,6 +20,7 @@ const { data: rules, error } = await useAsyncData(
 
 <template>
   <AppNotice :error="error?.message" />
+
   <div
     v-if="theme.name === 'dusk'"
     class="mb-6 flex items-center justify-between gap-5 max-[700px]:items-start rounded-lg bg-[var(--header)] p-3"
@@ -25,6 +30,7 @@ const { data: rules, error } = await useAsyncData(
       {{ t("Rules") }}
     </h1>
   </div>
+
   <p v-else class="mb-7 w-full rounded bg-red-600 p-4 text-white">
     {{
       t(
@@ -33,6 +39,7 @@ const { data: rules, error } = await useAsyncData(
       )
     }}
   </p>
+
   <div class="grid content-start gap-6">
     <BaseCard
       v-for="category in rules"
@@ -54,6 +61,7 @@ const { data: rules, error } = await useAsyncData(
           class="flex items-baseline gap-1 text-[var(--text-secondary)] [&_p]:m-0"
         >
           <strong>{{ rule.paragraph }}.</strong>
+
           <RichText :html="rule.rule" />
         </li>
       </ul>

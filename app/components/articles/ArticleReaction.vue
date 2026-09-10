@@ -7,16 +7,24 @@ defineProps<{
   busy: boolean;
   authenticated: boolean;
 }>();
+
 const emit = defineEmits<{ select: [] }>();
+
 const { t } = useLocale();
+
 const { theme } = useAppConfig();
+
 const hovered = ref(false);
+
 const focused = ref(false);
+
 const position = ref({ top: 0, left: 0 });
+
 const tooltipId = useId();
 
 function positionPopover(event: Event): void {
   const bounds = (event.currentTarget as HTMLElement).getBoundingClientRect();
+
   position.value = {
     top: bounds.top - 8,
     left: Math.max(
@@ -72,13 +80,16 @@ function leaveFocus(event: FocusEvent): void {
       @click="!busy && authenticated && emit('select')"
     >
       <img :src="`/assets/images/icons/reactions/${name}.png`" :alt="name" />
+
       <span>{{ count }}</span>
     </button>
+
     <span
       v-if="users.length && (hovered || focused)"
       class="absolute -top-2 left-0 h-2 w-full"
       aria-hidden="true"
     ></span>
+
     <div
       v-if="users.length && (hovered || focused)"
       :id="tooltipId"
@@ -98,11 +109,17 @@ function leaveFocus(event: FocusEvent): void {
           />
         </div>
       </div>
+
       <div class="max-h-[200px] overflow-y-auto px-3 py-2">
-        <p v-for="username in users" :key="username" class="w-full text-center">
+        <p
+          v-for="username in users"
+          :key="username"
+          class="w-full text-center"
+        >
           {{ username }}
         </p>
       </div>
+
       <div
         class="absolute -bottom-1 left-1/2 size-2 rotate-45 border-r border-b border-gray-600 bg-gray-800"
       ></div>

@@ -3,9 +3,13 @@ import type { Data } from "~/utils/api";
 import LeaderboardEntry from "./LeaderboardEntry.vue";
 
 const { theme } = useAppConfig();
+
 const isAtom = theme.name === "atom";
+
 const { t } = useLocale();
+
 const { api } = useApi();
+
 const boardIcons: Record<string, string> = {
   credits: "credits.png",
   duckets: "duckets.png",
@@ -14,6 +18,7 @@ const boardIcons: Record<string, string> = {
   respectsReceived: "heart.gif",
   achievementScores: "star.gif",
 };
+
 const boardNames: Record<string, string> = {
   credits: "Credits",
   duckets: "Duckets",
@@ -40,6 +45,7 @@ const { data: boards, error } = await useAsyncData(
 
 <template>
   <AppNotice :error="error?.message" />
+
   <div class="grid grid-cols-1 gap-5 md:grid-cols-3">
     <template v-for="(users, key) in boards" :key="key">
       <section
@@ -64,6 +70,7 @@ const { data: boards, error } = await useAsyncData(
             t((isAtom ? boardTitles : boardNames)[String(key)] || String(key))
           }}
         </h2>
+
         <LeaderboardEntry
           v-for="(entry, index) in users"
           :key="entry.user.id"
@@ -78,6 +85,7 @@ const { data: boards, error } = await useAsyncData(
             )
           "
         />
+
         <p v-if="!users.length" class="text-[var(--muted)]">
           {{ t("No rankings yet.") }}
         </p>

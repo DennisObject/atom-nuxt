@@ -1,5 +1,6 @@
 <script setup lang="ts">
 const frame = useTemplateRef<HTMLIFrameElement>("frame");
+
 const {
   t,
   busy,
@@ -26,6 +27,7 @@ const {
       @reload="reload"
       @fullscreen="toggleFullscreen"
     />
+
     <iframe
       v-if="url"
       ref="frame"
@@ -37,12 +39,15 @@ const {
       referrerpolicy="no-referrer"
       @load="handleFrameLoad"
     ></iframe>
+
     <AppNotice :error="error" />
+
     <section
       v-if="flashRequested"
       class="flex h-full flex-col items-center justify-center gap-4 px-6 py-[72px] text-center [&_h2]:text-2xl"
     >
       <h2>{{ t("Flash client unavailable in this browser") }}</h2>
+
       <p>
         {{
           t(
@@ -50,6 +55,7 @@ const {
           )
         }}
       </p>
+
       <NuxtLink
         class="flex items-center justify-center gap-1 rounded border-2 border-[#cf9d15] bg-[#eeb425] px-2 py-1 text-sm font-normal text-white transition-colors duration-150 ease-in-out hover:bg-[#e3aa1e] hover:text-white hover:filter-none [&_svg]:size-5"
         to="/game/nitro"
@@ -57,13 +63,16 @@ const {
         {{ t("Open Nitro") }}
       </NuxtLink>
     </section>
+
     <section
       v-else-if="!url"
       class="flex h-full flex-col items-center justify-center gap-4 px-6 py-[72px] text-center [&_h2]:text-2xl"
     >
       <p v-if="busy">{{ t("Connecting to the hotel…") }}</p>
+
       <template v-else>
         <p>{{ error || t("The hotel client is not configured yet.") }}</p>
+
         <a
           v-if="voteUrl"
           class="flex items-center justify-center gap-1 rounded border-2 border-[#cf9d15] bg-[#eeb425] px-2 py-1 text-sm font-normal text-white transition-colors duration-150 ease-in-out hover:bg-[#e3aa1e] hover:text-white hover:filter-none [&_svg]:size-5"
@@ -73,6 +82,7 @@ const {
         >
           {{ t("Vote for the hotel") }}
         </a>
+
         <button
           class="flex items-center justify-center gap-1 rounded border-2 border-[#cf9d15] bg-[#eeb425] px-2 py-1 text-sm font-normal text-white transition-colors duration-150 ease-in-out hover:bg-[#e3aa1e] hover:text-white hover:filter-none [&_svg]:size-5"
           @click="reload"
@@ -81,6 +91,7 @@ const {
         </button>
       </template>
     </section>
+
     <section
       v-if="disconnected"
       class="absolute inset-0 bg-black/50 [&_h2]:text-center [&_h2]:text-2xl [&_h2]:text-white"
@@ -90,6 +101,7 @@ const {
         class="relative flex size-full flex-col items-center justify-center gap-4 [&>div]:flex [&>div]:gap-4"
       >
         <h2>{{ t("Whoops! It seems like you have been disconnected...") }}</h2>
+
         <div>
           <button
             :disabled="busy"
@@ -98,6 +110,7 @@ const {
           >
             {{ t("Reload client") }}
           </button>
+
           <NuxtLink
             class="rounded border-2 border-green-500 bg-green-600 p-2 font-semibold text-white hover:bg-green-700 hover:text-white"
             to="/user/me"

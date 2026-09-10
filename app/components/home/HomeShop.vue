@@ -3,33 +3,44 @@ import type { Data } from "~/utils/api";
 import HomeShopSelection from "./HomeShopSelection.vue";
 
 const props = defineProps<{ shop: Data<"HomeShop">; busy: boolean }>();
+
 const emit = defineEmits<{
   preview: [items: Data<"HomeDefinition">[]];
   buy: [item: Data<"HomeDefinition">, quantity: number, place: boolean];
   buySelected: [items: Data<"HomeDefinition">[], place: boolean];
 }>();
+
 const { t } = useLocale();
+
 const { safeUrl } = useApi();
+
 const shopTab = ref("home");
+
 const selection = ref<number[]>([]);
+
 const categories = computed(
   () =>
     props.shop.categories as (Data<"HomeShop">["categories"][number] & {
       icon?: string | null;
     })[],
 );
+
 const filteredItems = computed(() => {
   if (shopTab.value.startsWith("category:")) {
     const category = Number(shopTab.value.slice(9));
+
     return props.shop.items.filter(
       (item) => item.type === "s" && item.category_id === category,
     );
   }
+
   return props.shop.items.filter((item) => item.type === shopTab.value);
 });
+
 const selectedItems = computed(() =>
   filteredItems.value.filter((item) => selection.value.includes(item.id)),
 );
+
 watch(shopTab, () => {
   selection.value = [];
 });
@@ -66,10 +77,12 @@ function selectAll() {
     >
       {{ t(label) }}
     </button>
+
     <div class="mt-1 border-t border-[var(--border)] pt-1">
       <p class="mb-1 px-3 text-[10px] uppercase tracking-wider text-gray-400">
         {{ t("Stickers") }}
       </p>
+
       <button
         v-for="category in categories"
         :key="category.id"
@@ -87,10 +100,12 @@ function selectAll() {
           alt=""
           class="size-4 shrink-0 object-contain"
         />
+
         <span class="truncate">{{ category.name }}</span>
       </button>
     </div>
   </nav>
+
   <div class="flex min-w-[140px] flex-1 flex-col">
     <div
       v-if="filteredItems.length"
@@ -108,10 +123,12 @@ function selectAll() {
           )
         }}
       </button>
-      <span v-if="selection.length > 1" class="text-[11px] text-gray-400"
-        >{{ selection.length }} {{ t("selected") }}</span
-      >
+
+      <span v-if="selection.length > 1" class="text-[11px] text-gray-400">
+        {{ selection.length }} {{ t("selected") }}
+      </span>
     </div>
+
     <div class="flex-1 overflow-y-auto px-3 pb-3">
       <p
         v-if="shopTab === 'home'"
@@ -119,6 +136,7 @@ function selectAll() {
       >
         {{ t("Pick a category to browse items.") }}
       </p>
+
       <div v-else class="flex flex-wrap gap-1.5">
         <button
           v-for="item in filteredItems"
@@ -135,17 +153,22 @@ function selectAll() {
             class="max-h-14 max-w-14 object-contain"
             :class="{ '[image-rendering:pixelated]': item.type === 'b' }"
           />
+
           <span v-else class="text-xs">{{ item.name }}</span>
+
           <span
             class="absolute right-0 bottom-0 rounded-tl bg-black/60 px-1 text-[9px] leading-tight text-white"
-            >{{ item.price }}</span
           >
+            {{ item.price }}
+          </span>
+
           <span
             v-if="selection.includes(item.id)"
             class="absolute top-0 left-0 flex size-4 items-center justify-center rounded-br bg-[#eeb425] text-[10px] text-white"
             >✓</span
           >
         </button>
+
         <p
           v-if="!filteredItems.length"
           class="w-full py-10 text-center text-sm text-gray-400"
@@ -155,6 +178,7 @@ function selectAll() {
       </div>
     </div>
   </div>
+
   <HomeShopSelection
     :items="selectedItems"
     :busy="busy"

@@ -1,8 +1,12 @@
 <script setup lang="ts">
 const copyMode = defineModel<boolean>("copyMode", { required: true });
+
 const eraser = defineModel<boolean>("eraser", { required: true });
+
 const showGrid = defineModel<boolean>("showGrid", { required: true });
+
 const emit = defineEmits<{ import: [] }>();
+
 const { t } = useLocale();
 </script>
 
@@ -19,6 +23,7 @@ const { t } = useLocale();
       {{ t("Copy color:") }}
       <i class="fa-solid fa-eye-dropper" aria-hidden="true"></i>
     </BadgeToolButton>
+
     <BadgeToolButton
       :aria-pressed="eraser"
       :aria-label="t('Toggle erase mode')"
@@ -30,6 +35,7 @@ const { t } = useLocale();
       {{ t("Erase mode:") }}
       <i class="fa-solid fa-eraser" aria-hidden="true"></i>
     </BadgeToolButton>
+
     <BadgeToolButton
       :aria-label="t('Import a picture for your badge')"
       @click="emit('import')"
@@ -37,6 +43,7 @@ const { t } = useLocale();
       {{ t("Import Picture:") }}
       <i class="fa-solid fa-file-import" aria-hidden="true"></i>
     </BadgeToolButton>
+
     <BadgeToolButton
       :aria-pressed="showGrid"
       :aria-label="t('Toggle grid visibility')"

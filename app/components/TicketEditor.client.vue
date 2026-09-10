@@ -2,12 +2,18 @@
 import Editor from "@tinymce/tinymce-vue";
 
 const model = defineModel<string>({ default: "" });
+
 defineProps<{ disabled?: boolean }>();
+
 const { session } = useSession();
+
 const { mode, isDark } = useThemeMode();
+
 const { editor } = useAppConfig();
+
 const contentStyle = computed(() => {
   const colors = editor[mode.value];
+
   return `body { background: ${colors.background}; color: ${colors.text}; font-family: ${editor.fontFamily}; } a { color: ${colors.link}; }`;
 });
 </script>

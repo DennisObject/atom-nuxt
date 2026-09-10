@@ -24,22 +24,29 @@ export function useSessionState() {
 
 export function useSession() {
   const session = useSessionState().value;
+
   const { api, safeUrl } = useApi();
 
   async function initialize(): Promise<void> {
     session.bootstrap = (await api<Data<"Bootstrap">>("/bootstrap")).data;
+
     session.user = session.bootstrap.viewer;
+
     await refreshUser();
+
     if (!session.user && session.bootstrap.maintenance) {
       session.restriction = "maintenance";
     }
+
     session.ready = true;
   }
 
   async function refreshUser(): Promise<void> {
     try {
       session.user = (await api<Data<"Me">>("/me")).data;
+
       session.restriction = "";
+
       if (session.bootstrap.viewer) {
         session.bootstrap.viewer.requires_two_factor = false;
       }
@@ -53,7 +60,9 @@ export function useSession() {
         )
       ) {
         session.restriction = error.code;
+
         session.bootstrap = (await api<Data<"Bootstrap">>("/bootstrap")).data;
+
         session.user = session.bootstrap.viewer;
       } else {
         throw error;
@@ -72,11 +81,13 @@ export function useSession() {
     const source = safeUrl(
       `${session.bootstrap.assets?.avatar || ""}${encodeURIComponent(user.look)}`,
     );
+
     if (!source) {
       return "/assets/images/avatar-fallback.png";
     }
 
     const url = new URL(source);
+
     const pose = {
       direction: 2,
       head_direction: 3,
@@ -84,9 +95,11 @@ export function useSession() {
       size: "m",
       ...options,
     };
+
     for (const [key, value] of Object.entries(pose)) {
       url.searchParams.set(key, String(value));
     }
+
     return url.href;
   }
 

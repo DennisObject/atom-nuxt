@@ -5,7 +5,9 @@ defineProps<{
   onlineCount: number;
   flashRequested: boolean;
 }>();
+
 const emit = defineEmits<{ reload: []; fullscreen: [] }>();
+
 const { t } = useLocale();
 </script>
 
@@ -24,11 +26,13 @@ const { t } = useLocale();
         <path
           d="M11.47 3.84a.75.75 0 0 1 1.06 0l8.69 8.69a.75.75 0 1 0 1.06-1.06l-8.689-8.69a2.25 2.25 0 0 0-3.182 0l-8.69 8.69a.75.75 0 0 0 1.061 1.06l8.69-8.69Z"
         />
+
         <path
           d="M12 5.432 20.159 13.591c.03.03.06.058.091.086v6.198c0 1.035-.84 1.875-1.875 1.875H15a.75.75 0 0 1-.75-.75v-4.5a.75.75 0 0 0-.75-.75h-3a.75.75 0 0 0-.75.75V21a.75.75 0 0 1-.75.75H5.625a1.875 1.875 0 0 1-1.875-1.875v-6.198a2.29 2.29 0 0 0 .091-.086L12 5.43Z"
         />
       </svg>
     </NuxtLink>
+
     <button
       v-if="!flashRequested"
       class="flex items-center justify-center gap-1 rounded border-2 border-[#cf9d15] bg-[#eeb425] px-2 py-1 text-sm font-normal text-white transition-colors duration-150 ease-in-out hover:bg-[#e3aa1e] hover:text-white hover:filter-none [&_svg]:size-5"
@@ -51,6 +55,7 @@ const { t } = useLocale();
         />
       </svg>
     </button>
+
     <button
       class="flex items-center justify-center gap-1 rounded border-2 border-[#cf9d15] bg-[#eeb425] px-2 py-1 text-sm font-normal text-white transition-colors duration-150 ease-in-out hover:bg-[#e3aa1e] hover:text-white hover:filter-none [&_svg]:size-5"
       :disabled="busy"
@@ -73,6 +78,7 @@ const { t } = useLocale();
         />
       </svg>
     </button>
+
     <span
       class="flex items-center justify-center gap-1 rounded border-2 border-[#cf9d15] bg-[#eeb425] px-2 py-1 text-sm font-normal text-white transition-colors duration-150 ease-in-out hover:bg-[#e3aa1e] hover:text-white hover:filter-none [&_svg]:size-5 cursor-default [&_svg]:size-4!"
       :aria-label="`${onlineCount} ${t('online')}`"
@@ -84,6 +90,7 @@ const { t } = useLocale();
           clip-rule="evenodd"
         />
       </svg>
+
       <span>{{ onlineCount }}</span>
     </span>
   </nav>

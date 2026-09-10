@@ -8,8 +8,11 @@ export function usePurchaseAttempt() {
     const storage = `dusk-pending:${
       session.user?.id
     }:${operation}:${JSON.stringify(payload)}`;
+
     const key = sessionStorage.getItem(storage) || crypto.randomUUID();
+
     sessionStorage.setItem(storage, key);
+
     return { storage, key };
   }
 

@@ -4,13 +4,21 @@ import ApplicationPositions from "./ApplicationPositions.vue";
 import GroupHeading from "./GroupHeading.vue";
 
 const props = defineProps<{ section: string }>();
+
 const { t } = useLocale();
+
 const { api } = useApi();
+
 const { session } = useSession();
+
 const route = useRoute();
+
 const { busy, error, fields, success, run } = usePage();
+
 const application = ref("");
+
 const captcha = ref<Record<string, string>>({});
+
 const {
   data,
   error: initialError,
@@ -36,8 +44,11 @@ const {
           ).data,
         },
 );
+
 const position = computed(() => data.value?.position);
+
 const positions = computed(() => data.value?.positions || []);
+
 const applicationStatusLabels: Record<string, string> = {
   pending: "Your application is pending",
   approved: "You have been approved",
@@ -58,7 +69,9 @@ async function apply() {
       content: application.value,
       ...captcha.value,
     });
+
     application.value = "";
+
     await refresh();
   }, "Your application has been submitted.");
 }
@@ -87,6 +100,7 @@ async function apply() {
         :badge="position.badge"
         :color="position.color"
       />
+
       <p
         v-if="position.application_status"
         class="flex flex-col gap-3 px-3"
@@ -94,6 +108,7 @@ async function apply() {
       >
         {{ applicationStatusLabel(position.application_status) }}
       </p>
+
       <form v-else class="flex flex-col gap-3 px-3" @submit.prevent="apply">
         <label class="flex flex-col gap-1">
           {{ t("Username") }}
@@ -103,6 +118,7 @@ async function apply() {
             readonly
           />
         </label>
+
         <label class="flex flex-col gap-1">
           {{ t("About you") }}
           <textarea
@@ -113,7 +129,9 @@ async function apply() {
             maxlength="5000"
           ></textarea>
         </label>
+
         <AppCaptcha v-model="captcha" :busy="busy" />
+
         <button
           class="w-full rounded border-2 border-yellow-400 bg-[#eeb425] p-2 font-semibold text-white hover:bg-[#d49f1c]"
           :disabled="busy"
@@ -122,6 +140,7 @@ async function apply() {
         </button>
       </form>
     </section>
+
     <aside class="col-span-12 lg:col-span-3 lg:w-[110%] lg:-ml-8">
       <BaseCard
         :title="t('Applying for :position', { position: position.name || '' })"
@@ -140,5 +159,6 @@ async function apply() {
       </BaseCard>
     </aside>
   </div>
+
   <ApplicationPositions v-else :positions="positions" :section="section" />
 </template>

@@ -4,18 +4,28 @@ import type { Data } from "~/utils/api";
 import PhotoLightbox from "~/components/PhotoLightbox.vue";
 
 const { t } = useLocale();
+
 const { artwork, theme } = useAppConfig();
+
 const { avatar } = useSession();
+
 const isAtom = theme.name === "atom";
+
 const { api, safeUrl } = useApi();
+
 const { busy, error, run } = usePage();
+
 const lightbox = ref<InstanceType<typeof PhotoLightbox>>();
+
 const { data: result, error: initialError } = await useAsyncData(
   "community:photos",
   () => api<Data<"Photo">[]>("/photos"),
 );
+
 const photos = computed(() => result.value?.data || []);
+
 const page = computed(() => result.value?.meta?.current_page || 1);
+
 const lastPage = computed(() => result.value?.meta?.last_page || 1);
 
 async function load(nextPage: number) {
@@ -25,6 +35,7 @@ async function load(nextPage: number) {
 
 <template>
   <AppNotice :error="error || initialError?.message" />
+
   <component
     :is="isAtom ? BaseCard : 'div'"
     :title="isAtom ? t('Latest Photos') : undefined"
@@ -59,6 +70,7 @@ async function load(nextPage: number) {
           v-if="!isAtom"
           class="pointer-events-none absolute inset-0 z-1 bg-black/10"
         />
+
         <img
           class="block w-full object-cover object-center"
           :class="
@@ -69,6 +81,7 @@ async function load(nextPage: number) {
           :src="safeUrl(photo.url)"
           :alt="`Photo by ${photo.author?.username || 'a hotel member'}`"
         />
+
         <span
           class="absolute z-5 flex items-center"
           :class="
@@ -83,7 +96,9 @@ async function load(nextPage: number) {
           >
             <img :src="avatar(photo.author, { headonly: 1 })" alt="" />
           </span>
+
           <img v-else class="self-center" :src="artwork.photoAuthor" alt="" />
+
           <span :class="{ 'text-sm': !isAtom }">
             {{ photo.author?.username || t("Unknown") }}
           </span>
@@ -91,17 +106,21 @@ async function load(nextPage: number) {
       </a>
     </div>
   </component>
+
   <p
     v-if="!busy && !photos.length"
     class="rounded-lg bg-[var(--empty-bg)] p-[25px] text-center text-[var(--empty-text)]"
   >
     {{ t("No photos have been shared yet.") }}
   </p>
+
   <div v-if="lastPage > 1" class="mt-5 flex items-center justify-center gap-3">
     <button :disabled="busy || page === 1" @click="run(() => load(page - 1))">
       {{ t("Previous") }}
     </button>
+
     <span>{{ page }} / {{ lastPage }}</span>
+
     <button
       :disabled="busy || page === lastPage"
       @click="run(() => load(page + 1))"
@@ -109,5 +128,6 @@ async function load(nextPage: number) {
       {{ t("Next") }}
     </button>
   </div>
+
   <PhotoLightbox ref="lightbox" :photos="photos" />
 </template>

@@ -1,7 +1,10 @@
 <script setup lang="ts">
 const { t } = useLocale();
+
 const { safeUrl } = useApi();
+
 const { session, avatar } = useSession();
+
 const backdrop = computed(
   () =>
     safeUrl(session.bootstrap.assets?.me_backdrop) ||
@@ -24,6 +27,7 @@ const backdrop = computed(
         :alt="session.user.username"
       />
     </NuxtLink>
+
     <NuxtLink
       class="relative ml-auto rounded-full bg-white/90 px-6 py-2 text-lg font-semibold text-black transition duration-300 ease-in-out hover:bg-white hover:text-black dark:bg-gray-900 dark:text-white dark:hover:text-white"
       to="/game/nitro"

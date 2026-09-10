@@ -3,9 +3,13 @@ import type { Data } from "~/utils/api";
 import AuthForm from "~/components/AuthForm.vue";
 
 const { t } = useLocale();
+
 const { api } = useApi();
+
 const route = useRoute();
+
 const kind = computed(() => String(route.meta.authKind || "login"));
+
 const titles: Record<string, string> = {
   login: "Login",
   register: "Create a new account",
@@ -13,7 +17,9 @@ const titles: Record<string, string> = {
   forgot: "Forgot your password?",
   reset: "Choose a new password",
 };
+
 useSeoMeta({ title: () => t(titles[kind.value] || "Login") });
+
 const { data: news } = await useAsyncData("auth-news", async () => {
   try {
     return (await api<Data<"Article">[]>("/articles")).data;
@@ -21,6 +27,7 @@ const { data: news } = await useAsyncData("auth-news", async () => {
     return [];
   }
 });
+
 const articles = computed(() =>
   (news.value || []).filter((article) => article.author).slice(0, 4),
 );
@@ -34,12 +41,16 @@ const articles = computed(() =>
       <h1 class="text-2xl font-normal leading-8">
         {{ t(titles[kind] || "Login") }}
       </h1>
+
       <AuthForm />
     </section>
+
     <aside>
       <NewsCarousel :articles="articles" :registration="kind === 'register'" />
+
       <GuestPhotos v-if="kind === 'register'" compact class="mt-4" />
     </aside>
+
     <GuestPhotos v-if="kind !== 'register'" class="md:col-span-2" />
   </div>
 </template>

@@ -7,8 +7,11 @@ import RegistrationFields from "~/components/auth/RegistrationFields.vue";
 import AppCaptcha from "~/components/AppCaptcha.vue";
 
 const { theme } = useAppConfig();
+
 const atom = theme.name === "atom";
+
 const props = defineProps<{ kind?: string; inDialog?: boolean }>();
+
 const {
   t,
   kind,
@@ -23,6 +26,7 @@ const {
   submit,
 } = useAuthPage(() => props.kind);
 </script>
+
 <template>
   <div class="auth-form">
     <AppNotice
@@ -31,6 +35,7 @@ const {
       :success="success"
       :teleport="!inDialog"
     />
+
     <p
       v-if="
         kind === 'register' && session.bootstrap.registration?.enabled === false
@@ -39,6 +44,7 @@ const {
     >
       {{ t("Registration is currently closed. Please check back soon.") }}
     </p>
+
     <form
       class="flex flex-col"
       :class="
@@ -53,6 +59,7 @@ const {
       @submit.prevent="submit"
     >
       <RegistrationFields v-if="kind === 'register'" :model-value="form" />
+
       <template v-else>
         <AuthField
           v-if="kind === 'login'"
@@ -64,6 +71,7 @@ const {
           :avatar="loginAvatar"
           required
         />
+
         <AuthField
           v-if="kind === 'forgot'"
           v-model="form.mail"
@@ -74,6 +82,7 @@ const {
           :placeholder="t('Enter your e-mail')"
           required
         />
+
         <AuthField
           v-if="kind === 'login' || kind === 'reset'"
           v-model="form.password"
@@ -84,6 +93,7 @@ const {
           :placeholder="t(atom ? 'Password' : 'Enter your password')"
           required
         />
+
         <AuthField
           v-if="kind === 'reset'"
           v-model="form.password_confirmation"
@@ -95,8 +105,11 @@ const {
           required
         />
       </template>
+
       <AuthChallengeFields v-if="kind === 'challenge'" :model-value="form" />
+
       <AppCaptcha v-model="captcha" :busy="busy" />
+
       <AuthActions
         :kind="kind"
         :busy="busy"

@@ -4,4 +4,6 @@ import LogoView from "~/views/LogoView.vue";
 definePageMeta({ auth: true });
 </script>
 
-<template><LogoView /></template>
+<template>
+  <LogoView />
+</template>

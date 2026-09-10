@@ -4,4 +4,6 @@ import { MeView } from "#components";
 definePageMeta({ auth: true, alias: ["/me"] });
 </script>
 
-<template><MeView /></template>
+<template>
+  <MeView />
+</template>

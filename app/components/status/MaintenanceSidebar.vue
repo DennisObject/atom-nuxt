@@ -3,11 +3,17 @@ import { computed, ref } from "vue";
 import type { Data } from "~/utils/api";
 
 type MaintenanceTask = Data<"MaintenanceTask">;
+
 defineProps<{ status: Data<"Status"> | null }>();
+
 const { t } = useLocale();
+
 const { safeUrl } = useApi();
+
 const { session } = useSession();
+
 const logoFailed = ref(false);
+
 const logo = computed(() =>
   logoFailed.value
     ? "/assets/images/logo.png"
@@ -36,6 +42,7 @@ function taskAvatar(task: MaintenanceTask) {
         @error="logoFailed = true"
       />
     </div>
+
     <div class="relative z-10 flex w-full flex-col gap-2">
       <article
         v-for="task in status?.tasks.items || []"
@@ -51,16 +58,19 @@ function taskAvatar(task: MaintenanceTask) {
               alt=""
             />
           </div>
+
           <div class="flex h-full w-2/3 items-center wrap-break-word">
             {{ task.task }}
           </div>
         </div>
+
         <div class="absolute right-2 bottom-2 flex w-full justify-between">
           <small
             class="pl-24 flex items-center gap-1 text-[12.8px] text-inherit"
           >
             {{ t("By: :user", { user: task.user?.username || "" }) }}
           </small>
+
           <small class="flex items-center gap-1 text-[12.8px] text-inherit">
             {{ t("Status:") }}
             <svg
@@ -95,6 +105,7 @@ function taskAvatar(task: MaintenanceTask) {
           </small>
         </div>
       </article>
+
       <nav
         v-if="(status?.tasks.current_page || 1) > 1 || status?.tasks.has_more"
         class="flex justify-between text-sm"
@@ -112,6 +123,7 @@ function taskAvatar(task: MaintenanceTask) {
         >
           {{ t("Previous") }}
         </NuxtLink>
+
         <NuxtLink
           class="rounded border border-[var(--border)] bg-[var(--surface-inset)] px-4 py-2"
           v-if="status?.tasks.has_more"
@@ -124,6 +136,7 @@ function taskAvatar(task: MaintenanceTask) {
         </NuxtLink>
       </nav>
     </div>
+
     <img
       class="absolute right-0 bottom-0 z-0"
       src="/assets/images/maintenance/fireman.png"

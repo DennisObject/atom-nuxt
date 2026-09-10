@@ -2,9 +2,12 @@
 import type { Data } from "~/utils/api";
 
 const { t } = useLocale();
+
 const { mediaUrl } = useApi();
+
 defineProps<{ article: Data<"Article">; registration?: boolean }>();
 </script>
+
 <template>
   <article
     class="relative block h-[250px] w-full overflow-hidden rounded-lg bg-cover bg-right"
@@ -21,6 +24,7 @@ defineProps<{ article: Data<"Article">; registration?: boolean }>();
       >
         {{ article.title }}
       </h2>
+
       <div
         class="flex items-center justify-between"
         :class="{ 'mt-1': !registration }"
@@ -43,6 +47,7 @@ defineProps<{ article: Data<"Article">; registration?: boolean }>();
           </svg>
           {{ article.author?.username }}
         </span>
+
         <NuxtLink
           :to="`/community/article/${article.slug}`"
           class="relative z-1 mt-1 text-sm leading-5 hover:text-white hover:underline"

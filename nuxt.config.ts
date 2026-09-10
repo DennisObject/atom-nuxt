@@ -2,6 +2,7 @@ import { fileURLToPath } from "node:url";
 import tailwindcss from "@tailwindcss/vite";
 
 const theme = process.env.ATOM_THEME || "dusk";
+
 if (!["atom", "dusk"].includes(theme)) {
   throw new Error(`Unknown ATOM_THEME "${theme}". Choose atom or dusk.`);
 }

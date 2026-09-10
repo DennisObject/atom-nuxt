@@ -8,9 +8,13 @@ defineProps<{
   visitor: boolean;
   editing: boolean;
 }>();
+
 const emit = defineEmits<{ post: [message: string] }>();
+
 const { t, locale } = useLocale();
+
 const { avatar } = useSession();
+
 const message = defineModel<string>({ default: "" });
 </script>
 
@@ -30,6 +34,7 @@ const message = defineModel<string>({ default: "" });
         :aria-label="t('Leave a message')"
         :placeholder="t('Leave a message')"
       ></textarea>
+
       <button
         class="self-end rounded border-0 bg-blue-500 px-3 py-1 text-xs font-semibold text-white hover:bg-blue-600"
         :disabled="busy"
@@ -37,6 +42,7 @@ const message = defineModel<string>({ default: "" });
         {{ t("Post") }}
       </button>
     </form>
+
     <article
       v-for="entry in content"
       :key="entry.id"
@@ -49,12 +55,14 @@ const message = defineModel<string>({ default: "" });
         "
         :alt="entry.author?.username"
       />
+
       <div class="flex min-w-0 flex-col">
         <div class="flex items-center gap-1">
           <span
             class="size-2 shrink-0 rounded-full"
             :class="entry.author?.online ? 'bg-green-500' : 'bg-gray-400'"
           />
+
           <NuxtLink
             class="truncate text-xs font-semibold text-blue-500 hover:underline"
             :to="`/home/${entry.author?.username}`"
@@ -62,11 +70,13 @@ const message = defineModel<string>({ default: "" });
             {{ entry.author?.username }}
           </NuxtLink>
         </div>
+
         <p
           class="mt-1 max-h-[100px] overflow-y-auto whitespace-pre-wrap text-xs text-[var(--text-secondary)]"
         >
           {{ entry.content }}
         </p>
+
         <span class="mt-1 text-[10px] text-gray-400">
           {{ relativeDate(entry.created_at, locale) }}
         </span>

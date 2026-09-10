@@ -1,6 +1,8 @@
 <script setup lang="ts">
 const { t, session, safeUrl, mobileOpen } = useThemeShell();
+
 const route = useRoute();
+
 const communityLinks = computed(() => [
   { label: "Articles", path: "/community/articles" },
   { label: "Staff", path: "/community/staff" },
@@ -11,6 +13,7 @@ const communityLinks = computed(() => [
     ? [{ label: "Photos", path: "/community/photos" }]
     : []),
 ]);
+
 const links = computed(() => [
   { label: "Leaderboards", path: "/leaderboard", icon: "leaderboards.png" },
   ...(session.bootstrap.features?.includes("rare-values")
@@ -46,12 +49,15 @@ const links = computed(() => [
           {{ session.user.username }}
           <template #children>
             <NuxtLink to="/user/me">{{ t("Home") }}</NuxtLink>
+
             <NuxtLink to="/draw-badge">{{ t("Badge Drawer") }}</NuxtLink>
-            <NuxtLink :to="`/home/${session.user.username}`">{{
-              t("My Home")
-            }}</NuxtLink>
+
+            <NuxtLink :to="`/home/${session.user.username}`">
+              {{ t("My Home") }}
+            </NuxtLink>
           </template>
         </NavigationDropdown>
+
         <NuxtLink
           v-else
           to="/"
@@ -64,6 +70,7 @@ const links = computed(() => [
             alt=""
           />{{ t("Home") }}
         </NuxtLink>
+
         <template v-if="session.user">
           <NavigationDropdown
             name="community"
@@ -75,15 +82,17 @@ const links = computed(() => [
               src="/assets/images/atom/icons/navigation/community.png"
               alt=""
             />{{ t("Community") }}
-            <template #children
-              ><NuxtLink
+            <template #children>
+              <NuxtLink
                 v-for="link in communityLinks"
                 :key="link.path"
                 :to="link.path"
-                >{{ t(link.label) }}</NuxtLink
-              ></template
-            >
+              >
+                {{ t(link.label) }}
+              </NuxtLink>
+            </template>
           </NavigationDropdown>
+
           <NuxtLink
             v-for="link in links"
             :key="link.path"
@@ -100,6 +109,7 @@ const links = computed(() => [
             />{{ t(link.label) }}
           </NuxtLink>
         </template>
+
         <NavigationDropdown
           name="assistance"
           uppercase
@@ -113,28 +123,38 @@ const links = computed(() => [
           <template #children>
             <template v-if="session.user">
               <NuxtLink to="/help-center">{{ t("Help center") }}</NuxtLink>
+
               <NuxtLink
                 v-if="session.user.can_manage_tickets"
                 to="/help-center/tickets/all"
-                >{{ t("Open tickets") }}</NuxtLink
               >
+                {{ t("Open tickets") }}
+              </NuxtLink>
             </template>
-            <NuxtLink v-else to="/help-center/rules">{{ t("Rules") }}</NuxtLink>
+
+            <NuxtLink v-else to="/help-center/rules">
+              {{ t("Rules") }}
+            </NuxtLink>
           </template>
         </NavigationDropdown>
+
         <a
           v-if="safeUrl(session.bootstrap.discord_url)"
           class="flex h-auto items-center text-sm font-semibold text-gray-700 uppercase transition duration-200 ease-in-out dark:text-gray-200 md:h-[60px] md:border-b-4 md:border-transparent md:hover:border-b-[#eeb425]"
           :href="safeUrl(session.bootstrap.discord_url)"
           target="_blank"
           rel="noopener"
-          >{{ t("Discord") }}</a
         >
+          {{ t("Discord") }}
+        </a>
+
         <div class="flex w-full justify-center gap-x-1 md:hidden">
           <LanguageMenu mobile />
         </div>
       </div>
+
       <ShellTools />
+
       <button
         type="button"
         class="absolute top-4 right-4 z-10 rounded-none border-0 bg-transparent p-0 text-inherit hover:text-gray-900 dark:text-white dark:hover:text-white md:hidden"

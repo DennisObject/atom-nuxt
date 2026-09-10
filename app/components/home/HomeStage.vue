@@ -12,12 +12,15 @@ defineProps<{
   editing: boolean;
   selectedId?: number;
 }>();
+
 const emit = defineEmits<{
   drag: [event: PointerEvent, item: Data<"HomeItem">];
   select: [item: Data<"HomeItem">];
   remove: [item: Data<"HomeItem">];
 }>();
+
 const { t } = useLocale();
+
 const { safeUrl } = useApi();
 </script>
 
@@ -58,6 +61,7 @@ const { safeUrl } = useApi();
         >
           {{ item.definition?.name }}
         </h3>
+
         <HomeWidget
           v-if="item.definition?.type === 'w' && item.id > 0"
           :class="{ 'pointer-events-none': editing }"
@@ -67,15 +71,18 @@ const { safeUrl } = useApi();
           :visitor="visitor"
           :editing="editing"
         />
+
         <p v-else-if="item.definition?.type === 'w'" class="p-2 italic">
           {{ t("Preview") }}
         </p>
+
         <p
           v-else-if="item.definition?.type === 'n'"
           class="whitespace-pre-wrap"
         >
           {{ item.extra_data }}
         </p>
+
         <img
           v-else-if="item.definition?.image"
           :src="safeUrl(item.definition.image)"
@@ -83,6 +90,7 @@ const { safeUrl } = useApi();
           class="pointer-events-none"
           :class="{ '-scale-x-100': item.is_reversed }"
         />
+
         <button
           v-if="editing && selectedId === item.id && item.id > 0"
           class="absolute top-0 right-0 z-50 flex size-7 items-center justify-center rounded-none rounded-bl-lg border-0 bg-red-500/90 p-0 text-xs text-white hover:bg-red-400"
@@ -93,6 +101,7 @@ const { safeUrl } = useApi();
         </button>
       </section>
     </template>
+
     <p
       v-if="!items.filter((item) => item.placed).length"
       class="rounded-lg bg-[var(--empty-bg)] p-[25px] text-center text-[var(--empty-text)]"

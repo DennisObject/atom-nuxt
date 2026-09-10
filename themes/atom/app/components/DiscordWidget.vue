@@ -9,6 +9,7 @@ interface DiscordMember {
   status: string;
   game?: { name: string };
 }
+
 interface DiscordGuild {
   name: string;
   instant_invite: string | null;
@@ -16,8 +17,11 @@ interface DiscordGuild {
 }
 
 const { t } = useLocale();
+
 const { session } = useSession();
+
 const { safeUrl } = useApi();
+
 const presenceColors: Record<string, string> = {
   online: "bg-green-600",
   idle: "bg-[#e9b124]",
@@ -25,8 +29,11 @@ const presenceColors: Record<string, string> = {
 };
 
 const guild = ref<DiscordGuild | null>(null);
+
 const loading = ref(false);
+
 const failed = ref(false);
+
 const invite = computed(() =>
   safeUrl(
     guild.value
@@ -34,14 +41,20 @@ const invite = computed(() =>
       : session.bootstrap.discord_url || "",
   ),
 );
+
 const controller = new AbortController();
+
 onBeforeUnmount(() => controller.abort());
+
 onMounted(async () => {
   const id = session.bootstrap.discord_widget_id;
+
   if (!id || !/^\d+$/.test(id)) {
     return;
   }
+
   loading.value = true;
+
   try {
     guild.value = await $fetch<DiscordGuild>(
       `https://discord.com/api/guilds/${id}/widget.json`,
@@ -58,6 +71,7 @@ onMounted(async () => {
   }
 });
 </script>
+
 <template>
   <BaseCard
     v-if="session.bootstrap.discord_widget_id || session.bootstrap.discord_url"
@@ -74,9 +88,11 @@ onMounted(async () => {
       <p v-if="loading" class="text-[var(--muted)]" role="status">
         {{ t("Please wait…") }}
       </p>
+
       <p v-else-if="failed" class="text-[var(--muted)]" role="status">
         {{ t("Discord is currently unavailable.") }}
       </p>
+
       <div
         v-for="member in guild?.members"
         :key="member.id"
@@ -86,6 +102,7 @@ onMounted(async () => {
           class="relative size-9 shrink-0 [&_img]:size-full [&_img]:rounded-full [&_img]:bg-[var(--surface-inset)]"
         >
           <img :src="safeUrl(member.avatar_url)" alt="" loading="lazy" />
+
           <span
             class="absolute right-0 bottom-0 size-3 rounded-full border-2 border-current dark:border-gray-800"
             :class="presenceColors[member.status] || 'bg-gray-400'"
@@ -93,16 +110,19 @@ onMounted(async () => {
             role="img"
           ></span>
         </div>
+
         <div class="min-w-0 wrap-anywhere">
           <p class="font-semibold">
             {{ member.nick || member.username }}
           </p>
+
           <p v-if="member.game" class="text-[var(--muted)]">
             {{ member.game.name }}
           </p>
         </div>
       </div>
     </div>
+
     <a
       v-if="invite"
       class="flex w-full items-center justify-center rounded border-2 border-green-500 bg-green-600 px-6 py-2 font-semibold text-white transition-colors hover:bg-green-700"

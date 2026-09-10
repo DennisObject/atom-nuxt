@@ -6,7 +6,9 @@ const props = defineProps<{
   articles: Data<"Article">[];
   registration?: boolean;
 }>();
+
 const { t } = useLocale();
+
 const { slide, hovered, focused, move, startSwipe, endSwipe, leaveFocus } =
   useNewsCarousel(() => props.articles.length, false);
 </script>
@@ -30,6 +32,7 @@ const { slide, hovered, focused, move, startSwipe, endSwipe, leaveFocus } =
       :article="article"
       :registration="registration"
     />
+
     <template v-if="articles.length > 1">
       <button
         class="absolute top-1/2 left-[10px] z-15 -mt-[22px] h-11 w-[27px] rounded-none border-0 bg-transparent p-0 text-[#007aff] disabled:cursor-auto disabled:opacity-35"
@@ -47,6 +50,7 @@ const { slide, hovered, focused, move, startSwipe, endSwipe, leaveFocus } =
           <path d="M25 1 3 22l22 21" />
         </svg>
       </button>
+
       <button
         class="absolute top-1/2 right-[10px] z-15 -mt-[22px] h-11 w-[27px] rounded-none border-0 bg-transparent p-0 text-[#007aff] disabled:cursor-auto disabled:opacity-35"
         :disabled="slide === articles.length - 1"
@@ -63,6 +67,7 @@ const { slide, hovered, focused, move, startSwipe, endSwipe, leaveFocus } =
           <path d="m2 1 22 21L2 43" />
         </svg>
       </button>
+
       <div
         class="absolute inset-x-0 top-[3px] z-15 flex h-[10px] justify-center gap-2"
       >

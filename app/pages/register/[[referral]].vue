@@ -4,4 +4,6 @@ import { AuthView } from "#components";
 definePageMeta({ authKind: "register" });
 </script>
 
-<template><AuthView /></template>
+<template>
+  <AuthView />
+</template>

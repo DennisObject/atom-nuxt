@@ -1,8 +1,11 @@
 export default defineNuxtRouteMiddleware(async (to) => {
   const { session, initialize } = useSession();
+
   const { locale, setLocale } = useLocale();
+
   if (!session.ready) {
     await setLocale(locale.value);
+
     try {
       await initialize();
     } catch {
@@ -13,7 +16,9 @@ export default defineNuxtRouteMiddleware(async (to) => {
       });
     }
   }
+
   const redirect = accessDestination(to.path, !!to.meta.auth, session);
+
   if (redirect) {
     return navigateTo(
       redirect === "/login"

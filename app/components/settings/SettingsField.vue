@@ -1,7 +1,10 @@
 <script setup lang="ts">
 defineOptions({ inheritAttrs: false });
+
 defineProps<{ label: string; description?: string; compact?: boolean }>();
+
 const { theme } = useAppConfig();
+
 const model = defineModel<string>({ required: true });
 </script>
 
@@ -19,9 +22,11 @@ const model = defineModel<string>({ required: true });
         v-if="description"
         class="block text-sm leading-[21px] font-normal text-gray-500 dark:text-gray-400"
         :class="{ 'text-gray-400!': theme.name === 'dusk' }"
-        >{{ description }}</span
       >
+        {{ description }}
+      </span>
     </span>
+
     <input
       v-model="model"
       v-bind="$attrs"

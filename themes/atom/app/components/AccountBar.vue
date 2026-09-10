@@ -1,5 +1,6 @@
 <script setup lang="ts">
 const { t, session, safeUrl, avatar, busy, logout } = useThemeShell();
+
 const currencies = computed(() => [
   {
     name: "Credits",
@@ -17,6 +18,7 @@ const currencies = computed(() => [
     amount: session.user?.balances?.diamonds ?? 0,
   },
 ]);
+
 const head = computed(() =>
   avatar(session.user, { headonly: 1, head_direction: 2 }),
 );
@@ -38,6 +40,7 @@ const head = computed(() =>
             :class="currency.icon"
             aria-hidden="true"
           ></span>
+
           <div class="dark:text-gray-400">
             <span class="font-semibold dark:text-white">
               {{ currency.amount }}
@@ -46,6 +49,7 @@ const head = computed(() =>
           </div>
         </div>
       </div>
+
       <div class="flex gap-x-3">
         <NavigationDropdown
           v-if="
@@ -65,6 +69,7 @@ const head = computed(() =>
             >
               {{ t("Logo generator") }}
             </NuxtLink>
+
             <a
               v-if="
                 session.bootstrap.viewer?.can_show_housekeeping_link &&
@@ -78,6 +83,7 @@ const head = computed(() =>
             </a>
           </template>
         </NavigationDropdown>
+
         <NavigationDropdown name="account" borderless>
           <div
             class="bg-center bg-no-repeat"
@@ -88,11 +94,14 @@ const head = computed(() =>
             "
             :style="{ backgroundImage: `url('${head}')` }"
           ></div>
+
           <span class="-ml-2">{{ session.user.username }}</span>
+
           <template #children>
             <NuxtLink to="/user/settings/account">
               {{ t("User settings") }}
             </NuxtLink>
+
             <button
               class="w-full justify-start rounded-none border-0 bg-transparent px-4 py-2 text-left text-gray-900 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-200 dark:hover:bg-gray-700 dark:hover:text-gray-200"
               :disabled="busy"

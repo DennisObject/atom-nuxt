@@ -2,6 +2,7 @@
 import { BaseCard } from "#components";
 
 const referralInput = useTemplateRef<HTMLInputElement>("referralInput");
+
 const { t, session, busy, error, success, referralLink, claim, copyReferral } =
   useReferrals(referralInput);
 </script>
@@ -9,6 +10,7 @@ const { t, session, busy, error, success, referralLink, claim, copyReferral } =
 <template>
   <div>
     <AppNotice :error="error" :success="success" />
+
     <BaseCard
       v-if="session.user"
       class="[&_.card-heading]:border-0"
@@ -33,6 +35,7 @@ const { t, session, busy, error, success, referralLink, claim, copyReferral } =
             )
           }}
         </p>
+
         <small class="text-gray-400">
           {{
             t(
@@ -40,6 +43,7 @@ const { t, session, busy, error, success, referralLink, claim, copyReferral } =
             )
           }}
         </small>
+
         <div
           class="grid grid-cols-1 gap-2 md:grid-cols-[minmax(0,10fr)_minmax(0,2fr)]"
         >
@@ -50,6 +54,7 @@ const { t, session, busy, error, success, referralLink, claim, copyReferral } =
             readonly
             :aria-label="t('Your invitation link')"
           />
+
           <button
             class="w-full rounded border-2 border-green-500 bg-green-600 px-6 py-2 font-semibold text-white transition-colors hover:bg-green-700"
             :disabled="busy"
@@ -58,6 +63,7 @@ const { t, session, busy, error, success, referralLink, claim, copyReferral } =
             {{ t("Copy code") }}
           </button>
         </div>
+
         <button
           v-if="session.user.referrals_needed === 0"
           class="mt-2 w-full rounded border-2 border-green-500 bg-green-600 px-6 py-2 font-semibold text-white transition-colors hover:bg-green-700"
@@ -66,6 +72,7 @@ const { t, session, busy, error, success, referralLink, claim, copyReferral } =
         >
           {{ t("Claim your referrals reward!") }}
         </button>
+
         <button
           v-else
           class="mt-2 w-full rounded border-0 bg-gray-400 p-2 font-normal text-white opacity-100 dark:bg-gray-900"

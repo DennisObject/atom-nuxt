@@ -2,28 +2,39 @@
 import type { Data } from "~/utils/api";
 
 defineProps<{ busy: boolean }>();
+
 const emit = defineEmits<{
   confirm: [items: Data<"HomeDefinition">[]];
   remove: [item: Data<"HomeDefinition">];
 }>();
+
 const { t } = useLocale();
+
 const { safeUrl } = useApi();
+
 const { currencyName, currencyIcon, balance } = useHomeCurrency();
+
 const dialog = useTemplateRef<HTMLDialogElement>("dialog");
+
 const items = ref<Data<"HomeDefinition">[]>([]);
+
 const totals = computed(() => {
   const amounts = new Map<number, number>();
+
   for (const item of items.value) {
     amounts.set(item.currency, (amounts.get(item.currency) || 0) + item.price);
   }
+
   return [...amounts].map(([currency, cost]) => ({ currency, cost }));
 });
+
 const unaffordable = computed(() =>
   totals.value.filter(({ currency, cost }) => balance(currency) < cost),
 );
 
 function open(selection: Data<"HomeDefinition">[]) {
   items.value = [...selection];
+
   if (items.value.length) {
     dialog.value?.showModal();
   }
@@ -31,7 +42,9 @@ function open(selection: Data<"HomeDefinition">[]) {
 
 function remove(item: Data<"HomeDefinition">) {
   items.value = items.value.filter((entry) => entry.id !== item.id);
+
   emit("remove", item);
+
   if (!items.value.length) {
     dialog.value?.close();
   }
@@ -43,6 +56,7 @@ function confirm() {
   }
 
   dialog.value?.close();
+
   emit("confirm", items.value);
 }
 
@@ -65,12 +79,14 @@ defineExpose({ open });
       >
         ×
       </button>
+
       <h3
         id="home-purchase-title"
         class="mb-2 shrink-0 text-center text-lg font-semibold"
       >
         {{ t("Purchase") }} {{ items.length }} {{ t("item(s)") }}
       </h3>
+
       <div class="min-h-0 space-y-1 overflow-y-auto">
         <div
           v-for="item in items"
@@ -84,15 +100,19 @@ defineExpose({ open });
               alt=""
               class="size-8 shrink-0 object-contain"
             />
+
             <span class="truncate text-sm">{{ item.name }}</span>
           </div>
+
           <div class="flex shrink-0 items-center gap-1">
             <span class="text-sm font-semibold">{{ item.price }}</span>
+
             <img
               :src="currencyIcon(item.currency)"
               :alt="currencyName(item.currency)"
               class="size-4"
             />
+
             <button
               v-if="items.length > 1"
               type="button"
@@ -105,6 +125,7 @@ defineExpose({ open });
           </div>
         </div>
       </div>
+
       <div class="shrink-0">
         <div
           class="mt-3 space-y-1 border-t border-gray-200 pt-3 dark:border-gray-700"
@@ -120,14 +141,16 @@ defineExpose({ open });
             "
           >
             <span>{{ currencyName(total.currency) }}</span>
-            <span
-              >{{ total.cost }} / {{ balance(total.currency) }}
+
+            <span>
+              {{ total.cost }} / {{ balance(total.currency) }}
               {{
                 balance(total.currency) < total.cost ? t("(insufficient)") : ""
-              }}</span
-            >
+              }}
+            </span>
           </div>
         </div>
+
         <p v-if="unaffordable.length" class="mt-2 text-xs text-red-500">
           {{ t("Not enough") }}
           {{
@@ -136,6 +159,7 @@ defineExpose({ open });
               .join(", ")
           }}. {{ t("Remove items to proceed.") }}
         </p>
+
         <div class="mt-5 flex gap-2">
           <button
             class="w-full rounded border-2 border-red-400 bg-red-500 p-2 font-semibold text-white hover:bg-red-600"
@@ -144,6 +168,7 @@ defineExpose({ open });
           >
             {{ t("Cancel") }}
           </button>
+
           <button
             class="w-full rounded border-2 border-green-500 bg-green-600 p-2 font-semibold text-white hover:bg-green-700"
             type="button"

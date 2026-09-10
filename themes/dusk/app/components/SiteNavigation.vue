@@ -31,6 +31,7 @@ const {
       >
         <img :src="logo" :alt="hotel" @error="logoFailed = true" />
       </NuxtLink>
+
       <button
         class="absolute right-5 top-5 border-0 bg-transparent p-0 text-white lg:hidden [&_svg]:size-6"
         :aria-label="t('Main navigation')"
@@ -52,6 +53,7 @@ const {
           />
         </svg>
       </button>
+
       <div
         id="main-navigation"
         class="w-full flex-col items-start gap-3 p-4 text-white lg:flex lg:w-auto lg:flex-row lg:items-center lg:gap-14 lg:p-0"
@@ -70,6 +72,7 @@ const {
             />
             {{ t(item.label) }}
           </NuxtLink>
+
           <div
             v-else
             class="nav-menu group/menu relative z-5"
@@ -105,6 +108,7 @@ const {
                 />
               </svg>
             </button>
+
             <Transition
               enter-active-class="transition duration-150 ease-out"
               leave-active-class="transition duration-75 ease-out"
@@ -124,6 +128,7 @@ const {
                   >
                     {{ t(child.label) }}
                   </NuxtLink>
+
                   <button
                     v-else
                     class="block w-full rounded-none border-0 bg-transparent px-2 py-1 text-left text-sm leading-5 text-white hover:bg-[#8770b2]"

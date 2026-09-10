@@ -9,20 +9,28 @@ import ShopPackage from "~/components/shop/ShopPackage.vue";
 import ShopTerms from "~/components/shop/ShopTerms.vue";
 
 const { t } = useLocale();
+
 const { theme } = useAppConfig();
+
 const isAtom = theme.name === "atom";
+
 const { api, safeUrl } = useApi();
+
 const { busy, error, fields, run } = usePage();
 
 const route = useRoute();
+
 const catalog = ref<Data<"Shop">>({ categories: [], packages: [] });
+
 const purchaseDialog = ref<InstanceType<typeof PurchaseDialog>>();
 
 async function load() {
   const category = route.params.category;
+
   const query = category
     ? `?category=${encodeURIComponent(String(category))}`
     : "";
+
   catalog.value = (await api<Data<"Shop">>(`/shop${query}`)).data;
 }
 
@@ -31,7 +39,9 @@ onMounted(() => run(load));
 
 <template>
   <ShopTerms />
+
   <AppNotice :error="error" :fields="fields" />
+
   <div
     class="grid grid-cols-1 items-start gap-4"
     :class="
@@ -54,6 +64,7 @@ onMounted(() => run(load));
       <h2 v-if="!isAtom" class="mb-3 rounded bg-[var(--panel)] p-3">
         {{ t("Categories") }}
       </h2>
+
       <nav
         class="grid gap-2 border-0 bg-transparent p-0"
         :aria-label="t('Store categories')"
@@ -74,6 +85,7 @@ onMounted(() => run(load));
           />
           {{ t("All") }}
         </NuxtLink>
+
         <NuxtLink
           class="flex items-center transition duration-150"
           :class="
@@ -95,15 +107,18 @@ onMounted(() => run(load));
         </NuxtLink>
       </nav>
     </component>
+
     <ShopFinance
       class="min-w-0 md:col-start-3 md:row-start-1"
       :class="isAtom ? 'max-md:row-start-2' : 'max-md:order-1'"
     />
+
     <div
       class="grid min-w-0 content-start gap-4 md:col-start-2 md:row-start-1"
       :class="{ 'max-md:order-3': !isAtom }"
     >
       <PurchaseDialog ref="purchaseDialog" @purchased="run(load)" />
+
       <div
         class="grid grid-cols-1"
         :class="
@@ -120,6 +135,7 @@ onMounted(() => run(load));
           @purchase="purchaseDialog?.open(item, $event)"
         />
       </div>
+
       <p
         v-if="!busy && !catalog.packages?.length"
         class="rounded-lg bg-[var(--empty-bg)] p-[25px] text-center text-[var(--empty-text)]"

@@ -2,6 +2,7 @@
 import { BaseCard } from "#components";
 
 const referralInput = useTemplateRef<HTMLInputElement>("referralInput");
+
 const { t, session, busy, error, success, referralLink, claim, copyReferral } =
   useReferrals(referralInput);
 </script>
@@ -9,6 +10,7 @@ const { t, session, busy, error, success, referralLink, claim, copyReferral } =
 <template>
   <div>
     <AppNotice :error="error" :success="success" />
+
     <BaseCard
       v-if="session.user"
       :title="`${t('User Referrals')} (${session.user.referrals_total ?? 0}/${session.user.referral_threshold ?? 0})`"
@@ -27,6 +29,7 @@ const { t, session, busy, error, success, referralLink, claim, copyReferral } =
           )
         }}
         <br />
+
         <small class="text-gray-300">
           {{
             t(
@@ -34,6 +37,7 @@ const { t, session, busy, error, success, referralLink, claim, copyReferral } =
             )
           }}
         </small>
+
         <div class="mt-2 grid grid-cols-12 gap-2">
           <input
             ref="referralInput"
@@ -42,6 +46,7 @@ const { t, session, busy, error, success, referralLink, claim, copyReferral } =
             readonly
             :aria-label="t('Your invitation link')"
           />
+
           <button
             class="col-span-12 w-full rounded border-2 border-green-500 bg-green-600 p-2 font-semibold text-white transition-colors duration-150 hover:bg-green-700 md:col-span-2"
             :disabled="busy"
@@ -50,6 +55,7 @@ const { t, session, busy, error, success, referralLink, claim, copyReferral } =
             {{ t("Copy code") }}
           </button>
         </div>
+
         <button
           v-if="session.user.referrals_needed === 0"
           class="mt-2 w-full rounded border-2 border-green-500 bg-green-600 p-2 font-semibold text-white transition-colors duration-150 hover:bg-green-700"
@@ -58,6 +64,7 @@ const { t, session, busy, error, success, referralLink, claim, copyReferral } =
         >
           {{ t("Claim your referrals reward!") }}
         </button>
+
         <button
           v-else
           class="mt-2 w-full cursor-default rounded border-0 bg-[#171a23] p-2 text-white disabled:cursor-default disabled:opacity-100"

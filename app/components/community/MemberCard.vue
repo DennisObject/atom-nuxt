@@ -6,13 +6,20 @@ const props = defineProps<{
   background?: string | null;
   role?: string;
 }>();
+
 const { t } = useLocale();
+
 const { theme } = useAppConfig();
+
 const { safeUrl } = useApi();
+
 const { avatar } = useSession();
+
 const isAtom = theme.name === "atom";
+
 const backgroundImage = computed(() => {
   const image = props.background || "/assets/images/staff-bg.png";
+
   return safeUrl(
     /^https?:/.test(image) || image.startsWith("/")
       ? image
@@ -37,10 +44,12 @@ const backgroundImage = computed(() => {
     >
       {{ role || t("Member") }}
     </span>
+
     <div
       class="h-[65%] w-full"
       :style="{ background: `rgba(0,0,0,.5) url('${backgroundImage}')` }"
     />
+
     <div
       class="absolute"
       :class="
@@ -58,12 +67,14 @@ const backgroundImage = computed(() => {
         :alt="user.username"
       />
     </div>
+
     <strong
       class="block truncate text-2xl font-semibold text-white"
       :class="isAtom ? '-mt-[35px] ml-[70px]' : '-mt-[55px] ml-[90px]'"
     >
       {{ user.username }}
     </strong>
+
     <small
       class="block truncate font-semibold"
       :class="
@@ -74,6 +85,7 @@ const backgroundImage = computed(() => {
     >
       {{ user.motto || t("No motto") }}
     </small>
+
     <span
       class="absolute right-4 bottom-2.5 size-[15px] rounded-full"
       :class="

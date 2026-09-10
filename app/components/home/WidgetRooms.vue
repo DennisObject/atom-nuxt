@@ -4,7 +4,9 @@ import type { Data } from "~/utils/api";
 defineProps<{
   content: Extract<Data<"HomeWidget">, { type: "my-rooms" }>["content"];
 }>();
+
 const { t } = useLocale();
+
 const roomColors: Record<string, string> = {
   open: "bg-green-100 dark:bg-green-900",
   invisible: "bg-green-100 dark:bg-green-900",
@@ -24,13 +26,16 @@ const roomColors: Record<string, string> = {
       :class="roomColors[room.state]"
       :title="room.state"
     ></span>
+
     <div class="min-w-0">
       <strong class="block truncate text-xs">{{ room.name }}</strong>
+
       <p class="truncate text-[10px] text-gray-500">
         {{ room.description }}
       </p>
     </div>
   </div>
+
   <p v-if="!content.length" class="text-[var(--muted)]">
     {{ t("No rooms yet.") }}
   </p>

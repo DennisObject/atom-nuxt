@@ -5,7 +5,9 @@ defineProps<{
   badge?: string | null;
   color?: string | null;
 }>();
+
 const { safeUrl } = useApi();
+
 const { session } = useSession();
 </script>
 
@@ -23,11 +25,13 @@ const { session } = useSession();
         alt=""
       />
     </span>
+
     <div>
       <h2 class="text-sm font-semibold text-[var(--text-secondary)]">
         {{ name }}
         <slot />
       </h2>
+
       <p class="text-sm text-[var(--text-dim)]">{{ description }}</p>
     </div>
   </header>

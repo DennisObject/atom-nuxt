@@ -15,4 +15,6 @@ definePageMeta({
 });
 </script>
 
-<template><CommunityView /></template>
+<template>
+  <CommunityView />
+</template>

@@ -4,4 +4,6 @@ import AuthChallengeView from "~/components/auth/AuthChallengeView.vue";
 definePageMeta({ authKind: "challenge" });
 </script>
 
-<template><AuthChallengeView /></template>
+<template>
+  <AuthChallengeView />
+</template>

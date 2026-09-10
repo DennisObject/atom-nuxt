@@ -6,13 +6,19 @@ import AppCaptcha from "~/components/AppCaptcha.vue";
 import type { RecordData } from "~/utils/api";
 
 const { t } = useLocale();
+
 const { theme } = useAppConfig();
+
 const { api } = useApi();
+
 const { session, refreshUser } = useSession();
+
 const { busy, error, fields, success, run } = usePage();
 
 const props = defineProps<{ tab: "account" | "password" }>();
+
 const captcha = ref<Record<string, string>>({});
+
 const form = reactive({
   mail: session.user?.mail || "",
   motto: session.user?.motto || "",
@@ -31,10 +37,13 @@ async function save() {
         current_password: form.current_password,
         ...captcha.value,
       };
+
       if (session.user?.can_change_name) {
         body.username = form.username;
       }
+
       await api("/me/account", "PUT", body);
+
       await refreshUser();
     } else {
       await api("/me/password", "PUT", {
@@ -43,9 +52,12 @@ async function save() {
         password_confirmation: form.password_confirmation,
         ...captcha.value,
       });
+
       form.password = "";
+
       form.password_confirmation = "";
     }
+
     form.current_password = "";
   }, "Your settings have been updated.");
 }
@@ -53,6 +65,7 @@ async function save() {
 
 <template>
   <AppNotice :error="error" :fields="fields" :success="success" />
+
   <form class="flex flex-col gap-4" @submit.prevent="save">
     <template v-if="tab === 'account'">
       <SettingsField
@@ -67,6 +80,7 @@ async function save() {
         autocomplete="email"
         required
       />
+
       <SettingsField
         v-if="session.user?.can_change_name"
         v-model="form.username"
@@ -77,12 +91,14 @@ async function save() {
         autocomplete="username"
         required
       />
+
       <SettingsField
         v-model="form.motto"
         :label="t('Motto')"
         :description="t('Spice up your profile with a nice motto')"
       />
     </template>
+
     <SettingsField
       v-model="form.current_password"
       :label="t('Current password')"
@@ -97,6 +113,7 @@ async function save() {
       autocomplete="current-password"
       :required="tab === 'password'"
     />
+
     <template v-if="tab === 'password'">
       <SettingsField
         v-model="form.password"
@@ -110,6 +127,7 @@ async function save() {
         autocomplete="new-password"
         required
       />
+
       <SettingsField
         v-model="form.password_confirmation"
         :label="t('Confirm new password')"
@@ -119,6 +137,7 @@ async function save() {
         required
       />
     </template>
+
     <AppCaptcha
       v-if="
         session.bootstrap.captcha?.recaptcha_enabled ||
@@ -127,6 +146,7 @@ async function save() {
       v-model="captcha"
       :busy="busy"
     />
+
     <div class="flex justify-start md:justify-end">
       <button
         class="w-full rounded border-2 border-green-500 bg-green-600 p-2 font-semibold text-white enabled:hover:bg-green-700 lg:w-1/4"

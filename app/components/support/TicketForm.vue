@@ -5,15 +5,20 @@ import AppNotice from "~/components/AppNotice.vue";
 import type { Data } from "~/utils/api";
 
 const { t } = useLocale();
+
 const { api } = useApi();
+
 const { busy, error, fields, success, run } = usePage();
 
 const props = defineProps<{
   categories: Data<"SupportCategory">[];
   ticket?: Data<"Ticket"> | null;
 }>();
+
 const emit = defineEmits<{ saved: []; cancel: [] }>();
+
 const router = useRouter();
+
 const form = reactive({
   category_id: String(
     props.ticket?.category_id || props.categories[0]?.id || "",
@@ -25,11 +30,13 @@ const form = reactive({
 async function save() {
   await run(async () => {
     const id = props.ticket?.id;
+
     const result = await api<Data<"Ticket">>(
       `/support/tickets${id ? `/${id}` : ""}`,
       id ? "PUT" : "POST",
       { ...form, category_id: Number(form.category_id) },
     );
+
     if (id) {
       emit("saved");
     } else {
@@ -41,6 +48,7 @@ async function save() {
 
 <template>
   <AppNotice :error="error" :fields="fields" :success="success" />
+
   <BaseCard
     :title="t(ticket ? 'Edit your ticket' : 'Create a ticket')"
     :subtitle="t('Please describe your request below')"
@@ -61,6 +69,7 @@ async function save() {
           {{ category.name }}
         </option>
       </select>
+
       <label>
         {{ t("Title") }}
         <input
@@ -72,7 +81,9 @@ async function save() {
           :placeholder="t('Enter a title for your ticket')"
         />
       </label>
+
       <TicketEditor v-model="form.content" :disabled="busy" />
+
       <div class="flex gap-4">
         <button
           class="w-full rounded border-2 border-green-500 bg-green-600 p-2 font-semibold text-white hover:bg-green-700"
@@ -80,6 +91,7 @@ async function save() {
         >
           {{ t(ticket ? "Update ticket" : "Submit ticket") }}
         </button>
+
         <button
           v-if="ticket"
           class="border-[var(--border)] bg-[var(--surface-muted)]"

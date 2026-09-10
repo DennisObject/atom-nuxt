@@ -5,7 +5,9 @@ import { spawn } from "node:child_process";
 import { once } from "node:events";
 
 let backend, frontend, origin;
+
 const requests = [];
+
 const user = (name) => ({
   id: name === "Alice" ? 1 : 2,
   username: name,
@@ -32,11 +34,15 @@ before(async () => {
       host: req.headers.host,
       accept: req.headers.accept,
     });
+
     res.setHeader("content-type", "application/json");
+
     const name = req.headers.cookie?.match(/member=(Alice|Bob)/)?.[1];
+
     const restriction = req.headers.cookie?.match(
       /restriction=(account_banned|maintenance|two_factor_required)/,
     )?.[1];
+
     const viewer = name
       ? {
           ...user(name),
@@ -59,6 +65,7 @@ before(async () => {
           can_access_housekeeping: true,
         }
       : null;
+
     if (req.url === "/api/v1/bootstrap") {
       res.end(
         JSON.stringify({
@@ -91,6 +98,7 @@ before(async () => {
       );
     } else if (req.url === "/api/v1/me") {
       res.statusCode = !viewer ? 401 : restriction ? 403 : 200;
+
       res.end(
         JSON.stringify(
           !viewer
@@ -258,6 +266,7 @@ before(async () => {
               )?.[1] || "pending"
             : null,
       };
+
       res.end(
         JSON.stringify({
           data: req.url === "/api/v1/applications/1" ? position : [position],
@@ -265,28 +274,40 @@ before(async () => {
       );
     } else if (req.url.startsWith("/paypal/successful-transaction")) {
       res.statusCode = 302;
+
       res.setHeader("location", "/paypal/success?order=example");
+
       res.end();
     } else if (req.url === "/login" && req.method === "POST") {
       for await (const _ of req) {
         /* Drain request body before responding. */
       }
+
       res.setHeader("set-cookie", [
         "session=example; HttpOnly; Path=/; SameSite=Lax",
         "XSRF-TOKEN=example; Path=/; SameSite=Lax",
       ]);
+
       res.statusCode = 204;
+
       res.end();
     } else {
       res.end(JSON.stringify({ data: [] }));
     }
   }).listen(0, "127.0.0.1");
+
   await once(backend, "listening");
+
   const reservation = createServer().listen(0, "127.0.0.1");
+
   await once(reservation, "listening");
+
   const port = reservation.address().port;
+
   await new Promise((resolve) => reservation.close(resolve));
+
   origin = `http://127.0.0.1:${port}`;
+
   frontend = spawn(process.execPath, [".output/server/index.mjs"], {
     env: {
       ...process.env,
@@ -296,28 +317,39 @@ before(async () => {
     },
     stdio: ["ignore", "pipe", "pipe"],
   });
+
   let logs = "";
+
   frontend.stdout.on("data", (data) => {
     logs += data;
   });
+
   frontend.stderr.on("data", (data) => {
     logs += data;
   });
+
   for (let i = 0; i < 100; i++) {
     try {
       await fetch(`${origin}/assets/images/logo.png`);
+
       return;
     } catch {}
+
     if (frontend.exitCode !== null) break;
+
     await new Promise((resolve) => setTimeout(resolve, 100));
   }
+
   throw new Error(`Nuxt failed to start: ${logs}`);
 });
+
 after(async () => {
   if (frontend && frontend.exitCode === null) {
     frontend.kill();
+
     await once(frontend, "exit");
   }
+
   if (backend) await new Promise((resolve) => backend.close(resolve));
 });
 
@@ -327,12 +359,18 @@ test("public news renders in HTML and concurrent sessions remain isolated", asyn
       const response = await fetch(`${origin}/community/articles`, {
         headers: name ? { cookie: `member=${name}` } : {},
       });
+
       assert.equal(response.status, 200);
+
       assert.match(response.headers.get("cache-control"), /private.*no-store/);
+
       const html = await response.text();
+
       assert.match(html, /News rendered on the server/);
+
       if (name) {
         assert.ok(html.includes(name));
+
         assert.ok(
           !html.includes(
             name === "Alice" ? "Bob@example.test" : "Alice@example.test",
@@ -344,19 +382,27 @@ test("public news renders in HTML and concurrent sessions remain isolated", asyn
             !html.includes("Bob@example.test"),
         );
       }
+
       return html;
     }),
   );
+
   assert.equal(responses.length, 5);
 });
 
 test("guest account visits redirect to login while login GET stays a frontend page", async () => {
   const response = await fetch(`${origin}/user/me`, { redirect: "manual" });
+
   assert.equal(response.status, 302);
+
   assert.match(response.headers.get("location"), /^\/login\?next=/);
+
   const login = await fetch(`${origin}/login`);
+
   assert.equal(login.status, 200);
+
   assert.match(login.headers.get("content-type"), /text\/html/);
+
   assert.ok(
     !requests.some((req) => req.path === "/login" && req.method === "GET"),
   );
@@ -372,18 +418,23 @@ test("authentication proxy preserves method, cookies and backend Set-Cookie head
     },
     body: JSON.stringify({ username: "Alice", password: "test-only" }),
   });
+
   assert.equal(response.status, 204);
+
   assert.equal(response.headers.getSetCookie().length, 2);
+
   assert.ok(
     requests.some(
       (req) => req.path === "/login" && req.accept === "application/json",
     ),
   );
+
   assert.ok(
     requests.some(
       (req) => req.path === "/login" && req.host === new URL(origin).host,
     ),
   );
+
   assert.ok(
     requests.some(
       (req) =>
@@ -399,11 +450,14 @@ test("payment callbacks reach Laravel and preserve its redirect", async () => {
     `${origin}/paypal/successful-transaction?token=example`,
     { redirect: "manual" },
   );
+
   assert.equal(response.status, 302);
+
   assert.equal(
     response.headers.get("location"),
     "/paypal/success?order=example",
   );
+
   assert.ok(
     requests.some(
       (req) => req.path === "/paypal/successful-transaction?token=example",
@@ -418,22 +472,29 @@ test("staff enrollment never loops against ban or maintenance restrictions", asy
     ["two_factor_required", "/user/settings/two-factor"],
   ]) {
     const headers = { cookie: `member=Alice; restriction=${restriction}` };
+
     const response = await fetch(`${origin}/user/me`, {
       headers,
       redirect: "manual",
     });
+
     assert.equal(response.status, 302);
+
     assert.equal(response.headers.get("location"), destination);
+
     const final = await fetch(`${origin}${destination}`, {
       headers,
       redirect: "manual",
     });
+
     assert.equal(final.status, 200);
+
     if (restriction === "account_banned") {
       const support = await fetch(`${origin}/help-center`, {
         headers,
         redirect: "manual",
       });
+
       assert.equal(support.status, 200);
     }
   }
@@ -441,21 +502,33 @@ test("staff enrollment never loops against ban or maintenance restrictions", asy
 
 test("maintenance sends guests to the notice while keeping staff login reachable", async () => {
   const headers = { cookie: "restriction=maintenance" };
+
   const response = await fetch(`${origin}/`, { headers, redirect: "manual" });
+
   assert.equal(response.status, 302);
+
   assert.equal(response.headers.get("location"), "/maintenance");
+
   const notice = await fetch(`${origin}/maintenance`, { headers });
+
   assert.equal(notice.status, 200);
+
   const html = await notice.text();
+
   assert.match(html, /Scheduled hotel upgrade/);
+
   assert.match(html, /Update the hotel/);
+
   assert.match(html, /Staff login/);
+
   const login = await fetch(`${origin}/login`, { headers, redirect: "manual" });
+
   assert.equal(login.status, 200);
 });
 
 test("navigation follows authentication, emulator support and individual permission grants", async () => {
   const atom = process.env.ATOM_THEME === "atom";
+
   for (const cookie of [
     "",
     "member=Alice",
@@ -467,10 +540,15 @@ test("navigation follows authentication, emulator support and individual permiss
     const response = await fetch(`${origin}/community/articles`, {
       headers: { cookie },
     });
+
     assert.equal(response.status, 200);
+
     const html = await response.text();
+
     const header = html.slice(0, html.indexOf("<main"));
+
     const member = cookie.includes("member=");
+
     for (const path of [
       "/community/staff",
       "/community/teams",
@@ -490,6 +568,7 @@ test("navigation follows authentication, emulator support and individual permiss
         `${cookie}: ${path}`,
       );
     }
+
     for (const path of ["/community/photos", "/values"]) {
       assert.equal(
         header.includes(`href="${path}"`),
@@ -497,20 +576,26 @@ test("navigation follows authentication, emulator support and individual permiss
         `${cookie}: ${path}`,
       );
     }
+
     if (!atom) assert.equal(header.includes('href="/login"'), !member);
+
     assert.equal(header.includes('href="/register"'), !member);
+
     assert.equal(
       header.includes('href="/logo-generator"'),
       cookie.includes("logo=1"),
     );
+
     assert.equal(
       header.includes(`href="${origin}/housekeeping"`),
       cookie.includes("housekeeping=1"),
     );
+
     assert.equal(
       header.includes('href="/community/articles"'),
       !atom || member,
     );
+
     assert.equal(
       header.includes('href="/help-center/rules"'),
       !atom || !member,
@@ -523,23 +608,36 @@ test("article reactions show existing counts and reserve unused reactions for th
     const response = await fetch(`${origin}/community/article/welcome`, {
       headers: member ? { cookie: "member=Alice" } : {},
     });
+
     assert.equal(response.status, 200);
+
     const html = await response.text();
+
     const strip = html.match(
       /<div[^>]*aria-label="Reactions"[\s\S]*?<\/div>/,
     )[0];
+
     assert.match(strip, /alt="heart"/);
+
     assert.doesNotMatch(strip, /alt="like"|alt="wow"/);
+
     assert.equal(/<button[^>]*>\s*Add\s*<\/button>/.test(strip), member);
+
     const modal = html.match(
       /<dialog[^>]*aria-labelledby="reaction-dialog-title"[\s\S]*?<\/dialog>/,
     )?.[0];
+
     assert.equal(!!modal, member);
+
     if (modal) {
       assert.match(modal, /Insert Reaction/);
+
       assert.match(modal, /alt="like"/);
+
       assert.match(modal, /alt="wow"/);
+
       assert.doesNotMatch(modal, /alt="heart"/);
+
       assert.doesNotMatch(modal, /<dialog[^>]*\bopen(?:\s|=|>)/);
     }
   }
@@ -547,19 +645,27 @@ test("article reactions show existing counts and reserve unused reactions for th
 
 test("footer renders the original credits in a closed dialog for guests", async () => {
   const response = await fetch(`${origin}/community/articles`);
+
   const html = await response.text();
+
   assert.match(html, /<footer[^>]*class="[^"]*site-footer/);
+
   const credits = html.match(
     /<dialog[^>]*class="[^"]*credits-dialog[^"]*"[\s\S]*?<\/dialog>/,
   )[0];
+
   assert.match(credits, /Kasja/);
+
   assert.match(credits, /Translations/);
+
   assert.match(credits, /Object/);
+
   assert.doesNotMatch(credits, /<dialog[^>]*\bopen(?:\s|=|>)/);
 });
 
 test("the selected theme renders on the server and color preferences stay request-scoped", async () => {
   const theme = process.env.ATOM_THEME || "dusk";
+
   for (const [preference, expectedDark] of [
     ["", theme === "dusk"],
     ["dark", true],
@@ -572,11 +678,17 @@ test("the selected theme renders on the server and color preferences stay reques
       }),
       fetch(`${origin}/community/articles`),
     ]);
+
     const html = await response.text();
+
     const documentTag = html.match(/<html[^>]*>/)[0];
+
     assert.match(documentTag, new RegExp(`data-theme="${theme}"`));
+
     assert.equal(/class="dark"/.test(documentTag), expectedDark);
+
     const otherDocument = (await other.text()).match(/<html[^>]*>/)[0];
+
     assert.equal(/class="dark"/.test(otherDocument), theme === "dusk");
   }
 });
@@ -590,8 +702,11 @@ test("both theme presentations retain the shared authentication form modes", asy
     ["/two-factor-challenge", ["code", "recovery_code"]],
   ]) {
     const response = await fetch(`${origin}${path}`);
+
     assert.equal(response.status, 200);
+
     const html = await response.text();
+
     for (const field of fields) {
       assert.match(
         html,
@@ -599,32 +714,44 @@ test("both theme presentations retain the shared authentication form modes", asy
         `${path}: ${field}`,
       );
     }
+
     if (path === "/register") {
       assert.match(html, /I accept the .* terms &amp; rules/);
+
       if (process.env.ATOM_THEME === "atom") {
         assert.match(html, /Your username is what you will have to use/);
+
         assert.match(html, /Your password must contain atleast 8 characters/);
+
         assert.match(html, /Create account/);
       } else {
         assert.match(html, /Enter your e-mail/);
+
         assert.match(html, /Back to login/);
       }
     }
+
     if (path === "/two-factor-challenge")
       assert.match(
         html,
         /Enter one of your recovery codes if you cannot access your authenticator app/,
       );
   }
+
   const beta = await fetch(`${origin}/register`, {
     headers: { cookie: "registration=beta" },
   });
+
   assert.match(await beta.text(), /<input[^>]*name="beta_code"[^>]*required/);
+
   const closed = await fetch(`${origin}/register`, {
     headers: { cookie: "registration=closed" },
   });
+
   const html = await closed.text();
+
   assert.match(html, /Registration is currently closed/);
+
   assert.match(
     html,
     /<button[^>]*disabled[^>]*>\s*(?:Register|Create account)\s*<\/button>/,
@@ -644,18 +771,27 @@ test("team application pages show the current applicant status without offering 
       const response = await fetch(`${origin}${path}`, {
         headers: { cookie: `member=Alice; application=${status}` },
       });
+
       assert.equal(response.status, 200);
+
       const html = await response.text();
+
       assert.ok(html.includes(label));
+
       assert.ok(!html.includes("Apply for Events Team"));
+
       assert.ok(!html.includes("<textarea"));
     }
   }
+
   const fresh = await fetch(`${origin}/community/team-applications`, {
     headers: { cookie: "member=Bob" },
   });
+
   const html = await fresh.text();
+
   assert.ok(html.includes("Apply for Events Team"));
+
   assert.ok(!html.includes("Your application is pending"));
 });
 
@@ -670,7 +806,9 @@ test("extracted community and home components preserve their server-rendered con
     const response = await fetch(`${origin}${path}`, {
       headers: { cookie: "member=Alice" },
     });
+
     assert.equal(response.status, 200, path);
+
     assert.ok(
       (await response.text()).includes(expected),
       `${path}: ${expected}`,
@@ -680,10 +818,13 @@ test("extracted community and home components preserve their server-rendered con
 
 test("production CSS includes responsive utilities from the theme layers", async () => {
   const html = await (await fetch(`${origin}/login`)).text();
+
   const stylesheets = [
     ...html.matchAll(/<link\b[^>]*href="([^"]+\.css)"[^>]*>/g),
   ].map((match) => match[1]);
+
   assert.ok(stylesheets.length, "the rendered page links its compiled CSS");
+
   const styles = (
     await Promise.all(
       stylesheets.map(async (path) =>
@@ -691,10 +832,12 @@ test("production CSS includes responsive utilities from the theme layers", async
       ),
     )
   ).join("\n");
+
   assert.ok(
     styles.includes(".lg\\:hidden"),
     "desktop navigation visibility utilities are compiled from the theme",
   );
+
   assert.ok(
     styles.includes(
       process.env.ATOM_THEME === "atom"
@@ -711,10 +854,13 @@ test("avatar poses override configured defaults without duplicate query paramete
       headers: { cookie: "member=Alice; avatar=1" },
     })
   ).text();
+
   const avatars = [
     ...html.matchAll(/https:\/\/avatar\.example\.test\/avatar[^"'<>\\\s)]+/g),
   ].map(([value]) => new URL(value.replaceAll("&amp;", "&")));
+
   assert.ok(avatars.length);
+
   for (const avatar of avatars) {
     for (const key of ["direction", "head_direction", "size"]) {
       assert.equal(
@@ -724,6 +870,7 @@ test("avatar poses override configured defaults without duplicate query paramete
       );
     }
   }
+
   assert.ok(
     avatars.some(
       (url) =>
@@ -731,6 +878,7 @@ test("avatar poses override configured defaults without duplicate query paramete
         url.searchParams.get("headonly") === "1",
     ),
   );
+
   assert.ok(
     avatars.some(
       (url) =>
@@ -738,6 +886,7 @@ test("avatar poses override configured defaults without duplicate query paramete
         url.searchParams.get("action") === "wav",
     ),
   );
+
   if (process.env.ATOM_THEME === "atom") {
     assert.ok(
       avatars.some(

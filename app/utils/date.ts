@@ -5,6 +5,7 @@ export function displayDate(
   if (!value) {
     return "";
   }
+
   return new Intl.DateTimeFormat("en-GB", {
     dateStyle: "short",
     ...(time ? { timeStyle: "short" as const } : {}),
@@ -22,6 +23,7 @@ export function relativeDate(
   }
 
   const seconds = (new Date(value).getTime() - now) / 1000;
+
   if (!Number.isFinite(seconds)) {
     return "";
   }
@@ -35,9 +37,11 @@ export function relativeDate(
     ["minute", 60],
     ["second", 1],
   ];
+
   const [unit, divisor] =
     units.find(([, size]) => Math.abs(seconds) >= size) ||
     units[units.length - 1]!;
+
   return new Intl.RelativeTimeFormat(locale.replace("_", "-"), {
     numeric: "always",
   }).format(Math.trunc(seconds / divisor), unit);

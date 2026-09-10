@@ -3,6 +3,7 @@ import type { Data } from "~/utils/api";
 import { ArticleTile } from "#components";
 
 const { t } = useLocale();
+
 const { api } = useApi();
 
 const { data: news } = await useAsyncData("auth-news", async () => {
@@ -29,6 +30,7 @@ const { data: news } = await useAsyncData("auth-news", async () => {
         :key="article.id"
         :article="article"
       />
+
       <EmptyArticle v-if="!news?.length" />
     </div>
   </GuestCard>

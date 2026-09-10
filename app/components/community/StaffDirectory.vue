@@ -4,9 +4,13 @@ import GroupHeading from "./GroupHeading.vue";
 import MemberCard from "./MemberCard.vue";
 
 const props = defineProps<{ section: string }>();
+
 const { t } = useLocale();
+
 const { api } = useApi();
+
 const { session } = useSession();
+
 const {
   data: groups,
   error,
@@ -16,7 +20,9 @@ const {
   async () => (await api<Data<"StaffGroup">[]>(`/${props.section}`)).data,
   { default: () => [] },
 );
+
 const busy = computed(() => status.value === "pending");
+
 const applicationCopy = computed(() =>
   t(
     "You can occasionally also look at the :startTag Staff application page :endTag which will show you all of our current open positions.",
@@ -27,6 +33,7 @@ const applicationCopy = computed(() =>
 
 <template>
   <AppNotice :error="error?.message" />
+
   <div class="grid grid-cols-12 items-start gap-4">
     <div class="col-span-12 grid content-start gap-4 lg:col-span-9 lg:w-[96%]">
       <section
@@ -40,6 +47,7 @@ const applicationCopy = computed(() =>
           :badge="group.badge"
           :color="group.color"
         />
+
         <div class="grid grid-cols-1 gap-4 px-3 sm:grid-cols-2 lg:grid-cols-3">
           <MemberCard
             v-for="user in group.users"
@@ -48,6 +56,7 @@ const applicationCopy = computed(() =>
             :background="group.background"
             :role="group.name"
           />
+
           <p
             v-if="!group.users.length"
             class="col-span-full text-center text-[var(--text-dim)]"
@@ -56,6 +65,7 @@ const applicationCopy = computed(() =>
           </p>
         </div>
       </section>
+
       <p
         v-if="!groups.length && !busy"
         class="rounded-lg bg-[var(--empty-bg)] p-[25px] text-center text-[var(--empty-text)]"
@@ -63,6 +73,7 @@ const applicationCopy = computed(() =>
         {{ t("There are no members in this group yet.") }}
       </p>
     </div>
+
     <aside
       class="col-span-12 grid content-start gap-4 text-sm lg:col-span-3 lg:w-[110%] lg:-ml-8"
     >
@@ -82,6 +93,7 @@ const applicationCopy = computed(() =>
               )
             }}
           </p>
+
           <p>
             {{
               t(
@@ -92,6 +104,7 @@ const applicationCopy = computed(() =>
           </p>
         </div>
       </BaseCard>
+
       <BaseCard
         :title="t('Apply for staff')"
         :subtitle="t('How to join the staff team')"
@@ -106,6 +119,7 @@ const applicationCopy = computed(() =>
               )
             }}
           </p>
+
           <p>
             {{ applicationCopy[0] }}
             <NuxtLink

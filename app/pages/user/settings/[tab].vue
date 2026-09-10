@@ -12,4 +12,6 @@ definePageMeta({
 });
 </script>
 
-<template><SettingsView /></template>
+<template>
+  <SettingsView />
+</template>

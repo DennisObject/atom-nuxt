@@ -1,9 +1,14 @@
 <script setup lang="ts">
 const route = useRoute();
+
 const { session } = useSession();
+
 const { locale } = useLocale();
+
 const { isDark } = useThemeMode();
+
 const { theme } = useAppConfig();
+
 useHead(() => ({
   htmlAttrs: {
     lang: locale.value,
@@ -11,17 +16,20 @@ useHead(() => ({
     "data-theme": theme.name,
   },
 }));
+
 watch(
   () => [session.user, session.restriction],
   () => {
     if (!session.ready) {
       return;
     }
+
     const destination = accessDestination(
       route.path,
       !!route.meta.auth,
       session,
     );
+
     if (destination) {
       void navigateTo(
         destination === "/login"
@@ -31,6 +39,7 @@ watch(
     }
   },
 );
+
 watch(
   () => route.fullPath,
   () => {
@@ -44,5 +53,7 @@ watch(
 </script>
 
 <template>
-  <NuxtLayout><NuxtPage :page-key="(route) => route.fullPath" /></NuxtLayout>
+  <NuxtLayout>
+    <NuxtPage :page-key="(route) => route.fullPath" />
+  </NuxtLayout>
 </template>

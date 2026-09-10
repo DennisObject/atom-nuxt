@@ -1,12 +1,18 @@
 <script setup lang="ts">
 import AuthField from "~/components/auth/AuthField.vue";
+
 const form = defineModel<ReturnType<typeof useAuthPage>["form"]>({
   required: true,
 });
+
 const { t } = useLocale();
+
 const { session } = useSession();
+
 const { theme } = useAppConfig();
+
 const atom = theme.name === "atom";
+
 const hotel = computed(() => session.bootstrap.hotel_name || "Atom Hotel");
 </script>
 
@@ -27,6 +33,7 @@ const hotel = computed(() => session.bootstrap.hotel_name || "Atom Hotel");
     "
     required
   />
+
   <div :class="{ 'mt-4': atom }">
     <AuthField
       v-model="form.mail"
@@ -45,6 +52,7 @@ const hotel = computed(() => session.bootstrap.hotel_name || "Atom Hotel");
       required
     />
   </div>
+
   <div
     :class="
       atom
@@ -70,7 +78,9 @@ const hotel = computed(() => session.bootstrap.hotel_name || "Atom Hotel");
       "
       required
     />
+
     <hr v-if="atom" class="dark:border-gray-700" />
+
     <AuthField
       v-model="form.password_confirmation"
       name="password_confirmation"
@@ -83,6 +93,7 @@ const hotel = computed(() => session.bootstrap.hotel_name || "Atom Hotel");
       required
     />
   </div>
+
   <div
     v-if="session.bootstrap.registration?.requires_beta_code"
     :class="{ 'mt-4': atom }"
@@ -98,6 +109,7 @@ const hotel = computed(() => session.bootstrap.hotel_name || "Atom Hotel");
       required
     />
   </div>
+
   <div
     :class="
       atom
@@ -116,6 +128,7 @@ const hotel = computed(() => session.bootstrap.hotel_name || "Atom Hotel");
         class="mt-1 size-4 shrink-0 rounded focus:ring-0"
         required
       />
+
       <NuxtLink to="/help-center/rules" target="_blank" class="mt-1">
         {{ t("I accept the :hotel terms & rules.", { hotel }) }}
       </NuxtLink>

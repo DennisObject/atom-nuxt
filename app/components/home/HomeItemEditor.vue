@@ -2,10 +2,12 @@
 import type { Data } from "~/utils/api";
 
 defineProps<{ item: Data<"HomeItem"> }>();
+
 const emit = defineEmits<{
   update: [patch: Partial<Data<"HomeItem">>];
   remove: [];
 }>();
+
 const { t } = useLocale();
 
 function updateNumber(key: "x" | "y" | "z", event: Event) {
@@ -28,6 +30,7 @@ function updateNumber(key: "x" | "y" | "z", event: Event) {
           @input="updateNumber('x', $event)"
         />
       </label>
+
       <label>
         {{ t("Y position") }}
         <input
@@ -38,6 +41,7 @@ function updateNumber(key: "x" | "y" | "z", event: Event) {
           @input="updateNumber('y', $event)"
         />
       </label>
+
       <label>
         {{ t("Layer") }}
         <input
@@ -48,6 +52,7 @@ function updateNumber(key: "x" | "y" | "z", event: Event) {
           @input="updateNumber('z', $event)"
         />
       </label>
+
       <label class="flex items-center text-[13px]">
         <input
           :checked="item.is_reversed"
@@ -61,6 +66,7 @@ function updateNumber(key: "x" | "y" | "z", event: Event) {
         {{ t("Flip image") }}
       </label>
     </div>
+
     <label v-if="item.definition?.type === 'n'">
       {{ t("Note text") }}
       <textarea
@@ -73,6 +79,7 @@ function updateNumber(key: "x" | "y" | "z", event: Event) {
         "
       ></textarea>
     </label>
+
     <div>
       <button
         class="px-[11px] py-[5px] text-[13px] border-[#d26475] bg-[#9e3b4a]"

@@ -1,7 +1,10 @@
 <script setup lang="ts">
 import OnlineFriend from "~/components/OnlineFriend.vue";
+
 const { t } = useLocale();
+
 const { theme } = useAppConfig();
+
 const { session } = useSession();
 </script>
 
@@ -25,13 +28,16 @@ const { session } = useSession();
       <div
         class="invisible -right-1 size-6 rotate-45 bg-[#e9b124] lg:visible lg:absolute"
       ></div>
+
       <img
         class="mr-2 mb-1 inline-flex max-h-6 max-w-6"
         src="/assets/images/icons/online-friends.png"
         alt=""
       />
+
       <span class="relative text-white">{{ t("Online Friends") }}</span>
     </div>
+
     <div
       class="relative flex flex-wrap items-center justify-center gap-2 pl-2 sm:justify-start"
     >

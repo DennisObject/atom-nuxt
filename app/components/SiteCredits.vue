@@ -1,8 +1,12 @@
 <script setup lang="ts">
 const { t } = useLocale();
+
 const { theme } = useAppConfig();
+
 defineProps<{ hotel: string }>();
+
 const creditsDialog = ref<HTMLDialogElement>();
+
 const contributors = [
   ["Kasja", "Design, ideas & GFX"],
   [
@@ -23,6 +27,7 @@ const contributors = [
   ["Danbo", "Bugfixes"],
   ["Diddy/Josh", "Code readability improvements"],
 ];
+
 const translators = [
   ["German", "Damue & EntenKoeniq"],
   ["Turkish", "Talion"],
@@ -36,6 +41,7 @@ const translators = [
   ["Portuguese (BR)", "Nicollas"],
 ];
 </script>
+
 <template>
   <footer
     class="site-footer h-14 min-h-14 p-0"
@@ -66,6 +72,7 @@ const translators = [
       }}
     </button>
   </footer>
+
   <dialog
     ref="creditsDialog"
     class="credits-dialog m-auto mb-4 max-h-[85vh] w-[calc(100%-32px)] max-w-xl rounded-lg border-0 bg-[var(--panel)] p-0 text-[var(--text)] open:flex open:flex-col open:overflow-hidden backdrop:bg-gray-950/70 sm:mb-auto"
@@ -76,6 +83,7 @@ const translators = [
       class="flex items-center justify-between gap-4 bg-[var(--header)] px-4 py-3"
     >
       <h3 class="text-base font-semibold">{{ hotel }}</h3>
+
       <button
         class="border-0 bg-transparent px-1.5 py-0 text-2xl leading-7 text-[var(--text-subtle)]"
         :aria-label="t('Close')"
@@ -84,6 +92,7 @@ const translators = [
         ×
       </button>
     </header>
+
     <div
       class="grid gap-6 overflow-y-auto p-4 text-sm leading-5 text-[var(--text-secondary)] [&_p]:leading-5 [&_a]:font-semibold [&_a]:text-blue-500 [&_h4]:mb-2 [&_h4]:text-xs [&_h4]:font-semibold [&_h4]:tracking-[0.05em] [&_h4]:text-[var(--text-dim)] [&_h4]:uppercase [&_li]:flex [&_li]:items-baseline [&_li]:justify-between [&_li]:gap-4 [&_strong]:shrink-0 [&_strong]:font-semibold [&_strong]:text-[var(--text)] [&_li_span]:text-right [&_li_span]:text-[var(--text-subtle)]"
     >
@@ -96,6 +105,7 @@ const translators = [
         }}
         ❤️
       </p>
+
       <p>
         {{ t(":hotel is driven by Atom CMS made by:", { hotel }) }}
         <a
@@ -106,22 +116,28 @@ const translators = [
           Object
         </a>
       </p>
+
       <section>
         <h4>{{ t("Credits:") }}</h4>
+
         <ul
           class="[&_li]:border-b [&_li]:border-[var(--surface-muted)] [&_li]:py-2 [&_li:last-child]:border-0 max-sm:[&_li]:flex-col max-sm:[&_li]:items-start max-sm:[&_li]:gap-0.5 max-sm:[&_li_span]:text-left"
         >
           <li v-for="[name, contribution] in contributors" :key="name">
             <strong>{{ name }}</strong>
+
             <span>{{ t(contribution || "") }}</span>
           </li>
         </ul>
       </section>
+
       <section>
         <h4>{{ t("Translations") }}</h4>
+
         <ul class="grid grid-cols-1 gap-x-6 gap-y-1.5 sm:grid-cols-2">
           <li v-for="[language, names] in translators" :key="language">
             <strong>{{ t(language || "") }}</strong>
+
             <span>{{ names }}</span>
           </li>
         </ul>

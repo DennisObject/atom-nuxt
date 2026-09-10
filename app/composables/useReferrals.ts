@@ -1,10 +1,16 @@
 import type { Ref } from "vue";
+
 export function useReferrals(referralInput: Ref<HTMLInputElement | null>) {
   const { t } = useLocale();
+
   const { api } = useApi();
+
   const { session, refreshUser } = useSession();
+
   const { busy, error, success, run } = usePage();
+
   const frontendOrigin = useRequestURL().origin;
+
   const referralLink = computed(
     () => `${frontendOrigin}/register/${session.user?.referral_code || ""}`,
   );
@@ -12,6 +18,7 @@ export function useReferrals(referralInput: Ref<HTMLInputElement | null>) {
   async function claim() {
     await run(async () => {
       await api("/me/referral-claim", "POST");
+
       await refreshUser();
     }, "Referral reward claimed.");
   }

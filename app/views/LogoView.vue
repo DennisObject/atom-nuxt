@@ -7,14 +7,19 @@ import { BaseCard } from "#components";
 import AppNotice from "~/components/AppNotice.vue";
 
 const { t } = useLocale();
+
 const { theme } = useAppConfig();
+
 const { api } = useApi();
 
 const { session } = useSession();
 
 const { busy, error, success, run } = usePage();
+
 const font = ref("atom");
+
 const text = ref("");
+
 const fonts = [
   "atom",
   "sunrise",
@@ -24,6 +29,7 @@ const fonts = [
   "habton_capitalized",
   "habbo_modern",
 ];
+
 const letters = computed(() =>
   text.value
     .toLowerCase()
@@ -35,6 +41,7 @@ async function generate(use: boolean) {
   await run(
     async () => {
       const canvas = await renderLogo(letters.value, font.value);
+
       if (use) {
         const blob = await new Promise<Blob>((resolve, reject) =>
           canvas.toBlob((value) =>
@@ -43,14 +50,21 @@ async function generate(use: boolean) {
               : reject(new Error("Could not generate this logo.")),
           ),
         );
+
         const data = new FormData();
+
         data.append("logo", blob, "logo.png");
+
         await api("/logo", "POST", data);
+
         session.bootstrap = (await api<Data<"Bootstrap">>("/bootstrap")).data;
       } else {
         const link = document.createElement("a");
+
         link.href = canvas.toDataURL("image/png");
+
         link.download = "hotel-logo.png";
+
         link.click();
       }
     },
@@ -58,6 +72,7 @@ async function generate(use: boolean) {
   );
 }
 </script>
+
 <template>
   <BaseCard
     :title="t('Logo generator')"
@@ -66,6 +81,7 @@ async function generate(use: boolean) {
     class="border border-[var(--border)]"
   >
     <AppNotice :error="error" :success="success" />
+
     <div class="px-2 text-sm text-[var(--text)]">
       <div class="mt-4">
         <div class="grid grid-cols-6 gap-3">
@@ -93,8 +109,10 @@ async function generate(use: boolean) {
             />
           </button>
         </div>
+
         <div class="mt-4">
           <label for="logo-text" class="font-bold">{{ t("Logo text") }}</label>
+
           <input
             id="logo-text"
             v-model="text"
@@ -102,6 +120,7 @@ async function generate(use: boolean) {
             :placeholder="t('Type here...')"
             class="mt-2 focus:ring-0 border-4 rounded bg-[var(--surface-inset)] border-[var(--border)] text-[var(--text)] focus:border-[#eeb425] w-full"
           />
+
           <div
             class="logo-preview flex mt-4 gap-[2px] overflow-x-auto"
             :class="text ? 'mb-4' : ''"
@@ -109,6 +128,7 @@ async function generate(use: boolean) {
           >
             <template v-for="(letter, index) in letters" :key="index">
               <span v-if="letter === ' '" class="shrink-0 w-[15px]"></span>
+
               <img
                 v-else
                 :src="`/assets/images/logo-generator/${font}/${letter}.png`"
@@ -117,6 +137,7 @@ async function generate(use: boolean) {
               />
             </template>
           </div>
+
           <div class="flex gap-4 justify-between">
             <button
               :disabled="busy || !letters.length"
@@ -125,6 +146,7 @@ async function generate(use: boolean) {
             >
               {{ t("Download logo") }}
             </button>
+
             <button
               v-if="session.user?.can_generate_logo"
               :disabled="busy || !letters.length"

@@ -2,12 +2,15 @@ import type { components } from "~/types/api-schema";
 
 export type Data<Name extends keyof components["schemas"]> =
   components["schemas"][Name];
+
 export type RecordData = Record<string, unknown>;
+
 export interface Envelope<T> {
   data: T;
   meta?: { current_page: number; last_page: number; total: number };
   links?: Record<string, string | null>;
 }
+
 export class ApiError extends Error {
   constructor(
     public status: number,

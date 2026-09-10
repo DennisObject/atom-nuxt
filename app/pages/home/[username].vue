@@ -4,4 +4,6 @@ import HomeView from "~/views/HomeView.vue";
 definePageMeta({ layout: "default" });
 </script>
 
-<template><HomeView /></template>
+<template>
+  <HomeView />
+</template>

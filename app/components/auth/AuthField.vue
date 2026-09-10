@@ -1,8 +1,12 @@
 <script setup lang="ts">
 defineOptions({ inheritAttrs: false });
+
 defineProps<{ label: string; description?: string; avatar?: string }>();
+
 const model = defineModel<string>({ required: true });
+
 const { theme } = useAppConfig();
+
 const atom = theme.name === "atom";
 </script>
 
@@ -26,6 +30,7 @@ const atom = theme.name === "atom";
         {{ description }}
       </span>
     </span>
+
     <input
       v-model="model"
       v-bind="$attrs"
@@ -36,6 +41,7 @@ const atom = theme.name === "atom";
           : 'relative rounded-md border border-gray-500 bg-white text-black focus:border-blue-600 focus:ring-blue-600'
       "
     />
+
     <img
       v-if="avatar && !atom"
       :src="avatar"

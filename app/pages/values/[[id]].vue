@@ -4,4 +4,6 @@ import RareValuesView from "~/views/RareValuesView.vue";
 definePageMeta({ auth: true });
 </script>
 
-<template><RareValuesView /></template>
+<template>
+  <RareValuesView />
+</template>

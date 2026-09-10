@@ -3,9 +3,13 @@ import type { Data } from "~/utils/api";
 import GroupHeading from "./GroupHeading.vue";
 
 type Position = Data<"Position"> & { group_description?: string | null };
+
 defineProps<{ positions: Position[]; section: string }>();
+
 const { t, locale } = useLocale();
+
 const { session } = useSession();
+
 const statusColors: Record<string, string> = {
   approved:
     "border-green-200 bg-green-100 text-green-800 dark:border-green-800 dark:bg-green-900/40 dark:text-green-300",
@@ -14,6 +18,7 @@ const statusColors: Record<string, string> = {
   rejected:
     "border-red-200 bg-red-100 text-red-800 dark:border-red-800 dark:bg-red-900/40 dark:text-red-300",
 };
+
 const statusLabels: Record<string, string> = {
   pending: "Your application is pending",
   approved: "You have been approved",
@@ -60,11 +65,13 @@ function deadline(value: string | null): string {
             }}
           </span>
         </GroupHeading>
+
         <div class="px-3">
           <div class="text-center text-[var(--text-dim)]">
             <p class="mb-4 whitespace-pre-line text-sm">
               {{ position.description }}
             </p>
+
             <p class="mb-4 text-sm font-semibold">
               {{
                 t("Application Deadline :date", {
@@ -73,6 +80,7 @@ function deadline(value: string | null): string {
               }}
             </p>
           </div>
+
           <button
             v-if="position.application_status"
             disabled
@@ -94,6 +102,7 @@ function deadline(value: string | null): string {
                   )
             }}
           </button>
+
           <NuxtLink
             v-else
             class="block w-full rounded border-2 p-2 text-center font-semibold text-white hover:text-white"
@@ -105,14 +114,16 @@ function deadline(value: string | null): string {
             :to="
               session.user ? `/community/${section}/${position.id}` : '/login'
             "
-            >{{
+          >
+            {{
               session.user
                 ? t("Apply for :position", { position: position.name || "" })
                 : t("Login to apply")
-            }}</NuxtLink
-          >
+            }}
+          </NuxtLink>
         </div>
       </section>
+
       <BaseCard
         v-if="!positions.length"
         :title="
@@ -143,6 +154,7 @@ function deadline(value: string | null): string {
         </p>
       </BaseCard>
     </div>
+
     <aside class="col-span-12 lg:col-span-3 lg:-ml-8 lg:w-[110%]">
       <BaseCard
         :title="

@@ -6,8 +6,11 @@ import WidgetRating from "./home/WidgetRating.vue";
 import WidgetRooms from "./home/WidgetRooms.vue";
 
 const { t } = useLocale();
+
 const { api, safeUrl } = useApi();
+
 const { avatar, session } = useSession();
+
 const props = defineProps<{
   username: string;
   memberSince?: string;
@@ -15,9 +18,13 @@ const props = defineProps<{
   visitor: boolean;
   editing: boolean;
 }>();
+
 const { busy, error, run } = usePage();
+
 const widget = ref<Data<"HomeWidget"> | null>(null);
+
 const message = ref("");
+
 const pagination = computed(() =>
   widget.value && ["my-friends", "my-badges"].includes(widget.value.type)
     ? (
@@ -46,7 +53,9 @@ const { data: initialWidget, error: widgetError } = await useAsyncData(
       )
     ).data,
 );
+
 widget.value = initialWidget.value || null;
+
 if (widgetError.value) {
   error.value = widgetError.value.message;
 }
@@ -56,7 +65,9 @@ async function post() {
     await api(`/homes/${props.username}/messages`, "POST", {
       content: message.value,
     });
+
     message.value = "";
+
     await load();
   });
 }
@@ -66,26 +77,32 @@ async function rate(rating: number) {
     await api(`/homes/${props.username}/ratings`, "POST", {
       rating,
     });
+
     await load();
   });
 }
 </script>
+
 <template>
   <div class="p-2 text-sm">
     <AppNotice :error="error" />
+
     <template v-if="widget">
       <p v-if="widget.supported === false" class="text-[var(--muted)]">
         {{ t("This widget is not available for this hotel.") }}
       </p>
+
       <WidgetProfile
         v-else-if="widget.type === 'my-profile'"
         :content="widget.content"
         :member-since="memberSince"
       />
+
       <WidgetRooms
         v-else-if="widget.type === 'my-rooms'"
         :content="widget.content"
       />
+
       <template v-else-if="widget.type === 'my-badges'">
         <div class="grid grid-cols-4 gap-1 p-1">
           <img
@@ -101,6 +118,7 @@ async function rate(rating: number) {
           />
         </div>
       </template>
+
       <template v-else-if="widget.type === 'my-friends'">
         <div class="grid grid-cols-2 gap-1.5 p-1">
           <NuxtLink
@@ -118,6 +136,7 @@ async function rate(rating: number) {
               "
               alt=""
             />
+
             <strong
               class="truncate text-xs font-semibold text-blue-500 hover:underline"
             >
@@ -126,6 +145,7 @@ async function rate(rating: number) {
           </NuxtLink>
         </div>
       </template>
+
       <WidgetRating
         v-else-if="widget.type === 'my-rating'"
         :content="widget.content"
@@ -134,6 +154,7 @@ async function rate(rating: number) {
         :editing="editing"
         @rate="rate"
       />
+
       <WidgetGuestbook
         v-model="message"
         v-else-if="widget.type === 'my-guestbook'"
@@ -143,6 +164,7 @@ async function rate(rating: number) {
         :editing="editing"
         @post="post"
       />
+
       <div
         v-if="pagination && pagination.last_page > 1"
         class="mt-5 flex items-center justify-center gap-3"
@@ -154,7 +176,9 @@ async function rate(rating: number) {
         >
           ←
         </button>
+
         <span>{{ pagination.current_page }}/{{ pagination.last_page }}</span>
+
         <button
           class="px-[11px] py-[5px] text-[13px]"
           :disabled="busy || pagination.current_page === pagination.last_page"

@@ -7,7 +7,9 @@ defineProps<{
   otherArticles: Data<"Article">[];
   authorDisplay?: { rank_name: string; background_url: string } | null;
 }>();
+
 const { t } = useLocale();
+
 const { mediaUrl } = useApi();
 </script>
 
@@ -19,6 +21,7 @@ const { mediaUrl } = useApi();
       :role="authorDisplay?.rank_name"
       :background="authorDisplay?.background_url"
     />
+
     <BaseCard
       :title="t('Other articles')"
       :subtitle="t('Our most recent articles')"
@@ -43,6 +46,7 @@ const { mediaUrl } = useApi();
           }}
         </NuxtLink>
       </div>
+
       <p v-if="!otherArticles.length">
         {{ t("There is currently no other articles") }}
       </p>

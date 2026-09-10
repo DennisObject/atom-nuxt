@@ -2,7 +2,9 @@
 import { ref } from "vue";
 
 const { t } = useLocale();
+
 const { session } = useSession();
+
 const termsDialog = ref<HTMLDialogElement>();
 </script>
 
@@ -17,11 +19,13 @@ const termsDialog = ref<HTMLDialogElement>();
     </button>
     {{ t("before making a purchase") }}
   </div>
+
   <dialog
     ref="termsDialog"
     class="m-auto max-h-[85vh] w-[min(640px,calc(100vw-32px))] rounded-lg border-0 bg-[var(--header)] p-6 text-[var(--text)] backdrop:bg-black/55"
   >
     <h2 class="mb-4 text-2xl">{{ t("Shop Terms & Conditions") }}</h2>
+
     <p class="my-2">
       {{
         t(
@@ -30,7 +34,9 @@ const termsDialog = ref<HTMLDialogElement>();
         )
       }}
     </p>
+
     <h3 class="mt-6 font-semibold">{{ t("Why are donations important?") }}</h3>
+
     <p class="my-2">
       {{
         t(
@@ -38,7 +44,9 @@ const termsDialog = ref<HTMLDialogElement>();
         )
       }}
     </p>
+
     <h3 class="mt-6 font-semibold">{{ t("Our terms") }}</h3>
+
     <p class="my-2">
       {{
         t(
@@ -46,7 +54,9 @@ const termsDialog = ref<HTMLDialogElement>();
         )
       }}
     </p>
+
     <h3 class="mt-6 font-semibold">{{ t("Notice") }}</h3>
+
     <p class="my-2">
       {{
         t(
@@ -54,6 +64,7 @@ const termsDialog = ref<HTMLDialogElement>();
         )
       }}
     </p>
+
     <p class="my-2">
       {{
         t(
@@ -61,6 +72,7 @@ const termsDialog = ref<HTMLDialogElement>();
         )
       }}
     </p>
+
     <button
       class="border-[var(--border)] bg-[var(--surface-muted)] mt-4"
       @click="termsDialog?.close()"

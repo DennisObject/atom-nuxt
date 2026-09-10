@@ -11,18 +11,23 @@ const props = defineProps<{
   fields: Record<string, string[]>;
   success: string;
 }>();
+
 const emit = defineEmits<{
   place: [items: Data<"HomeItem">[]];
   preview: [items: Data<"HomeDefinition">[]];
   buy: [item: Data<"HomeDefinition">, quantity: number, place: boolean];
   buySelected: [items: Data<"HomeDefinition">[], place: boolean];
 }>();
+
 const { t } = useLocale();
+
 const bag = ref<HTMLDialogElement>();
+
 const bagTab = ref("inventory");
 
 function open(tab: string) {
   bagTab.value = tab;
+
   bag.value?.showModal();
 }
 
@@ -53,6 +58,7 @@ defineExpose({ open, close });
       >
         {{ t("Inventory") }}
       </button>
+
       <button
         class="rounded border-0 px-4 py-1.5 text-sm font-semibold"
         :class="
@@ -64,6 +70,7 @@ defineExpose({ open, close });
       >
         {{ t("Shop") }}
       </button>
+
       <button
         class="ml-auto border-0 bg-transparent px-2 py-0 text-lg leading-none text-gray-400 hover:text-gray-700 dark:hover:text-white"
         :aria-label="t('Close')"
@@ -72,18 +79,21 @@ defineExpose({ open, close });
         ×
       </button>
     </header>
+
     <AppNotice
       :teleport="false"
       :error="props.error"
       :fields="props.fields"
       :success="props.success"
     />
+
     <div class="flex min-h-[300px] overflow-x-auto">
       <HomeInventory
         v-if="bagTab === 'inventory'"
         :inventory="inventory"
         @place="emit('place', $event)"
       />
+
       <HomeShop
         v-else
         :shop="shop"

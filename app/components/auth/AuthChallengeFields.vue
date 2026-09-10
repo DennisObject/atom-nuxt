@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import SettingsField from "~/components/settings/SettingsField.vue";
+
 const form = defineModel<ReturnType<typeof useAuthPage>["form"]>({
   required: true,
 });
+
 const { t } = useLocale();
 </script>
 
@@ -20,6 +22,7 @@ const { t } = useLocale();
       t('Enter the two-factor authentication code from your authenticator app.')
     "
   />
+
   <div class="mt-4">
     <SettingsField
       v-model="form.recovery_code"

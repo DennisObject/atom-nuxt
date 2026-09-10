@@ -1,10 +1,16 @@
 <script setup lang="ts">
 import type { Data } from "~/utils/api";
+
 const props = defineProps<{ friend: Data<"OnlineFriend"> }>();
+
 const { t } = useLocale();
+
 const { theme } = useAppConfig();
+
 const { avatar } = useSession();
+
 const tooltip = ref<{ top: number; left: number } | null>(null);
+
 const onlineSince = computed(() => {
   const timestamp = props.friend.last_online;
 
@@ -15,7 +21,9 @@ const onlineSince = computed(() => {
 
 function show(event: Event): void {
   const target = event.currentTarget as HTMLElement;
+
   const bounds = target.getBoundingClientRect();
+
   tooltip.value = {
     top: bounds.top - 8,
     left: Math.max(
@@ -46,6 +54,7 @@ function hide(): void {
     @blur="hide"
     @keydown.esc="hide"
   />
+
   <Teleport to="body">
     <div
       v-if="tooltip"
@@ -71,15 +80,18 @@ function hide(): void {
           {{ friend.username }}
         </div>
       </div>
+
       <div class="max-h-[200px] overflow-y-auto px-3 py-2">
         <b class="mr-1 font-bold">{{ t("Motto") }}:</b>
         {{ friend.motto }}
         <template v-if="onlineSince">
           <br />
+
           <b class="mr-1 font-bold">{{ t("Online Since") }}:</b>
           {{ onlineSince }}
         </template>
       </div>
+
       <div
         class="absolute -bottom-1 left-1/2 size-2 rotate-45 border-r border-b border-gray-200 bg-white"
         :class="{

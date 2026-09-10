@@ -7,11 +7,17 @@ import HomePurchaseDialog from "~/components/home/HomePurchaseDialog.vue";
 import HomeStage from "~/components/home/HomeStage.vue";
 
 const { t } = useLocale();
+
 const { api } = useApi();
+
 const { session, refreshUser } = useSession();
+
 const route = useRoute();
+
 const username = encodeURIComponent(String(route.params.username));
+
 const { busy, error, fields, success, run } = usePage();
+
 const {
   home,
   items,
@@ -33,6 +39,7 @@ const {
   endPreview,
   updateSelected,
 } = await useHomeLayout(username);
+
 const { purchaseAndPlace, purchaseBatch } = useHomePurchases(username, {
   inventory,
   items,
@@ -40,9 +47,13 @@ const { purchaseAndPlace, purchaseBatch } = useHomePurchases(username, {
   previewBackground,
   place,
 });
+
 const shop = ref<Data<"HomeShop">>({ categories: [], items: [] });
+
 const bag = ref<InstanceType<typeof HomeBag>>();
+
 const purchaseDialog = ref<InstanceType<typeof HomePurchaseDialog>>();
+
 useSeoMeta({
   title: () =>
     t("Home of :u", {
@@ -58,6 +69,7 @@ onBeforeRouteLeave(
 async function edit() {
   await run(async () => {
     shop.value = (await api<Data<"HomeShop">>("/home-shop")).data;
+
     editing.value = true;
   });
 }
@@ -77,10 +89,15 @@ async function save() {
       })),
       backgroundId: backgroundId.value,
     });
+
     endPreview();
+
     dirty.value = false;
+
     editing.value = false;
+
     selectedItem.value = null;
+
     await load();
   }, "Your home has been saved.");
 }
@@ -88,20 +105,26 @@ async function save() {
 async function cancel() {
   await run(async () => {
     await load();
+
     endPreview();
+
     dirty.value = false;
+
     editing.value = false;
+
     selectedItem.value = null;
   });
 }
 
 function placeItems(selected: Data<"HomeItem">[]) {
   selected.forEach(place);
+
   bag.value?.close();
 }
 
 function previewItemsFromShop(selected: Data<"HomeDefinition">[]) {
   selected.forEach(preview);
+
   bag.value?.close();
 }
 
@@ -113,9 +136,11 @@ async function buy(
   if (busy.value) {
     return;
   }
+
   await run(
     async () => {
       await purchaseAndPlace(item, quantity, undefined, placeAfterPurchase);
+
       if (placeAfterPurchase) {
         bag.value?.close();
       }
@@ -133,14 +158,18 @@ async function buySelected(
   if (busy.value || !targets.length) {
     return;
   }
+
   let failures: string[] = [];
+
   await run(
     async () => {
       const result = await purchaseBatch(
         targets.map((definition) => ({ definition })),
         placeAfterPurchase,
       );
+
       failures = result.failures;
+
       if (placeAfterPurchase) {
         bag.value?.close();
       }
@@ -149,8 +178,10 @@ async function buySelected(
       ? "Items purchased and placed. Save your home to keep this layout."
       : "Items purchased and added to your inventory.",
   );
+
   if (failures.length) {
     success.value = "";
+
     error.value = failures.join(" ");
   }
 }
@@ -158,6 +189,7 @@ async function buySelected(
 async function confirmPreview() {
   await run(async () => {
     await refreshUser();
+
     purchaseDialog.value?.open([
       ...previewItems.value.flatMap((item) =>
         item.definition ? [item.definition] : [],
@@ -171,6 +203,7 @@ function removePreview(item: Data<"HomeDefinition">) {
   previewItems.value = previewItems.value.filter(
     (entry) => entry.definition?.id !== item.id,
   );
+
   if (previewBackground.value?.id === item.id) {
     previewBackground.value = null;
   }
@@ -186,22 +219,31 @@ async function buyPreview(selected: Data<"HomeDefinition">[]) {
       ? [{ definition: previewBackground.value, position: undefined }]
       : []),
   ];
+
   const selectedTargets = targets.filter((entry) =>
     selected.some((item) => item.id === entry.definition.id),
   );
+
   if (busy.value || !selectedTargets.length) {
     return;
   }
+
   let failures: string[] = [];
+
   let purchased = 0;
+
   await run(async () => {
     const result = await purchaseBatch(selectedTargets);
+
     failures = result.failures;
+
     purchased = result.purchased;
   });
+
   if (purchased) {
     await save();
   }
+
   if (failures.length) {
     error.value = failures.join(" ");
   }
@@ -210,6 +252,7 @@ async function buyPreview(selected: Data<"HomeDefinition">[]) {
 
 <template>
   <AppNotice :error="error" :fields="fields" :success="success" />
+
   <div v-if="home" class="flex flex-col gap-4 items-center">
     <div
       class="flex w-full max-w-[928px] justify-between max-sm:flex-wrap max-sm:gap-2"
@@ -217,6 +260,7 @@ async function buyPreview(selected: Data<"HomeDefinition">[]) {
       <h1 v-if="!owner" class="w-full text-center text-xl font-semibold">
         {{ t("Home of :u", { u: home.user.username }) }}
       </h1>
+
       <template v-else>
         <button
           v-if="!editing"
@@ -226,6 +270,7 @@ async function buyPreview(selected: Data<"HomeDefinition">[]) {
         >
           {{ t("Edit Home") }}
         </button>
+
         <template v-else>
           <div class="flex items-center gap-4 flex-wrap">
             <button
@@ -235,6 +280,7 @@ async function buyPreview(selected: Data<"HomeDefinition">[]) {
             >
               {{ t("Inventory") }}
             </button>
+
             <button
               class="rounded border-2 border-yellow-400 bg-[#eeb425] px-4 py-1.5 text-sm font-semibold text-white hover:bg-[#d49f1c]"
               :disabled="busy"
@@ -243,6 +289,7 @@ async function buyPreview(selected: Data<"HomeDefinition">[]) {
               {{ t("Shop") }}
             </button>
           </div>
+
           <div class="flex items-center gap-4 flex-wrap">
             <button
               class="rounded border-2 border-red-400 bg-red-500 px-4 py-1.5 text-sm font-semibold text-white hover:bg-red-600"
@@ -251,6 +298,7 @@ async function buyPreview(selected: Data<"HomeDefinition">[]) {
             >
               {{ t("Cancel") }}
             </button>
+
             <button
               class="rounded border-2 border-green-500 bg-green-600 px-4 py-1.5 text-sm font-semibold text-white hover:bg-green-700"
               :disabled="busy"
@@ -262,6 +310,7 @@ async function buyPreview(selected: Data<"HomeDefinition">[]) {
         </template>
       </template>
     </div>
+
     <div
       v-if="previewItems.length || previewBackground"
       class="flex w-full max-w-[928px] items-center justify-between gap-3 rounded-lg border border-cyan-700 bg-cyan-900/50 px-4 py-2 text-sm"
@@ -269,6 +318,7 @@ async function buyPreview(selected: Data<"HomeDefinition">[]) {
       <span>
         {{ t("Preview mode - drag items to arrange, then purchase") }}
       </span>
+
       <div class="flex items-center gap-4">
         <button
           class="border-[var(--border)] bg-[var(--surface-muted)]"
@@ -277,11 +327,13 @@ async function buyPreview(selected: Data<"HomeDefinition">[]) {
         >
           {{ t("Cancel") }}
         </button>
+
         <button :disabled="busy" @click="confirmPreview">
           {{ t("Buy & Save") }}
         </button>
       </div>
     </div>
+
     <details
       v-if="editing && selectedItem"
       class="w-full max-w-[928px] text-sm"
@@ -289,12 +341,14 @@ async function buyPreview(selected: Data<"HomeDefinition">[]) {
       <summary class="cursor-pointer text-[var(--text-dim)]">
         {{ t("Selected item") }}
       </summary>
+
       <HomeItemEditor
         :item="selectedItem"
         @update="updateSelected"
         @remove="remove(selectedItem!)"
       />
     </details>
+
     <HomeStage
       :items="visibleItems"
       :background="background"
@@ -308,12 +362,14 @@ async function buyPreview(selected: Data<"HomeDefinition">[]) {
       @drag="drag"
       @select="selectedItem = $event"
     />
+
     <HomePurchaseDialog
       ref="purchaseDialog"
       :busy="busy"
       @confirm="buyPreview"
       @remove="removePreview"
     />
+
     <HomeBag
       ref="bag"
       :inventory="inventory"

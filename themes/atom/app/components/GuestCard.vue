@@ -14,6 +14,7 @@ defineProps<{
   >
     <header class="flex gap-x-2">
       <ThemeIcon :name="icon" />
+
       <div class="flex flex-col">
         <h2
           :id="headingId"
@@ -21,9 +22,11 @@ defineProps<{
         >
           {{ title }}
         </h2>
+
         <p class="dark:text-gray-500">{{ subtitle }}</p>
       </div>
     </header>
+
     <slot />
   </section>
 </template>

@@ -1,8 +1,12 @@
 <script setup lang="ts">
 const props = defineProps<{ kind: string; busy: boolean; disabled: boolean }>();
+
 const { t } = useLocale();
+
 const { theme } = useAppConfig();
+
 const atom = theme.name === "atom";
+
 const labels: Record<string, string> = {
   login: "Login",
   register: atom ? "Create account" : "Register",
@@ -10,6 +14,7 @@ const labels: Record<string, string> = {
   forgot: "Send reset link",
   reset: "Save password",
 };
+
 const layout = computed(() => {
   if (props.kind === "challenge") {
     return "mt-4 flex flex-col";
@@ -40,6 +45,7 @@ const layout = computed(() => {
     >
       {{ t(busy ? "Please wait…" : labels[kind] || "Login") }}
     </button>
+
     <NuxtLink
       v-if="
         kind !== 'challenge' &&
@@ -55,6 +61,7 @@ const layout = computed(() => {
       </span>
     </NuxtLink>
   </div>
+
   <template v-if="kind === 'login' && atom">
     <NuxtLink
       to="/forgot-password"
@@ -62,6 +69,7 @@ const layout = computed(() => {
     >
       {{ t("Did you forget your password?") }}
     </NuxtLink>
+
     <NuxtLink
       to="/register"
       class="text-center text-sm font-semibold text-gray-700 dark:text-gray-400"

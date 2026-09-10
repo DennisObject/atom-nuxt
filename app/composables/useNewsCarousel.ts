@@ -5,9 +5,13 @@ export function useNewsCarousel(
   autoplay = false,
 ) {
   const slide = ref(0);
+
   const hovered = ref(false);
+
   const focused = ref(false);
+
   let pointerStart: number | undefined;
+
   let timer: ReturnType<typeof setInterval> | undefined;
 
   function move(direction: number) {
@@ -32,6 +36,7 @@ export function useNewsCarousel(
     }
 
     const delta = event.clientX - pointerStart;
+
     pointerStart = undefined;
 
     if (Math.abs(delta) > 40) {

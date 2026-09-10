@@ -8,4 +8,6 @@ definePageMeta({
 });
 </script>
 
-<template><ClientView /></template>
+<template>
+  <ClientView />
+</template>

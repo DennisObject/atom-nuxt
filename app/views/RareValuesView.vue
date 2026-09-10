@@ -4,19 +4,26 @@ import RareOwners from "~/components/values/RareOwners.vue";
 import RareValueCard from "~/components/values/RareValueCard.vue";
 
 const { t } = useLocale();
+
 const { api } = useApi();
+
 const { session } = useSession();
+
 type Category = {
   id: number;
   name: string;
   badge?: string;
   values: Data<"RareValue">[];
 };
+
 type Value = Data<"RareValue"> & {
   holdings: { user: Data<"PublicUser"> | null; count: number }[];
 };
+
 const route = useRoute();
+
 const search = ref(String(route.query.search || ""));
+
 const { data, error, status } = await useAsyncData(
   computed(() => `rare-values:${route.fullPath}`),
   async () => {
@@ -31,28 +38,37 @@ const { data, error, status } = await useAsyncData(
         navigation: [],
       };
     }
+
     const navigation = (await api<Category[]>("/rare-values")).data;
+
     const params = new URLSearchParams();
+
     if (route.query.search) {
       params.set("search", String(route.query.search));
     }
+
     if (route.params.category || route.query.category) {
       params.set(
         "category",
         String(route.params.category || route.query.category),
       );
     }
+
     const categories = params.size
       ? (await api<Category[]>(`/rare-values?${params}`)).data
       : navigation;
+
     return { value: null, categories, navigation };
   },
 );
+
 const value = computed(() => data.value?.value);
 </script>
+
 <template>
   <div class="rare-values-page">
     <AppNotice :error="error?.message" />
+
     <div v-if="value" class="flex flex-col gap-y-4">
       <NuxtLink
         to="/values"
@@ -61,8 +77,10 @@ const value = computed(() => data.value?.value);
         <span aria-hidden="true">←</span>
         {{ t("Go back to values") }}
       </NuxtLink>
+
       <RareOwners :value="value" />
     </div>
+
     <div v-else class="grid grid-cols-12 gap-4">
       <div class="col-span-12 lg:col-span-9 lg:w-[96%] flex flex-col gap-y-4">
         <BaseCard
@@ -80,6 +98,7 @@ const value = computed(() => data.value?.value);
             />
           </div>
         </BaseCard>
+
         <BaseCard
           v-if="!data?.categories.length && status !== 'pending'"
           :title="t('Rare values')"
@@ -95,6 +114,7 @@ const value = computed(() => data.value?.value);
           </p>
         </BaseCard>
       </div>
+
       <aside
         class="col-span-12 lg:col-span-3 lg:w-[110%] lg:-ml-8 flex flex-col gap-4"
       >
@@ -117,6 +137,7 @@ const value = computed(() => data.value?.value);
               maxlength="255"
               class="mb-3 focus:ring-0 border-2 border-[var(--border)] rounded bg-[var(--header)] focus:border-[#eeb425] w-full text-[var(--text)]"
             />
+
             <button
               :disabled="status === 'pending'"
               class="w-full rounded bg-green-600 hover:bg-green-700 text-white p-2 border-2 border-green-500 transition duration-150 font-semibold"
@@ -125,6 +146,7 @@ const value = computed(() => data.value?.value);
             </button>
           </form>
         </BaseCard>
+
         <BaseCard
           :title="t('Rare categories')"
           :subtitle="t('Select a category below')"
@@ -138,6 +160,7 @@ const value = computed(() => data.value?.value);
             >
               {{ t("All values") }}
             </NuxtLink>
+
             <NuxtLink
               v-for="category in data?.navigation || []"
               :key="category.id"

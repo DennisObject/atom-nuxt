@@ -5,7 +5,9 @@ defineProps<{
   content: Extract<Data<"HomeWidget">, { type: "my-profile" }>["content"];
   memberSince?: string;
 }>();
+
 const { t } = useLocale();
+
 const { avatar } = useSession();
 </script>
 
@@ -20,6 +22,7 @@ const { avatar } = useSession();
       >
         <strong>{{ content.username }}</strong>
       </NuxtLink>
+
       <small
         class="block text-xs"
         :class="
@@ -30,15 +33,18 @@ const { avatar } = useSession();
       >
         {{ t(content.online ? "Online" : "Offline") }}
       </small>
+
       <small class="mt-1 block text-xs text-gray-500" v-if="memberSince">
         {{ t("Member since") }} {{ memberSince.slice(0, 10) }}
       </small>
     </div>
+
     <img
       class="h-auto w-16 [image-rendering:pixelated]"
       :src="avatar(content, { direction: 4, head_direction: 4 })"
       :alt="content.username"
     />
   </div>
+
   <p class="p-2 text-xs italic">{{ content.motto }}</p>
 </template>

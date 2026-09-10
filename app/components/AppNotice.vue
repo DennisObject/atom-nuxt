@@ -5,19 +5,24 @@ const props = defineProps<{
   fields?: Record<string, string[]>;
   teleport?: boolean;
 }>();
+
 const { t } = useLocale();
+
 const fieldMessages = computed(() =>
   [...new Set(Object.values(props.fields || {}).flat())].filter(
     (message) => message && message !== props.error,
   ),
 );
+
 const dismissed = reactive({ error: false, success: false });
+
 watch(
   () => props.error,
   () => {
     dismissed.error = false;
   },
 );
+
 watch(
   () => props.success,
   () => {
@@ -25,6 +30,7 @@ watch(
   },
 );
 </script>
+
 <template>
   <Teleport to="body" :disabled="teleport === false">
     <div
@@ -52,6 +58,7 @@ watch(
               d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm3.857-9.809a.75.75 0 0 0-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 1 0-1.06 1.061l2.5 2.5a.75.75 0 0 0 1.137-.089l4-5.5Z"
               clip-rule="evenodd"
             />
+
             <path
               v-else
               fill-rule="evenodd"
@@ -59,6 +66,7 @@ watch(
               clip-rule="evenodd"
             />
           </svg>
+
           <div>
             {{ props[kind] }}
             <ul v-if="kind === 'error' && fieldMessages.length">
@@ -67,6 +75,7 @@ watch(
               </li>
             </ul>
           </div>
+
           <button
             class="absolute top-[7px] right-2 border-0 bg-transparent p-0 text-xl font-normal text-[var(--text-subtle)]"
             :aria-label="t('Close')"
@@ -74,6 +83,7 @@ watch(
           >
             ×
           </button>
+
           <div
             class="absolute bottom-0 left-0 h-0.5 animate-[notice-progress_4s_linear_forwards] group-hover:[animation-play-state:paused]"
             :class="kind === 'error' ? 'bg-rose-500' : 'bg-emerald-500'"

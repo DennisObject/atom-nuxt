@@ -3,10 +3,15 @@ import AuthForm from "~/components/AuthForm.vue";
 import { BaseCard } from "#components";
 
 const { t } = useLocale();
+
 const route = useRoute();
+
 const { session } = useSession();
+
 const kind = computed(() => String(route.meta.authKind || "login"));
+
 const isHome = computed(() => route.path === "/");
+
 const titles: Record<string, string> = {
   login: "Login",
   register: "Create your account!",
@@ -14,6 +19,7 @@ const titles: Record<string, string> = {
   forgot: "Forgot your password?",
   reset: "Choose a new password",
 };
+
 useSeoMeta({
   title: () =>
     isHome.value
@@ -25,8 +31,10 @@ useSeoMeta({
 <template>
   <div v-if="isHome" class="space-y-14">
     <GuestNews />
+
     <GuestPhotos />
   </div>
+
   <div v-else :class="{ 'lg:px-[250px]': kind !== 'register' }">
     <BaseCard
       :class="{ 'gap-y-8!': kind === 'register' }"
@@ -51,6 +59,7 @@ useSeoMeta({
         <div class="w-full">
           <AuthForm />
         </div>
+
         <div v-if="kind === 'register'" class="relative hidden w-full md:block">
           <img
             class="absolute -right-3 -bottom-3 opacity-50"

@@ -7,9 +7,13 @@ defineProps<{
   label: string;
   onlineTime: boolean;
 }>();
+
 const { theme, artwork } = useAppConfig();
+
 const { avatar, session } = useSession();
+
 const isAtom = theme.name === "atom";
+
 const rankColors = ["bg-[#f9d83e]", "bg-[#b8c4d4]", "bg-[#f1851b]"];
 </script>
 
@@ -33,8 +37,10 @@ const rankColors = ["bg-[#f9d83e]", "bg-[#b8c4d4]", "bg-[#f1851b]"];
         :src="artwork.medals[index]"
         :alt="String(index + 1)"
       />
+
       <template v-else>{{ index + 1 }}</template>
     </span>
+
     <img
       v-if="isAtom"
       class="[image-rendering:pixelated]"
@@ -44,6 +50,7 @@ const rankColors = ["bg-[#f9d83e]", "bg-[#b8c4d4]", "bg-[#f1851b]"];
       :src="avatar(entry.user, { size: 'b', head_direction: 2, headonly: 1 })"
       alt=""
     />
+
     <div
       v-else
       class="relative size-12 shrink-0 overflow-hidden rounded-full bg-[image:var(--leaderboard-portrait-background)] bg-cover bg-center"
@@ -54,8 +61,10 @@ const rankColors = ["bg-[#f9d83e]", "bg-[#b8c4d4]", "bg-[#f1851b]"];
         alt=""
       />
     </div>
+
     <div>
       <strong>{{ entry.user.username }}</strong>
+
       <p :class="{ 'text-sm': !isAtom }">
         {{
           (onlineTime
@@ -66,6 +75,7 @@ const rankColors = ["bg-[#f9d83e]", "bg-[#b8c4d4]", "bg-[#f1851b]"];
         {{ label }}
       </p>
     </div>
+
     <template v-if="!isAtom">
       <img
         v-if="index < 3"
@@ -73,6 +83,7 @@ const rankColors = ["bg-[#f9d83e]", "bg-[#b8c4d4]", "bg-[#f1851b]"];
         :src="artwork.medals[index]"
         :alt="String(index + 1)"
       />
+
       <span
         v-else
         class="ml-auto grid gap-4 size-8 place-items-center rounded-full bg-gray-300 text-gray-800"

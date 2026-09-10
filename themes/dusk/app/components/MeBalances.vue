@@ -1,6 +1,8 @@
 <script setup lang="ts">
 const { t } = useLocale();
+
 const { session } = useSession();
+
 const currencies = [
   {
     name: "credits",
@@ -41,10 +43,12 @@ const currencies = [
             alt=""
           />
         </span>
+
         <div class="flex gap-x-2">
           <span class="font-semibold">
             {{ session.user?.balances?.[currency.name] || 0 }}
           </span>
+
           <span class="hidden lg:block">{{ t(currency.label) }}</span>
         </div>
       </div>

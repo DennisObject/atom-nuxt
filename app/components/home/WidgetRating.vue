@@ -7,7 +7,9 @@ defineProps<{
   visitor: boolean;
   editing: boolean;
 }>();
+
 const emit = defineEmits<{ rate: [value: number] }>();
+
 const { t } = useLocale();
 </script>
 
@@ -20,6 +22,7 @@ const { t } = useLocale();
         })
       }}
     </strong>
+
     <div class="flex gap-1">
       <button
         v-for="value in 5"
@@ -46,10 +49,12 @@ const { t } = useLocale();
         </svg>
       </button>
     </div>
+
     <div class="flex flex-col items-center text-gray-500">
       <span>
         {{ t(":n votes total", { n: content.total }) }}
       </span>
+
       <span class="text-[var(--text-subtle)]">
         {{ t("(:n users voted 4 or better)", { n: content.positive }) }}
       </span>

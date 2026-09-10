@@ -2,6 +2,7 @@
 import { onMounted, onBeforeUnmount, ref, watch } from "vue";
 
 const { session } = useSession();
+
 type CaptchaApi = {
   render(
     element: HTMLElement,
@@ -10,31 +11,47 @@ type CaptchaApi = {
   reset(id: string | number): void;
   remove?(id: string | number): void;
 };
+
 const model = defineModel<Record<string, string>>({ required: true });
+
 const props = defineProps<{ busy?: boolean }>();
+
 const recaptchaElement = ref<HTMLElement | null>(null);
+
 const turnstileElement = ref<HTMLElement | null>(null);
+
 const error = ref("");
+
 const widgets: { api: CaptchaApi; id: string | number }[] = [];
+
 let alive = true;
 
 async function loadScript(name: string, src: string): Promise<CaptchaApi> {
   const globals = window as unknown as Record<string, CaptchaApi>;
+
   if (globals[name]) {
     return globals[name];
   }
+
   await new Promise<void>((resolve, reject) => {
     let script = document.querySelector<HTMLScriptElement>(
       `script[data-captcha="${name}"]`,
     );
+
     if (!script) {
       script = document.createElement("script");
+
       script.src = src;
+
       script.async = true;
+
       script.dataset.captcha = name;
+
       document.head.appendChild(script);
     }
+
     script.addEventListener("load", () => resolve(), { once: true });
+
     script.addEventListener(
       "error",
       () =>
@@ -46,14 +63,17 @@ async function loadScript(name: string, src: string): Promise<CaptchaApi> {
       { once: true },
     );
   });
+
   return globals[name]!;
 }
 
 onMounted(async () => {
   const config = session.bootstrap.captcha;
+
   if (!config) {
     return;
   }
+
   try {
     for (const item of [
       {
@@ -76,15 +96,19 @@ onMounted(async () => {
       if (!item.enabled) {
         continue;
       }
+
       if (!item.key) {
         throw new Error(
           "Hotel verification is not configured. Please contact the hotel team.",
         );
       }
+
       const service = await loadScript(item.name, item.url);
+
       if (!alive || !item.element.value) {
         return;
       }
+
       const id = service.render(item.element.value, {
         sitekey: item.key,
         theme: "dark",
@@ -95,6 +119,7 @@ onMounted(async () => {
           model.value = { ...model.value, [item.field]: "" };
         },
       });
+
       widgets.push({ api: service, id });
     }
   } catch (failure) {
@@ -104,21 +129,27 @@ onMounted(async () => {
         : "Verification could not be loaded.";
   }
 });
+
 watch(
   () => props.busy,
   (value, old) => {
     if (!value && old) {
       widgets.forEach((widget) => widget.api.reset(widget.id));
+
       model.value = {};
     }
   },
 );
+
 onBeforeUnmount(() => {
   alive = false;
+
   widgets.forEach((widget) => widget.api.remove?.(widget.id));
+
   model.value = {};
 });
 </script>
+
 <template>
   <div
     v-if="
@@ -128,7 +159,9 @@ onBeforeUnmount(() => {
     class="grid content-start gap-4"
   >
     <div ref="recaptchaElement"></div>
+
     <div ref="turnstileElement"></div>
+
     <p
       v-if="error"
       class="relative m-0 flex items-start gap-3 overflow-hidden rounded-lg border-0 bg-[var(--panel)] p-3 pr-9 text-sm leading-5 shadow-lg error"

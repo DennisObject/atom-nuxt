@@ -6,7 +6,9 @@ defineProps<{
     holdings: { user: Data<"PublicUser"> | null; count: number }[];
   };
 }>();
+
 const { t } = useLocale();
+
 const { avatar } = useSession();
 </script>
 
@@ -34,10 +36,12 @@ const { avatar } = useSession();
             :alt="holder.user.username"
           />
         </div>
+
         <div class="flex flex-col gap-y-2">
           <p class="text-[var(--text)]">
             {{ holder.user?.username || t("Unknown member") }}
           </p>
+
           <div
             class="w-full bg-yellow-400 rounded h-[35px] flex items-center text-gray-900"
           >
@@ -50,6 +54,7 @@ const { avatar } = useSession();
                 alt=""
               />
             </div>
+
             <p class="w-full text-center truncate text-sm px-2">
               {{ holder.count }} {{ t("owned") }}
             </p>
@@ -57,6 +62,7 @@ const { avatar } = useSession();
         </div>
       </NuxtLink>
     </div>
+
     <p v-if="!value.holdings.length" class="text-center text-sm">
       {{ t("No owners found.") }}
     </p>

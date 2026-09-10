@@ -1,5 +1,6 @@
 <script setup lang="ts">
 const { t } = useLocale();
+
 const { isDark, toggleMode } = useThemeMode();
 </script>
 
@@ -27,6 +28,7 @@ const { isDark, toggleMode } = useThemeMode();
         />
       </svg>
     </button>
+
     <LanguageMenu />
   </div>
 </template>

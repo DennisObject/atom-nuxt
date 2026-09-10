@@ -2,12 +2,19 @@
 import { ref } from "vue";
 
 const { t } = useLocale();
+
 const { api, request } = useApi();
+
 const { session, refreshUser } = useSession();
+
 const { busy, error, fields, run } = usePage();
+
 const loginDialog = ref<HTMLDialogElement>();
+
 const username = ref("");
+
 const password = ref("");
+
 const captcha = ref<Record<string, string>>({});
 
 async function login() {
@@ -17,19 +24,26 @@ async function login() {
       password: password.value,
       ...captcha.value,
     });
+
     password.value = "";
+
     loginDialog.value?.close();
+
     if (result.two_factor) {
       await navigateTo({
         path: "/two-factor-challenge",
         query: { next: "/user/me" },
       });
+
       return;
     }
+
     session.bootstrap = (
       await api<typeof session.bootstrap>("/bootstrap")
     ).data;
+
     await refreshUser();
+
     if (session.restriction !== "maintenance") {
       await navigateTo("/user/me");
     }
@@ -45,6 +59,7 @@ async function login() {
   >
     {{ t("Staff login") }}
   </button>
+
   <dialog
     ref="loginDialog"
     class="relative m-auto w-[calc(100%-32px)] max-w-xl rounded border-0 bg-[var(--header)] px-6 py-6 text-[var(--text)] backdrop:bg-black/50 lg:max-w-2xl lg:px-8"
@@ -58,8 +73,10 @@ async function login() {
     >
       ×
     </button>
+
     <header class="my-4 flex flex-col items-center">
       <h2 class="text-2xl leading-8 font-semibold">{{ t("Hello!") }}</h2>
+
       <p>
         {{
           t("There is currently :online users online", {
@@ -68,7 +85,9 @@ async function login() {
         }}
       </p>
     </header>
+
     <AppNotice :teleport="false" :error="error" :fields="fields" />
+
     <form class="flex flex-col gap-3" @submit.prevent="login">
       <label>
         {{ t("Username") }}
@@ -81,6 +100,7 @@ async function login() {
           class="focus:ring-0 border-2 border-[var(--border)] rounded bg-[var(--header)] focus:border-[#eeb425] w-full text-[var(--text)]"
         />
       </label>
+
       <label>
         {{ t("Password") }}
         <input
@@ -93,19 +113,23 @@ async function login() {
           class="focus:ring-0 border-2 border-[var(--border)] rounded bg-[var(--header)] focus:border-[#eeb425] w-full text-[var(--text)]"
         />
       </label>
+
       <AppCaptcha v-model="captcha" :busy="busy" />
+
       <button
         :disabled="busy"
         class="w-full rounded bg-[#eeb425] text-white p-2 border-2 border-yellow-400 hover:bg-[#d49f1c] font-semibold"
       >
         {{ t("Login") }}
       </button>
+
       <NuxtLink
         to="/forgot-password"
         class="text-center text-sm font-semibold text-gray-400 hover:underline"
       >
         {{ t("Did you forget your password?") }}
       </NuxtLink>
+
       <NuxtLink
         to="/register"
         class="text-center text-sm font-semibold text-gray-400 hover:underline"

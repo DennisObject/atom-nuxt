@@ -9,4 +9,6 @@ definePageMeta({
 });
 </script>
 
-<template><SupportView /></template>
+<template>
+  <SupportView />
+</template>

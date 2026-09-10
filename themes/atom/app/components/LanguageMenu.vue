@@ -1,5 +1,6 @@
 <script setup lang="ts">
 const { t, locale, busy, languages, changeLocale } = useThemeShell();
+
 defineProps<{ mobile?: boolean }>();
 </script>
 
@@ -11,6 +12,7 @@ defineProps<{ mobile?: boolean }>();
     :aria-label="t('Language')"
   >
     <img :src="`/assets/images/icons/flags/${locale}.png`" :alt="locale" />
+
     <template #children>
       <button
         v-for="language in languages"

@@ -27,6 +27,7 @@ export default defineNuxtConfig({
   ],
   runtimeConfig: {
     backendUrl: "http://127.0.0.1:8000",
+    backendForwardHost: true,
   },
   app: {
     head: {

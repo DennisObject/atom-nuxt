@@ -45,7 +45,9 @@ export default defineEventHandler((event) => {
     fetch: nodeFetch as unknown as typeof globalThis.fetch,
     fetchOptions: { redirect: "manual" },
     headers: {
-      host: url.host,
+      // A backend served behind its own public vhost has to see its own Host,
+      // or the edge rejects the request before Laravel ever runs.
+      ...(config.backendForwardHost ? { host: url.host } : {}),
       accept: getRequestHeader(event, "accept") || "*/*",
     },
   });
